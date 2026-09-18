@@ -26,13 +26,14 @@ const OUT = path.join(ROOT, 'public/assets/cgi');
 const PORT = 8123;
 const CHROME = process.env.CHROME_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 
-// Rendered at 2x the largest display size, then downsampled — software
-// rasterising has no MSAA to spare, so supersampling is what buys the edges.
-const ROOM_RENDER = { w: 2400, h: 1600 };
+// Rendered at twice the largest display size, then downsampled. The chain
+// already runs SMAA, but supersampling on top is what keeps mullions, skirtings
+// and grout lines from stippling at the sizes the site actually serves.
+const ROOM_RENDER = { w: 3200, h: 2133 };
 const ROOM_OUT = [1600, 1000, 640];
 // Exteriors render to the aspect the view declares, at a fixed long edge.
-const EXT_LONG_EDGE = 3000;
-const EXT_OUT = [2000, 1280, 800];
+const EXT_LONG_EDGE = 4400;
+const EXT_OUT = [2800, 2000, 1280, 800];
 
 function extSize(aspect) {
   const [aw, ah] = aspect;
@@ -115,7 +116,7 @@ async function writeVariants(png, slug, widths, quality) {
   for (const w of widths) {
     const name = `${slug}-${w}.webp`;
     await base.clone().resize({ width: w, kernel: 'lanczos3' })
-      .webp({ quality, effort: 5 }).toFile(path.join(OUT, name));
+      .webp({ quality, effort: 6 }).toFile(path.join(OUT, name));
     files[w] = `/assets/cgi/${name}`;
   }
   return files;
@@ -181,7 +182,7 @@ async function main() {
       const t0 = Date.now();
       const { w, h } = extSize(aspects[view] ?? [16, 9]);
       await page.evaluate(([v, vw, vh]) => window.CGI.renderExterior(v, vw, vh), [view, w, h]);
-      manifest.exterior[view] = await writeVariants(await grab(page), `exterior-${view}`, EXT_OUT, 86);
+      manifest.exterior[view] = await writeVariants(await grab(page), `exterior-${view}`, EXT_OUT, 87);
       console.log(`  exterior/${view}  ${w}x${h}  ${((Date.now() - t0) / 1000).toFixed(1)}s`);
     }
   }
@@ -211,7 +212,7 @@ async function main() {
         ([r, f, w, h]) => window.CGI.renderRoom(r, f, w, h),
         [room, finishes, ROOM_RENDER.w, ROOM_RENDER.h],
       );
-      manifest.variants[key] = await writeVariants(await grab(page), slug, ROOM_OUT, 84);
+      manifest.variants[key] = await writeVariants(await grab(page), slug, ROOM_OUT, 88);
       const isDefault =
         finishes.walls === DEFAULTS.walls &&
         finishes.doors === DEFAULTS.doors &&

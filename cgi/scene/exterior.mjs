@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { box, boxAt, cyl } from './kit.mjs';
-import { stoneTexture, slateTexture, grassTexture } from './stage.mjs';
+import { surface, stoneCanvas, slateCanvas, grassCanvas, skyTexture } from './stage.mjs';
 import { SECTION } from './rooms.mjs';
 
 /**
@@ -25,7 +25,13 @@ const TAN = Math.tan((BLOCK.pitchDeg * Math.PI) / 180);
 const RISE = (BLOCK.depth / 2) * TAN;
 
 function stoneMaterial() {
-  return new THREE.MeshStandardMaterial({ map: stoneTexture(4, 3), roughness: 0.95 });
+  const { map, normalMap } = surface(stoneCanvas(), { repeat: [4, 3], strength: 2.4 });
+  return new THREE.MeshStandardMaterial({
+    map,
+    normalMap,
+    normalScale: new THREE.Vector2(1.1, 1.1),
+    roughness: 0.95,
+  });
 }
 
 /** One dwelling: stone shell, gabled 40° roof, openings and rainwater goods. */
@@ -64,7 +70,13 @@ function dwelling(materials, { x, base, handed }) {
   // Roof: two planes meeting at a ridge that runs across the width, so the
   // slopes fall to the front and the rear as the second-floor plan shows.
   const slopeLen = Math.hypot(d / 2, RISE);
-  const roofMat = new THREE.MeshStandardMaterial({ map: slateTexture(3, 4), roughness: 0.82 });
+  const slate = surface(slateCanvas(), { repeat: [3, 4], strength: 2.0 });
+  const roofMat = new THREE.MeshStandardMaterial({
+    map: slate.map,
+    normalMap: slate.normalMap,
+    normalScale: new THREE.Vector2(0.9, 0.9),
+    roughness: 0.78,
+  });
   [-1, 1].forEach((sign) => {
     const plane = new THREE.Mesh(new THREE.BoxGeometry(w + 0.34, 0.16, slopeLen + 0.3), roofMat);
     plane.position.set(w / 2, h + RISE / 2 + 0.02, d / 2 + (sign * d) / 4);
@@ -148,6 +160,20 @@ function dwelling(materials, { x, base, handed }) {
 function setting(materials) {
   const g = new THREE.Group();
 
+  // Sky dome. A flat background colour gives the hero shot no horizon and no
+  // cloud, which reads as a studio backdrop rather than a Pennine hillside.
+  const sky = new THREE.Mesh(
+    new THREE.SphereGeometry(190, 48, 32),
+    new THREE.MeshBasicMaterial({
+      map: skyTexture(),
+      side: THREE.BackSide,
+      depthWrite: false,
+      fog: false,
+    }),
+  );
+  sky.position.set(BLOCK.width / 2, -10, BLOCK.depth / 2);
+  g.add(sky);
+
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(240, 240), materials.grass);
   ground.rotation.x = -Math.PI / 2;
   ground.position.set(BLOCK.width / 2, -0.02, BLOCK.depth / 2);
@@ -190,7 +216,7 @@ function setting(materials) {
   };
   g.add(tree(BLOCK.width + 5.2, 8.4, 5.8));
   g.add(tree(-5.0, 11.0, 5.0));
-  g.add(tree(-9.5, -9.0, 4.4));
+  g.add(tree(-7.5, 17.5, 4.4));
 
   // A car on the drive gives the massing its scale.
   const car = new THREE.Group();
@@ -216,7 +242,16 @@ export function buildExterior(materials) {
     extDoor: new THREE.MeshStandardMaterial({ color: '#2f3a33', roughness: 0.45 }),
     cill: new THREE.MeshStandardMaterial({ color: '#bdb6a8', roughness: 0.8 }),
     lintel: new THREE.MeshStandardMaterial({ color: '#b5ada0', roughness: 0.85 }),
-    grass: new THREE.MeshStandardMaterial({ map: grassTexture(34), roughness: 1, color: 0xcfd2c4 }),
+    grass: (() => {
+      const { map, normalMap } = surface(grassCanvas(), { repeat: [130, 130], strength: 0.9 });
+      return new THREE.MeshStandardMaterial({
+        map,
+        normalMap,
+        normalScale: new THREE.Vector2(0.4, 0.4),
+        roughness: 1,
+        color: 0xcfd2c4,
+      });
+    })(),
     paving: new THREE.MeshStandardMaterial({ color: '#8e8b85', roughness: 0.92 }),
     trunk: new THREE.MeshStandardMaterial({ color: '#4d4034', roughness: 0.95 }),
     foliage: new THREE.MeshStandardMaterial({ color: '#4e6640', roughness: 0.96 }),
@@ -234,22 +269,23 @@ export function buildExterior(materials) {
 
 /** Exterior lighting: a low Yorkshire sun with a cool sky fill. */
 export function lightExterior(scene) {
-  scene.add(new THREE.AmbientLight(0xffffff, 0.34));
-  const hemi = new THREE.HemisphereLight(0xbcd9f0, 0x53523f, 0.9);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.12));
+  const hemi = new THREE.HemisphereLight(0xbcd9f0, 0x53523f, 0.42);
   scene.add(hemi);
   const sun = new THREE.DirectionalLight(0xfff0d6, 3.1);
   sun.position.set(-9.5, 21, -18);
   sun.target.position.set(BLOCK.width / 2, 2.5, BLOCK.depth / 2);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(4096, 4096);
   sun.shadow.camera.near = 1;
   sun.shadow.camera.far = 90;
   sun.shadow.camera.left = -26;
   sun.shadow.camera.right = 26;
   sun.shadow.camera.top = 26;
   sun.shadow.camera.bottom = -26;
-  sun.shadow.bias = -0.0007;
-  sun.shadow.normalBias = 0.03;
+  sun.shadow.bias = -0.0005;
+  sun.shadow.normalBias = 0.028;
+  sun.shadow.radius = 2;
   scene.add(sun);
   scene.add(sun.target);
   return sun;
@@ -263,13 +299,13 @@ export function lightExterior(scene) {
  * landscape render.
  */
 export const EXTERIOR_VIEWS = {
-  hero: { pos: [-10.4, 4.2, -12.4], target: [6.0, 3.4, 2.6], fov: 46, aspect: [16, 9] },
-  'plot-1': { pos: [-9.6, 3.4, -12.5], target: [2.6, 3.2, 1.6], fov: 40, aspect: [16, 9] },
-  'plot-2': { pos: [21.5, 3.7, -12.0], target: [8.0, 3.2, 1.8], fov: 38, aspect: [16, 9] },
-  frontage: { pos: [5.4, 3.4, -23.0], target: [5.4, 3.6, 4.0], fov: 38, aspect: [16, 9] },
-  garden: { pos: [16.5, 4.2, 22.0], target: [5.0, 3.0, 6.0], fov: 40, aspect: [16, 9] },
-  street: { pos: [-15.0, 2.2, -17.5], target: [4.6, 3.8, 1.8], fov: 52, aspect: [16, 9] },
+  hero: { pos: [-10.4, 4.2, -12.4], target: [6.0, 3.4, 2.6], fov: 46, aspect: [16, 9], near: 0.5, far: 260 },
+  'plot-1': { pos: [-9.6, 3.4, -12.5], target: [2.6, 3.2, 1.6], fov: 40, aspect: [16, 9], near: 0.5, far: 260 },
+  'plot-2': { pos: [21.5, 3.7, -12.0], target: [8.0, 3.2, 1.8], fov: 38, aspect: [16, 9], near: 0.5, far: 260 },
+  frontage: { pos: [5.4, 3.4, -23.0], target: [5.4, 3.6, 4.0], fov: 38, aspect: [16, 9], near: 0.5, far: 260 },
+  garden: { pos: [16.5, 4.2, 22.0], target: [5.0, 3.0, 6.0], fov: 40, aspect: [16, 9], near: 0.5, far: 260 },
+  street: { pos: [-15.0, 2.2, -17.5], target: [4.6, 3.8, 1.8], fov: 52, aspect: [16, 9], near: 0.5, far: 260 },
   // Portrait compositions for the two plot cards on the development section.
-  'plot-1-card': { pos: [-6.6, 3.0, -12.4], target: [2.6, 3.6, 1.4], fov: 44, aspect: [4, 5] },
-  'plot-2-card': { pos: [16.8, 3.0, -13.2], target: [8.4, 3.6, 1.5], fov: 44, aspect: [4, 5] },
+  'plot-1-card': { pos: [-6.6, 3.0, -12.4], target: [2.6, 3.6, 1.4], fov: 44, aspect: [4, 5], near: 0.5, far: 260 },
+  'plot-2-card': { pos: [16.8, 3.0, -13.2], target: [8.4, 3.6, 1.5], fov: 44, aspect: [4, 5], near: 0.5, far: 260 },
 };

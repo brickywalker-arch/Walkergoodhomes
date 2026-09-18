@@ -96,6 +96,27 @@ async function persist(record: object, file: string): Promise<boolean> {
   }
 }
 
+/**
+ * Durable store, where the host provides one.
+ *
+ * Most hosts give a route handler an ephemeral filesystem, so the JSONL log
+ * does not survive a redeploy. On Netlify, Blobs does — and it needs no extra
+ * account or secret, so a deployed enquiry form captures leads whether or not
+ * email has been configured. Everywhere else this is a no-op and the disk log
+ * and email carry the lead.
+ */
+async function persistToStore(record: { ref: string }, store: string): Promise<boolean> {
+  if (!process.env.NETLIFY) return false;
+  try {
+    const { getStore } = await import('@netlify/blobs');
+    await getStore(store).setJSON(`${record.ref}-${Date.now()}`, record);
+    return true;
+  } catch (err) {
+    console.error('[leads] could not write to the blob store:', (err as Error).message);
+    return false;
+  }
+}
+
 /** Sends via Resend's HTTP API when RESEND_API_KEY is configured. */
 async function sendEmail(subject: string, text: string, replyTo?: string): Promise<boolean> {
   const key = process.env.RESEND_API_KEY;
@@ -136,11 +157,12 @@ export async function recordLead(lead: Lead): Promise<{ stored: boolean; emailed
     lead.message ? `Message:\n${lead.message}` : 'No message.',
   ].join('\n');
 
-  const [stored, emailed] = await Promise.all([
+  const [onDisk, inStore, emailed] = await Promise.all([
     persist(lead, 'enquiries.jsonl'),
+    persistToStore(lead, 'wgh-enquiries'),
     sendEmail(`Hoyle Ing enquiry — ${lead.name} (${lead.plot})`, body, lead.email),
   ]);
-  return { stored, emailed };
+  return { stored: onDisk || inStore, emailed };
 }
 
 /**
@@ -153,6 +175,16 @@ export async function recordLead(lead: Lead): Promise<{ stored: boolean; emailed
  * reference rather than turning away a real buyer.
  */
 export async function refExists(ref: string): Promise<boolean | null> {
+  if (process.env.NETLIFY) {
+    try {
+      const { getStore } = await import('@netlify/blobs');
+      const { blobs } = await getStore('wgh-enquiries').list({ prefix: `${ref}-` });
+      return blobs.length > 0;
+    } catch (err) {
+      console.error('[leads] could not read the blob store:', (err as Error).message);
+      return null;
+    }
+  }
   try {
     const body = await fs.readFile(path.join(LEADS_DIR, 'enquiries.jsonl'), 'utf8');
     return body.split('\n').some((line) => {
@@ -178,11 +210,12 @@ export async function recordVisit(ref: string, slot: string): Promise<{ stored: 
     `Booked:    ${record.bookedAt}`,
   ].join('\n');
 
-  const [stored, emailed] = await Promise.all([
+  const [onDisk, inStore, emailed] = await Promise.all([
     persist(record, 'visits.jsonl'),
+    persistToStore(record, 'wgh-visits'),
     sendEmail(`Hoyle Ing site visit — ${slot}`, body),
   ]);
-  return { stored, emailed };
+  return { stored: onDisk || inStore, emailed };
 }
 
 /* ------------------------------------------------------------ rate limit */

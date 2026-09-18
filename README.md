@@ -80,6 +80,28 @@ To change the model, edit `cgi/scene/`: `rooms.mjs` (room sets, cameras),
 `kit.mjs` (walls, openings, joinery, furniture), `stage.mjs` (lighting and
 procedural textures). `cgi/index.html` is the render stage the driver drives.
 
+### Render quality
+
+The look comes from four things, and all of them matter — drop any one and it
+goes back to reading like a box model:
+
+- **Image-based lighting.** A pre-filtered environment gives every surface soft
+  directional fill and a reflection. Interiors use a neutral sky-and-floor
+  environment; give them the garden instead and every ceiling picks up a green
+  cast off the lawn.
+- **Ground-truth ambient occlusion.** Contact shadow in every corner, under
+  every worktop and around every skirting. The AO radius scales with the room —
+  a 1 m W/C needs a far tighter radius than a 5 m living room.
+- **Normal maps derived from the colour maps.** Stone coursing, slate laps,
+  board joints and grout lines catch the light as relief rather than as a
+  printed pattern.
+- **Supersampling.** Rendered at twice the largest size served and downsampled,
+  on top of SMAA.
+
+The surface textures cost more to generate than a frame does to render, so they
+are cached across the run — without that, redrawing them for all 162 renders
+dominates the whole thing.
+
 ### Drawing previews
 
 The six sheets are rasterised to WebP at build time and shown inline; the PDF
@@ -89,14 +111,16 @@ A1 sheet.
 
 ## Enquiries
 
-`POST /api/enquiry` validates server-side, then writes to **two sinks**:
+`POST /api/enquiry` validates server-side, then writes to **three sinks**:
 
 1. **Disk** — appended as JSONL to `LEADS_DIR` (`.data` by default).
-2. **Email** — sent via Resend when `RESEND_API_KEY` and `LEAD_FROM_EMAIL` are
+2. **Netlify Blobs** — on Netlify only, where a function's filesystem does not
+   survive a redeploy. Needs no extra account or key.
+3. **Email** — sent via Resend when `RESEND_API_KEY` and `LEAD_FROM_EMAIL` are
    set.
 
-A lead counts as captured if either sink accepted it. If both fail the route
-answers 503 and the form tells the visitor to email directly, rather than
+A lead counts as captured if any sink accepted it. If all of them fail the
+route answers 503 and the form tells the visitor to email directly, rather than
 saying "sent" over a lost enquiry.
 
 The visitor's finish selections are submitted with the enquiry, so Michael
@@ -110,8 +134,11 @@ edge).
 reference the enquiry returned.
 
 > **On an ephemeral filesystem** (most serverless platforms) the disk sink does
-> not survive a redeploy. Configure email delivery, point `LEADS_DIR` at a
-> mounted volume, or add a database sink in `src/lib/leads.ts`.
+> not survive a redeploy. On Netlify the Blobs sink covers this. Elsewhere,
+> configure email delivery, point `LEADS_DIR` at a mounted volume, or add a
+> sink in `src/lib/leads.ts`.
+
+See [DEPLOY.md](DEPLOY.md) for the hosting setup and what to switch on.
 
 ## Reserved buyers
 
@@ -132,7 +159,8 @@ cgi/               the CGI model and render stage
 scripts/
   render-cgi.mjs   renders the CGIs
   render-sheets.mjs rasterises the architect's PDFs
-  dev/             screenshot and contact-sheet helpers
+  verify-assets.mjs asserts every selection resolves to a render
+  dev/             preview, screenshot and contact-sheet helpers
 src/
   app/             routes, API handlers, global styles
   components/      page sections

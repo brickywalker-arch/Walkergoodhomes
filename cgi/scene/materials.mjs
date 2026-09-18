@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { viewTexture, plankTexture, carpetTexture, tileTexture, boardTexture } from './stage.mjs';
+import { viewTexture, surface, plankCanvas, carpetCanvas, tileCanvas, boardCanvas } from './stage.mjs';
 
 /**
  * Finish palettes.
@@ -52,6 +52,25 @@ const FIXED = {
   rug: { color: '#7c7364', roughness: 1.0 },
 };
 
+/**
+ * Mapped surfaces, built once.
+ *
+ * Floors, tiling, carpet and boarding do not depend on the buyer's selection —
+ * only wall paint, door and unit colours do, and those are plain colours. The
+ * texture set is therefore cached: drawing the 2048px canvases and deriving
+ * their normal maps is the most expensive part of a render, and repeating it
+ * for all 162 renders would dominate the run.
+ */
+const SURFACE_CACHE = new Map();
+
+function cachedSurface(name, build) {
+  const hit = SURFACE_CACHE.get(name);
+  if (hit) return hit;
+  const made = build();
+  SURFACE_CACHE.set(name, made);
+  return made;
+}
+
 export function makeMaterials(finishes, level = 'ground') {
   const std = (spec) =>
     new THREE.MeshStandardMaterial({
@@ -60,15 +79,23 @@ export function makeMaterials(finishes, level = 'ground') {
       metalness: spec.metalness ?? 0.0,
       transparent: spec.transparent ?? false,
       opacity: spec.opacity ?? 1,
+      envMapIntensity: spec.envMapIntensity ?? 1,
     });
 
-  const textured = (spec, map) =>
-    new THREE.MeshStandardMaterial({
+  /** A mapped surface: colour plus the normal map derived from it. */
+  const textured = (name, spec, drawCanvas, normalStrength = 1.5) => {
+    const { map, normalMap } = cachedSurface(name, () =>
+      surface(drawCanvas(), { strength: normalStrength }),
+    );
+    return new THREE.MeshStandardMaterial({
       map,
+      normalMap,
+      normalScale: new THREE.Vector2(0.7, 0.7),
       color: 0xffffff,
       roughness: spec.roughness ?? 0.8,
       metalness: spec.metalness ?? 0.0,
     });
+  };
 
   const wall = WALL_PAINT[finishes.walls] ?? WALL_PAINT.chalk;
   const door = DOOR_FINISH[finishes.doors] ?? DOOR_FINISH.white;
@@ -84,12 +111,12 @@ export function makeMaterials(finishes, level = 'ground') {
     kitchenWall: std({ ...kitchen, roughness: (kitchen.roughness ?? 0.4) + 0.04 }),
     ceiling: std(FIXED.ceiling),
     skirting: std(FIXED.skirting),
-    oakFloor: textured(FIXED.oakFloor, plankTexture(FIXED.oakFloor.color)),
-    darkOakFloor: textured(FIXED.darkOakFloor, plankTexture(FIXED.darkOakFloor.color)),
-    tileFloor: textured(FIXED.tileFloor, tileTexture(FIXED.tileFloor.color, 3)),
-    tileWall: textured(FIXED.tileWall, tileTexture(FIXED.tileWall.color, 2)),
-    carpet: textured(FIXED.carpet, carpetTexture(FIXED.carpet.color)),
-    boarded: textured(FIXED.boarded, boardTexture()),
+    oakFloor: textured('oakFloor', FIXED.oakFloor, () => plankCanvas(FIXED.oakFloor.color), 1.4),
+    darkOakFloor: textured('darkOakFloor', FIXED.darkOakFloor, () => plankCanvas(FIXED.darkOakFloor.color), 1.4),
+    tileFloor: textured('tileFloor', FIXED.tileFloor, () => tileCanvas(FIXED.tileFloor.color, 3), 2.2),
+    tileWall: textured('tileWall', FIXED.tileWall, () => tileCanvas(FIXED.tileWall.color, 2), 2.2),
+    carpet: textured('carpet', FIXED.carpet, () => carpetCanvas(FIXED.carpet.color), 0.7),
+    boarded: textured('boarded', FIXED.boarded, () => boardCanvas(), 1.3),
     worktop: std(finishes.kitchen === 'graphite' ? FIXED.worktopLight : FIXED.worktop),
     steel: std(FIXED.steel),
     brass: std(FIXED.brass),
@@ -105,7 +132,7 @@ export function makeMaterials(finishes, level = 'ground') {
     plant: std({ color: '#5d7050', roughness: 0.85 }),
     // The view out, unlit so the glazing reads as daylight rather than as a
     // surface the interior lighting has to reach.
-    sky: new THREE.MeshBasicMaterial({ map: viewTexture(level) }),
+    sky: new THREE.MeshBasicMaterial({ map: cachedSurface(`view:${level}`, () => viewTexture(level)) }),
     mirror: std({ color: '#c9d6dd', roughness: 0.06, metalness: 0.7 }),
     // Seen through a cased opening into the next room — a lit interior, not
     // the outdoors, so it must not use the view texture.

@@ -30,7 +30,7 @@ type CgiManifest = {
 const CGI = manifest as CgiManifest;
 
 const ROOM_WIDTHS = [640, 1000, 1600];
-const EXT_WIDTHS = [800, 1280, 2000];
+const EXT_WIDTHS = [800, 1280, 2000, 2800];
 
 export type ResolvedImage = {
   src: string;

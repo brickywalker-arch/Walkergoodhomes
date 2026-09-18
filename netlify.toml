@@ -1,0 +1,31 @@
+# Netlify build configuration.
+#
+# The Next.js runtime is detected automatically and turns the app's route
+# handlers into functions, so the enquiry, site-visit and buyer-area endpoints
+# work as they do locally. Lead records go to Netlify Blobs, because a
+# function's filesystem does not survive a redeploy.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # The CGIs are rendered and committed as WebP by scripts/render-cgi.mjs, so
+  # the deploy build has no browser to download.
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
+
+[[headers]]
+  for = "/assets/cgi/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/sheets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/pdf/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
