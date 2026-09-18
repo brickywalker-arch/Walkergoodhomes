@@ -42,7 +42,14 @@ export const metadata: Metadata = {
     title,
     description,
     locale: 'en_GB',
-    images: [{ url: '/assets/cgi/exterior-hero-2000.webp', width: 2000, height: 1125, alt: 'Plots 1 and 2, Hoyle Ing — computer-generated image' }],
+    images: [
+      {
+        url: '/assets/photo/exterior-dusk-1728.webp',
+        width: 1728,
+        height: 1104,
+        alt: 'Plots 1 and 2, Hoyle Ing — computer-generated image',
+      },
+    ],
   },
   twitter: { card: 'summary_large_image', title, description },
   icons: { icon: '/favicon.svg' },

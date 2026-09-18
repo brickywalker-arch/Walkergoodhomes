@@ -1,0 +1,23 @@
+{
+  "generated": "2026-09-18T15:05:04.904Z",
+  "source": "reference/client-supplied/hero-exterior.png",
+  "native": {
+    "width": 864,
+    "height": 552
+  },
+  "images": {
+    "hero": {
+      "864": "/assets/photo/exterior-dusk-864.webp",
+      "1300": "/assets/photo/exterior-dusk-1300.webp",
+      "1728": "/assets/photo/exterior-dusk-1728.webp"
+    },
+    "plot-1": {
+      "442": "/assets/photo/plot-1-442.webp",
+      "884": "/assets/photo/plot-1-884.webp"
+    },
+    "plot-2": {
+      "442": "/assets/photo/plot-2-442.webp",
+      "884": "/assets/photo/plot-2-884.webp"
+    }
+  }
+}

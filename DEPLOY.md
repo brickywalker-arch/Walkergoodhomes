@@ -90,6 +90,16 @@ Netlify issues the TLS certificate. Afterwards update
 `NEXT_PUBLIC_SITE_URL` and redeploy so the canonical URLs and the sitemap
 follow.
 
+## Worth asking the client for
+
+- **A clean, full-resolution exterior visual.** What we have is a 1774 x 887
+  marketing banner with the logo and caption baked in; the clean plate lifted
+  out of it is 864 px wide, so the hero is served from a 2x upscale. The
+  original at full size would sharpen the most prominent image on the site.
+- **Photoreal interiors to match.** The interiors are rendered from the
+  drawings, so they are geometrically right and can be varied per finish
+  selection, but they do not have the exterior visual's photoreal finish.
+
 ## Before the first public deploy
 
 - [ ] Confirm bedroom 2's width with the architect — the approved copy quotes

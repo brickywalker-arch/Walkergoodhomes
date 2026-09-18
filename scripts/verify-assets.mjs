@@ -15,6 +15,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), 'utf8'));
 
 const cgi = read('public/assets/cgi/manifest.json');
+const photo = read('public/assets/photo/manifest.json');
 const sheets = read('public/assets/sheets/manifest.json');
 
 // The catalogues the UI renders, kept in step with src/data/interior.ts.
@@ -32,6 +33,8 @@ const EXTERIOR_VIEWS = [
   'hero', 'plot-1', 'plot-2', 'frontage', 'garden', 'street',
   'plot-1-card', 'plot-2-card',
 ];
+/** The approved exterior visual, prepared by scripts/prepare-photo.mjs. */
+const PHOTO_KEYS = ['hero', 'plot-1', 'plot-2'];
 const SHEET_SLUGS = [
   '01-location-plan', '02-existing-block-plan', '03-floor-plans',
   '04-section', '05-elevations', '06-block-plan',
@@ -72,6 +75,10 @@ for (const view of EXTERIOR_VIEWS) {
   if (!cgi.exterior[view]) fail(`no render for exterior view "${view}"`);
 }
 
+for (const key of PHOTO_KEYS) {
+  if (!photo.images?.[key]) fail(`no prepared exterior image for "${key}"`);
+}
+
 for (const slug of SHEET_SLUGS) {
   if (!sheets.some((s) => s.slug === slug)) fail(`no rasterised preview for sheet "${slug}"`);
 }
@@ -89,6 +96,7 @@ const checkFiles = (group) => {
 checkFiles(cgi.exterior);
 checkFiles(cgi.rooms);
 checkFiles(cgi.variants);
+checkFiles(photo.images ?? {});
 for (const sheet of sheets) {
   for (const s of [...sheet.sizes.map((x) => x.file), sheet.full]) {
     files += 1;
@@ -101,7 +109,8 @@ const orphans = Object.keys(cgi.variants).filter((k) => !seen.has(k));
 
 console.log(`${ROOMS.length} rooms × ${selections / ROOMS.length} selections = ${selections} selections`);
 console.log(`${Object.keys(cgi.variants).length} interior renders, ${seen.size} reachable`);
-console.log(`${Object.keys(cgi.exterior).length} exterior views, ${sheets.length} drawing sheets`);
+console.log(`${Object.keys(cgi.exterior).length} exterior CGI views (reference), ${sheets.length} drawing sheets`);
+console.log(`${Object.keys(photo.images ?? {}).length} approved exterior images, ${photo.native?.width}px native`);
 console.log(`${files} image files checked`);
 if (orphans.length) console.log(`note: ${orphans.length} renders are not reachable from any selection`);
 

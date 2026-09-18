@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { PLOT_FACTS } from '@/data/development';
-import { exteriorImage } from '@/lib/cgi';
+import { photoImage } from '@/lib/cgi';
 import { CornerMarks } from './CornerMarks';
 
 const PLOTS = [
@@ -12,16 +11,16 @@ const PLOTS = [
     kicker: 'Plot 1 · Left-hand home',
     title: 'Home 01',
     meta: '3 bedrooms over 3 storeys · 2 en-suites · private drive',
-    view: 'plot-1-card',
-    alt: 'Plot 1, the left-hand home — computer-generated image from the drive',
+    photo: 'plot-1',
+    alt: 'Plot 1, the left-hand home at dusk — computer-generated image from the drive',
   },
   {
     id: 2 as const,
     kicker: 'Plot 2 · Right-hand home, handed',
     title: 'Home 02',
     meta: '3 bedrooms over 3 storeys · 2 en-suites · private drive',
-    view: 'plot-2-card',
-    alt: 'Plot 2, the right-hand home with its private drive — computer-generated image',
+    photo: 'plot-2',
+    alt: 'Plot 2, the right-hand home with its private drive, at dusk — computer-generated image',
   },
 ];
 
@@ -54,9 +53,9 @@ export function Plots() {
               style={{ marginTop: 22, border: '1px solid var(--rule)', background: 'var(--paper-warm)', padding: '18px 20px' }}
             >
               <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.7, color: 'var(--ink-body)' }}>
-                <strong style={{ color: 'var(--ink)' }}>Modelled from the drawings.</strong> Every image on this page
-                is rendered from a model built to the dimensions on sheets 26/1362/03 and /04 — no generic CGI
-                substitutions.
+                <strong style={{ color: 'var(--ink)' }}>Exterior reference locked.</strong> The images above are the
+                development&rsquo;s approved exterior visual. Every interior below is rendered from a model built to
+                the dimensions on sheets 26/1362/03 and /04 — no generic CGI substitutions.
               </p>
               <CornerMarks />
             </div>
@@ -72,7 +71,7 @@ export function Plots() {
           }}
         >
           {PLOTS.map((p) => {
-            const img = exteriorImage(p.view);
+            const img = photoImage(p.photo);
             const active = plot === p.id;
             return (
               <button
@@ -95,12 +94,14 @@ export function Plots() {
                   color: 'inherit',
                 }}
               >
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={img.src}
-                  alt={p.alt}
-                  fill
+                  srcSet={img.srcSet}
                   sizes="(max-width: 700px) 100vw, 50vw"
-                  style={{ objectFit: 'cover' }}
+                  alt={p.alt}
+                  decoding="async"
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                 />
                 <span
                   style={{

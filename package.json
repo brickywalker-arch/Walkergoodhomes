@@ -2,7 +2,7 @@
   "name": "walker-good-homes",
   "version": "1.0.0",
   "private": true,
-  "description": "Walker Good Homes Ltd — Plots 1 & 2, Hoyle Ing, Linthwaite, Huddersfield HD7 5RX",
+  "description": "Walker Good Homes Ltd \u2014 Plots 1 & 2, Hoyle Ing, Linthwaite, Huddersfield HD7 5RX",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,9 +11,10 @@
     "typecheck": "tsc --noEmit",
     "cgi:render": "node scripts/render-cgi.mjs",
     "cgi:sheets": "node scripts/render-sheets.mjs",
-    "assets": "npm run cgi:sheets && npm run cgi:render && npm run verify:assets",
+    "assets": "npm run cgi:sheets && npm run photo && npm run cgi:render && npm run verify:assets",
     "verify:assets": "node scripts/verify-assets.mjs",
-    "check": "npm run typecheck && npm run lint && npm run verify:assets"
+    "check": "npm run typecheck && npm run lint && npm run verify:assets",
+    "photo": "node scripts/prepare-photo.mjs"
   },
   "dependencies": {
     "@netlify/blobs": "^10.7.13",

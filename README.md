@@ -25,10 +25,40 @@ Nothing in `.env.local` is needed to browse the site. Enquiries work without
 it too — they are appended to `LEADS_DIR` — but see **Enquiries** below before
 going live.
 
-## The CGIs
+## The images
 
-Every image of the homes on this site is **rendered from a parametric model of
-the building**, built to the dimensions on the architect's issued sheets:
+Two sources, each doing what it is best at.
+
+### Exteriors — the client's approved visual
+
+The outside of the homes is the client's own approved exterior visual, which is
+photoreal and **locked** — the page uses it rather than a render.
+
+It arrives as a finished marketing banner with the logo, headline and a
+"COMING SOON" caption baked in, none of which can appear on the site.
+`scripts/prepare-photo.mjs` lifts the clean plate out from inside the banner's
+gold frame and above the caption, then cuts the portrait compositions the two
+plot cards need — plot 1 the left-hand home, plot 2 the right-hand home
+stepped down the slope.
+
+```bash
+npm run photo
+```
+
+> The clean plate is only **864 px** wide, so the hero is served from a 2x
+> upscale. A clean, full-resolution version from whoever produced the banner
+> would sharpen it up; the crop box in the script assumes the 1774 × 887
+> banner and warns if it is given anything else.
+
+The drawing-accurate exterior renders under `public/assets/cgi/exterior-*` are
+kept as a reference set — they are the only exterior views built to the issued
+dimensions, and the rear view is the only one showing the rooflights — but the
+page does not use them.
+
+### Interiors — rendered from the drawings
+
+Every interior is **rendered from a parametric model of the building**, built
+to the dimensions on the architect's issued sheets:
 
 | From | Used for |
 |---|---|
@@ -42,9 +72,10 @@ visitor sees is a render of their own choice, not a stand-in.
 
 ```bash
 npm run cgi:sheets    # rasterise the six PDF sheets to WebP
-npm run cgi:render    # render the CGIs (about 10 minutes)
+npm run photo         # prepare the approved exterior visual
+npm run cgi:render    # render the interior CGIs (about an hour)
 npm run verify:assets # assert every selection resolves to a render
-npm run assets        # all three
+npm run assets        # all of the above
 ```
 
 `verify:assets` walks all 15 rooms × 36 finish selections and checks each one
@@ -157,7 +188,8 @@ cgi/               the CGI model and render stage
   scene/           materials, kit, rooms, exterior, stage
   index.html       render stage the headless driver loads
 scripts/
-  render-cgi.mjs   renders the CGIs
+  prepare-photo.mjs lifts the clean plate out of the supplied banner
+  render-cgi.mjs   renders the interior CGIs
   render-sheets.mjs rasterises the architect's PDFs
   verify-assets.mjs asserts every selection resolves to a render
   dev/             preview, screenshot and contact-sheet helpers
@@ -168,7 +200,8 @@ src/
   lib/             CGI resolver, lead handling, buyer sessions
 public/assets/
   brand/ pdf/      logo and the six issued sheets
-  cgi/             rendered CGIs + manifest.json
+  cgi/             rendered interior CGIs + manifest.json
+  photo/           the approved exterior visual, prepared + manifest.json
   sheets/          rasterised drawing previews + manifest.json
 reference/         design handoff, its screenshots, and the client's own
                    supplied imagery (not served — see its README)

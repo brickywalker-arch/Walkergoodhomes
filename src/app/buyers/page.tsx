@@ -1,13 +1,12 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import Image from 'next/image';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { CornerMarks } from '@/components/CornerMarks';
 import { DEVELOPMENT } from '@/data/development';
 import { BUILD_STAGES, PLOT_RECORDS } from '@/data/buyers';
 import { SESSION_COOKIE, portalConfigured, readToken } from '@/lib/session';
-import { exteriorImage } from '@/lib/cgi';
+import { photoImage } from '@/lib/cgi';
 
 export const metadata: Metadata = {
   title: 'Reserved buyers',
@@ -141,7 +140,7 @@ function SignIn({ configured, failed }: { configured: boolean; failed: boolean }
 
 function Portal({ plot }: { plot: number }) {
   const record = PLOT_RECORDS.find((r) => r.plot === plot) ?? PLOT_RECORDS[0];
-  const hero = exteriorImage(plot === 2 ? 'plot-2' : 'plot-1');
+  const hero = photoImage(plot === 2 ? 'plot-2' : 'plot-1');
 
   return (
     <section className="sec">
@@ -182,12 +181,14 @@ function Portal({ plot }: { plot: number }) {
         >
           <div>
             <div style={{ position: 'relative', aspectRatio: '3 / 2', overflow: 'hidden', border: '1px solid rgba(239,207,145,.35)' }}>
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={hero.src}
-                alt={`Plot ${record.plot} — computer-generated image`}
-                fill
+                srcSet={hero.srcSet}
                 sizes="(max-width: 800px) 100vw, 580px"
-                style={{ objectFit: 'cover' }}
+                alt={`Plot ${record.plot} — computer-generated image`}
+                decoding="async"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
             <div

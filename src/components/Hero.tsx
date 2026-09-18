@@ -1,14 +1,18 @@
 import Image from 'next/image';
 import { QUICK_LINKS } from '@/data/development';
-import { exteriorImage } from '@/lib/cgi';
+import { photoImage } from '@/lib/cgi';
 
 /**
  * Opens on the brand, then the coming-soon development — the order the client
- * set. The banner image is a render of the pair from the architect's drawings,
- * so it needs none of the cropping the original supplied artwork did.
+ * set.
+ *
+ * The banner is the client's approved exterior visual, lifted clean out of the
+ * supplied marketing artwork by scripts/prepare-photo.mjs. It needs none of
+ * the crop maths the original design used to push that artwork's baked-in
+ * logo and caption out of frame.
  */
 export function Hero() {
-  const hero = exteriorImage('hero');
+  const hero = photoImage('hero');
 
   return (
     <section style={{ position: 'relative', background: 'var(--navy-deep)' }}>
@@ -51,13 +55,24 @@ export function Hero() {
       </div>
 
       <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', maxHeight: 620, overflow: 'hidden' }}>
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={hero.src}
-          alt="Plots 1 and 2, Hoyle Ing — computer-generated image of the pair of Yorkshire stone homes from the approach"
-          fill
-          priority
+          srcSet={hero.srcSet}
           sizes="100vw"
-          style={{ objectFit: 'cover' }}
+          alt="Plots 1 and 2, Hoyle Ing at dusk — computer-generated image of the pair of Yorkshire stone homes from the approach"
+          fetchPriority="high"
+          decoding="async"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            // The plate is 3:2 and the banner is far wider, so the crop is
+            // biased slightly up to keep both ridges in frame.
+            objectPosition: 'center 45%',
+          }}
         />
         <div
           style={{

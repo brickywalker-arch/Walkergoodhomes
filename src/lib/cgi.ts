@@ -1,4 +1,5 @@
 import manifest from '../../public/assets/cgi/manifest.json';
+import photoManifest from '../../public/assets/photo/manifest.json';
 import sheetManifest from '../../public/assets/sheets/manifest.json';
 import type { Finishes } from '@/data/interior';
 
@@ -103,6 +104,42 @@ export function exteriorImage(view: string): ResolvedImage {
     exact: true,
   };
 }
+
+/* ------------------------------------------------------ approved exterior */
+
+type PhotoManifest = {
+  native: { width: number; height: number };
+  images: Record<string, SizeMap>;
+};
+
+const PHOTO = photoManifest as PhotoManifest;
+const PHOTO_WIDTHS = [442, 864, 884, 1300, 1728];
+
+/**
+ * The client's approved exterior visual, prepared by scripts/prepare-photo.mjs.
+ *
+ * This is the development's primary exterior image and it is locked — the page
+ * uses it rather than a render for anything showing the outside of the homes.
+ * The CGIs are for the interiors, where they can be built to the drawn
+ * geometry and varied per finish selection.
+ */
+export function photoImage(key: string): ResolvedImage {
+  const sizes = PHOTO.images[key];
+  if (!sizes) {
+    throw new Error(
+      `Exterior image "${key}" is not in public/assets/photo/manifest.json. ` +
+        'Run `node scripts/prepare-photo.mjs` to prepare it.',
+    );
+  }
+  return {
+    src: largest(sizes, PHOTO_WIDTHS),
+    srcSet: toSrcSet(sizes, PHOTO_WIDTHS),
+    exact: true,
+  };
+}
+
+/** Native size of the approved exterior plate, before any upscaling. */
+export const PHOTO_NATIVE = PHOTO.native;
 
 /* --------------------------------------------------------------- drawings */
 
