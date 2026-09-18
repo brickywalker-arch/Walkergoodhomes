@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-18T13:55:15.347Z",
+  "generated": "2026-09-18T14:53:31.969Z",
   "defaults": {
     "kitchen": "graphite",
     "walls": "chalk",
@@ -72,42 +72,50 @@
     "hero": {
       "800": "/assets/cgi/exterior-hero-800.webp",
       "1280": "/assets/cgi/exterior-hero-1280.webp",
-      "2000": "/assets/cgi/exterior-hero-2000.webp"
+      "2000": "/assets/cgi/exterior-hero-2000.webp",
+      "2800": "/assets/cgi/exterior-hero-2800.webp"
     },
     "plot-1": {
       "800": "/assets/cgi/exterior-plot-1-800.webp",
       "1280": "/assets/cgi/exterior-plot-1-1280.webp",
-      "2000": "/assets/cgi/exterior-plot-1-2000.webp"
+      "2000": "/assets/cgi/exterior-plot-1-2000.webp",
+      "2800": "/assets/cgi/exterior-plot-1-2800.webp"
     },
     "plot-2": {
       "800": "/assets/cgi/exterior-plot-2-800.webp",
       "1280": "/assets/cgi/exterior-plot-2-1280.webp",
-      "2000": "/assets/cgi/exterior-plot-2-2000.webp"
+      "2000": "/assets/cgi/exterior-plot-2-2000.webp",
+      "2800": "/assets/cgi/exterior-plot-2-2800.webp"
     },
     "frontage": {
       "800": "/assets/cgi/exterior-frontage-800.webp",
       "1280": "/assets/cgi/exterior-frontage-1280.webp",
-      "2000": "/assets/cgi/exterior-frontage-2000.webp"
+      "2000": "/assets/cgi/exterior-frontage-2000.webp",
+      "2800": "/assets/cgi/exterior-frontage-2800.webp"
     },
     "garden": {
       "800": "/assets/cgi/exterior-garden-800.webp",
       "1280": "/assets/cgi/exterior-garden-1280.webp",
-      "2000": "/assets/cgi/exterior-garden-2000.webp"
+      "2000": "/assets/cgi/exterior-garden-2000.webp",
+      "2800": "/assets/cgi/exterior-garden-2800.webp"
     },
     "street": {
       "800": "/assets/cgi/exterior-street-800.webp",
       "1280": "/assets/cgi/exterior-street-1280.webp",
-      "2000": "/assets/cgi/exterior-street-2000.webp"
+      "2000": "/assets/cgi/exterior-street-2000.webp",
+      "2800": "/assets/cgi/exterior-street-2800.webp"
     },
     "plot-1-card": {
       "800": "/assets/cgi/exterior-plot-1-card-800.webp",
       "1280": "/assets/cgi/exterior-plot-1-card-1280.webp",
-      "2000": "/assets/cgi/exterior-plot-1-card-2000.webp"
+      "2000": "/assets/cgi/exterior-plot-1-card-2000.webp",
+      "2800": "/assets/cgi/exterior-plot-1-card-2800.webp"
     },
     "plot-2-card": {
       "800": "/assets/cgi/exterior-plot-2-card-800.webp",
       "1280": "/assets/cgi/exterior-plot-2-card-1280.webp",
-      "2000": "/assets/cgi/exterior-plot-2-card-2000.webp"
+      "2000": "/assets/cgi/exterior-plot-2-card-2000.webp",
+      "2800": "/assets/cgi/exterior-plot-2-card-2800.webp"
     }
   },
   "rooms": {
