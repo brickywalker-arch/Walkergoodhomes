@@ -240,6 +240,8 @@ export type FinishGroup = { name: string; options: FinishOption[] };
 
 export const FINISHES: Record<FinishGroupKey, FinishGroup> = {
   kitchen: {
+    // Howdens, Shaker-style doors, confirmed with the client. The colour is
+    // still the buyer's choice, which is what these four options are.
     name: 'Kitchen units',
     options: [
       { id: 'graphite', label: 'Graphite', swatch: '#3d4348' },

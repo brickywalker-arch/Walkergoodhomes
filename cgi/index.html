@@ -68,7 +68,7 @@ function renderRoom(roomKey, finishes, width, height) {
   // Image-based lighting, so every surface picks up soft directional fill and
   // a reflection instead of only the lights placed in the room.
   scene.environment = makeEnvironment(r, 'interior');
-  scene.environmentIntensity = 0.34;
+  scene.environmentIntensity = 0.28;
 
   const { group, room, set } = buildRoom(roomKey, materials);
   scene.add(group);

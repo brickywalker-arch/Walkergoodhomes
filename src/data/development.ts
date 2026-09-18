@@ -143,7 +143,8 @@ export const SPEC: SpecSection[] = [
   {
     title: 'Interior finishes',
     items: [
-      'Kitchen units, worktop and appliances — selection to be confirmed with buyer',
+      'Kitchen by Howdens, Shaker-style doors — door colour, worktop and appliances to be confirmed with buyer',
+      'Internal doors and joinery by Howdens — finish to be confirmed with buyer',
       'Sanitaryware and brassware — selection to be confirmed with buyer',
       'Wall and floor tiling — selection to be confirmed with buyer',
       'Heating system and controls — specification to be confirmed',

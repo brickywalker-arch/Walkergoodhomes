@@ -2,7 +2,7 @@
   "name": "walker-good-homes",
   "version": "1.0.0",
   "private": true,
-  "description": "Walker Good Homes Ltd \u2014 Plots 1 & 2, Hoyle Ing, Linthwaite, Huddersfield HD7 5RX",
+  "description": "Walker Good Homes Ltd — Plots 1 & 2, Hoyle Ing, Linthwaite, Huddersfield HD7 5RX",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

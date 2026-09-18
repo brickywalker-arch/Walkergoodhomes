@@ -268,7 +268,7 @@ export const ROOM_SETS = {
       ct.position.set(1.72, 0, 1.28);
       g.add(ct);
       g.add(box(0.26, 0.03, 0.19, m.linen, 2.1, 0.38, 1.47));
-      g.add(rug(m, 1.35, 0.72, 2.3, 1.7));
+      g.add(rug(m, 1.5, 0.78, 2.0, 1.45));
 
       // Low shelving on the right-hand wall, and planting by the doors.
       const shelf = unitRun(m, { length: 1.5, height: 0.52, depth: 0.4, doorMat: m.timberDark, count: 3, plinth: 0.05 });

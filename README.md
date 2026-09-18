@@ -129,9 +129,52 @@ goes back to reading like a box model:
 - **Supersampling.** Rendered at twice the largest size served and downsampled,
   on top of SMAA.
 
+And four things that make the *contents* of the room read as real rather than
+as boxes:
+
+- **No sharp edges on anything you could touch.** Walls and floors stay sharp,
+  because they meet in a caulked line, but every piece of joinery and furniture
+  goes through a rounded box. A perfect 90° arris is the most reliable single
+  giveaway of a computer-generated interior.
+- **Real joinery profiles.** The fit-out is Howdens with Shaker-style kitchen
+  doors, confirmed with the client — stiles and rails around a recessed panel,
+  which gives every door a shadow line — and the internal doors are four-panel
+  moulded leaves in a lining with a lever on a rose. A flat slab reads as a
+  placeholder.
+- **Bounce light.** A rasteriser has no indirect light at all, and its absence
+  is most of what makes a CG interior look flat: in a real room most of what
+  you see is light that has already hit something else. Two stand-ins carry it
+  — up off the floor and back off the wall facing the glazing.
+- **A photographic finish.** High-threshold bloom so only genuinely blown
+  highlights lift, a gentle S-curve, warm highlights against slightly cool
+  shadows, a corner falloff, and enough grain to break up the flat gradients a
+  renderer produces.
+
 The surface textures cost more to generate than a frame does to render, so they
 are cached across the run — without that, redrawing them for all 162 renders
 dominates the whole thing.
+
+### What this pipeline cannot do
+
+It is good architectural visualisation, not photorealism, and the gap is
+indirect light. A rasteriser fakes it; only a path tracer solves it.
+
+`three-gpu-pathtracer` was measured in this environment and does initialise
+against this scene, but the renderer here is SwiftShader — software, no GPU —
+and it reached roughly one sample per pixel per six seconds at 800 × 533. A
+usable image needs a hundred-odd samples, so that is minutes per image at a
+fraction of the size the site serves, and hours per image at full size. For
+162 renders it is not viable. On a machine with a real GPU it would be, and
+the scene is already in a state where it would work.
+
+The other route to photoreal is a diffusion pass over these renders, using
+each one as the structural reference so the drawn geometry survives. That
+keeps the parametric model as the source of truth for all 162 finish
+combinations — which is the thing diffusion cannot do consistently — and
+treats the photoreal finish as a separate, per-room step.
+[docs/photoreal-plan.md](docs/photoreal-plan.md) sets that out: which rooms,
+how the finish axes collapse, the prompt structure, and how the results slot
+into the existing resolver.
 
 ### Drawing previews
 

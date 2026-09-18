@@ -5,6 +5,8 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
 RectAreaLightUniformsLib.init();
 
@@ -403,6 +405,58 @@ function envScene(kind) {
   return scene;
 }
 
+/**
+ * The interior surround as a plain equirectangular texture.
+ *
+ * `makeEnvironment` pre-filters into a PMREM cube, which is what the raster
+ * pipeline wants but not what a path tracer can sample — it reads the
+ * environment directly and needs the equirect image.
+ */
+export function interiorEquirect({ width = 512, height = 256, sunBoost = 14 } = {}) {
+  // Float data, because a path tracer samples the environment directly and
+  // needs real radiance values rather than an 8-bit canvas.
+  const data = new Float32Array(width * height * 4);
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  for (let y = 0; y < height; y += 1) {
+    const v = y / (height - 1); // 0 = zenith
+    // Sky above the horizon, warm neutral floor below it.
+    let r;
+    let g;
+    let b;
+    if (v < 0.5) {
+      const t = v / 0.5;
+      r = lerp(0.66, 0.94, t);
+      g = lerp(0.78, 0.96, t);
+      b = lerp(0.9, 0.98, t);
+    } else {
+      const t = (v - 0.5) / 0.5;
+      r = lerp(0.93, 0.56, t);
+      g = lerp(0.9, 0.52, t);
+      b = lerp(0.82, 0.45, t);
+    }
+    for (let x = 0; x < width; x += 1) {
+      const u = x / (width - 1);
+      // A bright sun disc, so the trace has a directional key to find.
+      const du = Math.min(Math.abs(u - 0.32), 1 - Math.abs(u - 0.32));
+      const sun = Math.exp(-((du * du) / 0.0006 + ((v - 0.28) ** 2) / 0.0006));
+      const i = (y * width + x) * 4;
+      data[i] = r + sun * sunBoost;
+      data[i + 1] = g + sun * sunBoost * 0.96;
+      data[i + 2] = b + sun * sunBoost * 0.88;
+      data[i + 3] = 1;
+    }
+  }
+
+  const tex = new THREE.DataTexture(data, width, height, THREE.RGBAFormat, THREE.FloatType);
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  tex.magFilter = THREE.LinearFilter;
+  tex.minFilter = THREE.LinearFilter;
+  tex.generateMipmaps = false;
+  tex.needsUpdate = true;
+  return tex;
+}
+
 export function makeEnvironment(renderer, kind = 'interior') {
   const cached = ENV_CACHE.get(kind);
   if (cached) return cached;
@@ -415,8 +469,8 @@ export function makeEnvironment(renderer, kind = 'interior') {
 }
 
 export function lightInterior(scene, group, room) {
-  scene.add(new THREE.AmbientLight(0xffffff, 0.1));
-  const hemi = new THREE.HemisphereLight(0xdff0fb, 0x6b6357, 0.3);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.04));
+  const hemi = new THREE.HemisphereLight(0xdff0fb, 0x6b6357, 0.14);
   hemi.position.set(0, room.height, 0);
   scene.add(hemi);
 
@@ -428,7 +482,7 @@ export function lightInterior(scene, group, room) {
   const windows = openings.filter((o) => o.kind !== 'door' || o.h > 1.9);
 
   windows.forEach((o) => {
-    const light = new THREE.RectAreaLight(0xf2f7ff, 4.2, Math.max(0.5, o.w), Math.max(0.5, o.h));
+    const light = new THREE.RectAreaLight(0xf2f7ff, 2.5, Math.max(0.5, o.w), Math.max(0.5, o.h));
     const cz = o.side === 'front' ? 0.06 : o.side === 'back' ? room.depth - 0.06 : 0;
     const cx = o.side === 'left' ? 0.06 : o.side === 'right' ? room.width - 0.06 : 0;
     if (o.side === 'front') {
@@ -452,7 +506,7 @@ export function lightInterior(scene, group, room) {
   // buries it above the ceiling slab, where the only light that reaches the
   // floor is a sliver at the foot of the wall.
   const main = windows.slice().sort((a, b) => b.w * b.h - a.w * a.h)[0];
-  const sun = new THREE.DirectionalLight(0xfff1dc, windows.length ? 3.4 : 0.8);
+  const sun = new THREE.DirectionalLight(0xfff1dc, windows.length ? 2.5 : 0.6);
   const span = Math.max(room.width, room.depth) * 1.5;
 
   if (main) {
@@ -501,8 +555,44 @@ export function lightInterior(scene, group, room) {
   scene.add(sun);
   scene.add(sun.target);
 
+  /*
+   * Bounce light.
+   *
+   * A rasteriser has no indirect light at all, and its absence is most of what
+   * makes a CG interior look flat: in a real room most of what you see is
+   * light that has already hit something else. These stand in for the two
+   * bounces that matter — up off the floor, and back off the wall opposite the
+   * glazing — at a fraction of the key's intensity and tinted by the surface
+   * they are meant to be leaving.
+   */
+  const floorBounce = new THREE.RectAreaLight(0xffeedd, 0.4, room.width * 0.9, room.depth * 0.9);
+  floorBounce.position.set(room.width / 2, 0.04, room.depth / 2);
+  floorBounce.lookAt(room.width / 2, room.height, room.depth / 2);
+  scene.add(floorBounce);
+
+  if (main) {
+    // Off the wall facing the glazing, back into the room.
+    const opposite = { front: 'back', back: 'front', left: 'right', right: 'left' }[main.side];
+    const bounce = new THREE.RectAreaLight(0xfff4e8, 0.34, room.width * 0.8, room.height * 0.7);
+    const mid = room.height * 0.45;
+    if (opposite === 'back') {
+      bounce.position.set(room.width / 2, mid, room.depth - 0.05);
+      bounce.lookAt(room.width / 2, mid, 0);
+    } else if (opposite === 'front') {
+      bounce.position.set(room.width / 2, mid, 0.05);
+      bounce.lookAt(room.width / 2, mid, room.depth);
+    } else if (opposite === 'right') {
+      bounce.position.set(room.width - 0.05, mid, room.depth / 2);
+      bounce.lookAt(0, mid, room.depth / 2);
+    } else {
+      bounce.position.set(0.05, mid, room.depth / 2);
+      bounce.lookAt(room.width, mid, room.depth / 2);
+    }
+    scene.add(bounce);
+  }
+
   // Warm practicals so ceilings and corners are not dead.
-  const lamp = new THREE.PointLight(0xffe9c4, 1.1, Math.max(room.width, room.depth) * 2.2, 2);
+  const lamp = new THREE.PointLight(0xffe9c4, 0.55, Math.max(room.width, room.depth) * 2.2, 2);
   lamp.position.set(room.width / 2, room.height - 0.55, room.depth / 2);
   scene.add(lamp);
 
@@ -513,12 +603,12 @@ export function lightInterior(scene, group, room) {
     // fittings are the light: two practicals down the space plus a lift in
     // the ambient, or they render as a flat grey box.
     [0.3, 0.72].forEach((f) => {
-      const fill = new THREE.PointLight(0xfff0d8, 2.6, Math.max(room.width, room.depth) * 2.6, 2);
+      const fill = new THREE.PointLight(0xfff0d8, 2.1, Math.max(room.width, room.depth) * 2.6, 2);
       fill.position.set(room.width * 0.5, room.height - 0.3, room.depth * f);
       scene.add(fill);
     });
-    scene.add(new THREE.AmbientLight(0xfff6ea, 0.2));
-    const bounce = new THREE.HemisphereLight(0xfff3e4, 0x9a9384, 0.34);
+    scene.add(new THREE.AmbientLight(0xfff6ea, 0.1));
+    const bounce = new THREE.HemisphereLight(0xfff3e4, 0x9a9384, 0.2);
     scene.add(bounce);
   }
 }
@@ -534,7 +624,7 @@ export function makeRenderer(canvasEl, width, height) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.92;
+  renderer.toneMappingExposure = 0.9;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   return renderer;
 }
@@ -588,7 +678,57 @@ export function renderFrame(renderer, scene, camera, width, height, { aoRadius =
     ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 3, samples: 24 });
     composer.addPass(ao);
 
+      /*
+     * Bloom, tuned high-threshold and low-strength so that only genuinely
+     * blown highlights lift — the glazing, a lamp, a specular on chrome.
+     * Interior photography always has some of this and its absence reads as
+     * synthetic; too much of it reads as a video game.
+     */
+    const bloom = new UnrealBloomPass(new THREE.Vector2(width, height), 0.2, 0.7, 0.88);
+    composer.addPass(bloom);
+
     composer.addPass(new OutputPass());
+
+    // A photographic finish: a gentle S-curve, a little warmth in the
+    // highlights, a corner falloff, and just enough grain to break up the
+    // flat gradients a renderer produces.
+    const grade = new ShaderPass({
+      uniforms: {
+        tDiffuse: { value: null },
+        amount: { value: 1 },
+        seed: { value: Math.random() * 100 },
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }`,
+      fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform float amount;
+        uniform float seed;
+        varying vec2 vUv;
+        float hash(vec2 p) {
+          return fract(sin(dot(p, vec2(12.9898, 78.233)) + seed) * 43758.5453);
+        }
+        void main() {
+          vec3 c = texture2D(tDiffuse, vUv).rgb;
+          // Contrast S-curve around mid grey.
+          c = mix(c, c * c * (3.0 - 2.0 * c), 0.14 * amount);
+          // Warm the highlights, cool the shadows very slightly.
+          float l = dot(c, vec3(0.299, 0.587, 0.114));
+          c *= mix(vec3(0.996, 0.999, 1.006), vec3(1.016, 1.004, 0.976), l);
+          // Vignette.
+          vec2 d = vUv - 0.5;
+          c *= 1.0 - 0.1 * amount * dot(d, d) * 1.9;
+          // Grain, a touch stronger in the shadows as on film.
+          float g = (hash(vUv * 1024.0) - 0.5) * 0.016 * amount * (1.25 - l);
+          gl_FragColor = vec4(clamp(c + g, 0.0, 1.0), 1.0);
+        }`,
+    });
+    composer.addPass(grade);
+
     const smaa = new SMAAPass(width, height);
     composer.addPass(smaa);
 
@@ -598,11 +738,13 @@ export function renderFrame(renderer, scene, camera, width, height, { aoRadius =
       composer,
       renderPass,
       ao,
+      bloom,
       smaa,
       radius: null,
       mode: null,
       dispose() {
         this.ao.dispose();
+        this.bloom.dispose?.();
         this.smaa.dispose?.();
         this.renderPass.dispose?.();
         this.composer.dispose();

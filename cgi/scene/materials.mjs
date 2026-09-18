@@ -136,6 +136,6 @@ export function makeMaterials(finishes, level = 'ground') {
     mirror: std({ color: '#c9d6dd', roughness: 0.06, metalness: 0.7 }),
     // Seen through a cased opening into the next room — a lit interior, not
     // the outdoors, so it must not use the view texture.
-    interiorBeyond: new THREE.MeshBasicMaterial({ color: new THREE.Color('#ded8cb') }),
+    interiorBeyond: new THREE.MeshBasicMaterial({ color: new THREE.Color('#b9b2a4') }),
   };
 }
