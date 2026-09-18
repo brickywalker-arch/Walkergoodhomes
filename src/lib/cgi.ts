@@ -1,0 +1,129 @@
+import manifest from '../../public/assets/cgi/manifest.json';
+import sheetManifest from '../../public/assets/sheets/manifest.json';
+import type { Finishes } from '@/data/interior';
+
+/**
+ * Resolves rendered images.
+ *
+ * The CGIs are rendered from a parametric model of the house built to the
+ * dimensions on sheets 26/1362/03 and /04, one image per room per finish
+ * combination. `roomImage` therefore returns an exact render of the visitor's
+ * own selection where one exists, and falls back to the room's base render if
+ * a combination has not been rendered yet.
+ */
+
+type SizeMap = Record<string, string>;
+
+type FinishAxis = 'kitchen' | 'walls' | 'doors';
+
+type CgiManifest = {
+  generated: string;
+  /** The finish combination each room's base render was made with. */
+  defaults?: Finishes;
+  /** Which finish axes actually change each room's render. */
+  axes?: Record<string, FinishAxis[]>;
+  exterior: Record<string, SizeMap>;
+  rooms: Record<string, SizeMap>;
+  variants: Record<string, SizeMap>;
+};
+
+const CGI = manifest as CgiManifest;
+
+const ROOM_WIDTHS = [640, 1000, 1600];
+const EXT_WIDTHS = [800, 1280, 2000];
+
+export type ResolvedImage = {
+  src: string;
+  srcSet: string;
+  /** True when this exact finish combination has its own render. */
+  exact: boolean;
+};
+
+function toSrcSet(sizes: SizeMap, widths: number[]): string {
+  return widths
+    .filter((w) => sizes[String(w)])
+    .map((w) => `${sizes[String(w)]} ${w}w`)
+    .join(', ');
+}
+
+function largest(sizes: SizeMap, widths: number[]): string {
+  for (const w of [...widths].reverse()) {
+    if (sizes[String(w)]) return sizes[String(w)];
+  }
+  const any = Object.values(sizes)[0];
+  if (!any) throw new Error('CGI manifest entry has no image files');
+  return any;
+}
+
+/**
+ * An asset the page needs is not in the manifest.
+ *
+ * Better to stop the build with the asset's name than to hand a component an
+ * empty src and have it fail somewhere less informative.
+ */
+function missing(what: string): never {
+  throw new Error(
+    `CGI asset "${what}" is not in public/assets/cgi/manifest.json. ` +
+      'Run `npm run cgi:render` to render the missing images.',
+  );
+}
+
+/**
+ * The manifest key for a room and a selection.
+ *
+ * Axes that do not change the room are pinned to the render's own default, so
+ * choosing sage kitchen units still resolves the exact render for a bedroom —
+ * the kitchen colour is simply not visible from in there.
+ */
+function manifestKey(roomKey: string, finishes: Finishes): string {
+  const relevant = CGI.axes?.[roomKey] ?? (['kitchen', 'walls', 'doors'] as FinishAxis[]);
+  const pick = (axis: FinishAxis) =>
+    relevant.includes(axis) ? finishes[axis] : (CGI.defaults?.[axis] ?? finishes[axis]);
+  return `${roomKey}|${pick('kitchen')}|${pick('walls')}|${pick('doors')}`;
+}
+
+export function roomImage(roomKey: string, finishes: Finishes): ResolvedImage {
+  const key = manifestKey(roomKey, finishes);
+  const exactSizes = CGI.variants[key];
+  const sizes = exactSizes ?? CGI.rooms[roomKey];
+  if (!sizes) missing(key);
+  return {
+    src: largest(sizes, ROOM_WIDTHS),
+    srcSet: toSrcSet(sizes, ROOM_WIDTHS),
+    exact: Boolean(exactSizes),
+  };
+}
+
+export function exteriorImage(view: string): ResolvedImage {
+  const sizes = CGI.exterior[view];
+  if (!sizes) missing(`exterior/${view}`);
+  return {
+    src: largest(sizes, EXT_WIDTHS),
+    srcSet: toSrcSet(sizes, EXT_WIDTHS),
+    exact: true,
+  };
+}
+
+/* --------------------------------------------------------------- drawings */
+
+type Sheet = {
+  slug: string;
+  width: number;
+  height: number;
+  aspect: number;
+  full: string;
+  sizes: { width: number; file: string }[];
+};
+
+const SHEET_IMAGES = sheetManifest as Sheet[];
+
+export function sheetImage(slug: string) {
+  const sheet = SHEET_IMAGES.find((s) => s.slug === slug);
+  if (!sheet) return null;
+  const sorted = [...sheet.sizes].sort((a, b) => a.width - b.width);
+  return {
+    src: sorted.at(-1)?.file ?? sheet.full,
+    srcSet: sorted.map((s) => `${s.file} ${s.width}w`).join(', '),
+    aspect: sheet.aspect,
+  };
+}

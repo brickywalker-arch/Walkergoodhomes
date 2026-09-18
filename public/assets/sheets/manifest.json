@@ -1,0 +1,128 @@
+[
+  {
+    "slug": "01-location-plan",
+    "width": 2020,
+    "height": 1428,
+    "aspect": 1.4146,
+    "full": "/assets/sheets/01-location-plan-full.webp",
+    "sizes": [
+      {
+        "width": 640,
+        "file": "/assets/sheets/01-location-plan-640.webp"
+      },
+      {
+        "width": 1280,
+        "file": "/assets/sheets/01-location-plan-1280.webp"
+      },
+      {
+        "width": 2048,
+        "file": "/assets/sheets/01-location-plan-2048.webp"
+      }
+    ]
+  },
+  {
+    "slug": "02-existing-block-plan",
+    "width": 2020,
+    "height": 1428,
+    "aspect": 1.4146,
+    "full": "/assets/sheets/02-existing-block-plan-full.webp",
+    "sizes": [
+      {
+        "width": 640,
+        "file": "/assets/sheets/02-existing-block-plan-640.webp"
+      },
+      {
+        "width": 1280,
+        "file": "/assets/sheets/02-existing-block-plan-1280.webp"
+      },
+      {
+        "width": 2048,
+        "file": "/assets/sheets/02-existing-block-plan-2048.webp"
+      }
+    ]
+  },
+  {
+    "slug": "03-floor-plans",
+    "width": 3576,
+    "height": 2526,
+    "aspect": 1.4157,
+    "full": "/assets/sheets/03-floor-plans-full.webp",
+    "sizes": [
+      {
+        "width": 640,
+        "file": "/assets/sheets/03-floor-plans-640.webp"
+      },
+      {
+        "width": 1280,
+        "file": "/assets/sheets/03-floor-plans-1280.webp"
+      },
+      {
+        "width": 2048,
+        "file": "/assets/sheets/03-floor-plans-2048.webp"
+      }
+    ]
+  },
+  {
+    "slug": "04-section",
+    "width": 2382,
+    "height": 1684,
+    "aspect": 1.4145,
+    "full": "/assets/sheets/04-section-full.webp",
+    "sizes": [
+      {
+        "width": 640,
+        "file": "/assets/sheets/04-section-640.webp"
+      },
+      {
+        "width": 1280,
+        "file": "/assets/sheets/04-section-1280.webp"
+      },
+      {
+        "width": 2048,
+        "file": "/assets/sheets/04-section-2048.webp"
+      }
+    ]
+  },
+  {
+    "slug": "05-elevations",
+    "width": 3031,
+    "height": 2143,
+    "aspect": 1.4144,
+    "full": "/assets/sheets/05-elevations-full.webp",
+    "sizes": [
+      {
+        "width": 640,
+        "file": "/assets/sheets/05-elevations-640.webp"
+      },
+      {
+        "width": 1280,
+        "file": "/assets/sheets/05-elevations-1280.webp"
+      },
+      {
+        "width": 2048,
+        "file": "/assets/sheets/05-elevations-2048.webp"
+      }
+    ]
+  },
+  {
+    "slug": "06-block-plan",
+    "width": 2020,
+    "height": 1428,
+    "aspect": 1.4146,
+    "full": "/assets/sheets/06-block-plan-full.webp",
+    "sizes": [
+      {
+        "width": 640,
+        "file": "/assets/sheets/06-block-plan-640.webp"
+      },
+      {
+        "width": 1280,
+        "file": "/assets/sheets/06-block-plan-1280.webp"
+      },
+      {
+        "width": 2048,
+        "file": "/assets/sheets/06-block-plan-2048.webp"
+      }
+    ]
+  }
+]

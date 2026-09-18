@@ -1,0 +1,39 @@
+{
+  "name": "walker-good-homes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Walker Good Homes Ltd — Plots 1 & 2, Hoyle Ing, Linthwaite, Huddersfield HD7 5RX",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "cgi:render": "node scripts/render-cgi.mjs",
+    "cgi:sheets": "node scripts/render-sheets.mjs",
+    "assets": "npm run cgi:sheets && npm run cgi:render && npm run verify:assets",
+    "verify:assets": "node scripts/verify-assets.mjs",
+    "check": "npm run typecheck && npm run lint && npm run verify:assets"
+  },
+  "dependencies": {
+    "next": "15.5.25",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.7",
+    "@types/node": "22.15.3",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "eslint": "9.29.0",
+    "eslint-config-next": "15.5.25",
+    "pdf-to-img": "7.0.0",
+    "playwright-core": "1.56.1",
+    "sharp": "0.35.4",
+    "three": "0.186.0",
+    "typescript": "5.8.3"
+  },
+  "overrides": {
+    "postcss": "^8.5.23"
+  }
+}

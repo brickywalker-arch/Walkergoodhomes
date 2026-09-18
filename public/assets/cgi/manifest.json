@@ -1,0 +1,1002 @@
+{
+  "generated": "2026-09-18T13:55:15.347Z",
+  "defaults": {
+    "kitchen": "graphite",
+    "walls": "chalk",
+    "doors": "white"
+  },
+  "axes": {
+    "hall": [
+      "walls",
+      "doors"
+    ],
+    "kitchen": [
+      "kitchen",
+      "walls",
+      "doors"
+    ],
+    "wc": [
+      "walls",
+      "doors"
+    ],
+    "dining": [
+      "walls",
+      "doors"
+    ],
+    "living": [
+      "walls",
+      "doors"
+    ],
+    "master": [
+      "walls",
+      "doors"
+    ],
+    "ensuite": [
+      "walls",
+      "doors"
+    ],
+    "bath": [
+      "walls",
+      "doors"
+    ],
+    "bed3": [
+      "walls",
+      "doors"
+    ],
+    "landing": [
+      "walls",
+      "doors"
+    ],
+    "bed2": [
+      "walls",
+      "doors"
+    ],
+    "ensuite2": [
+      "walls",
+      "doors"
+    ],
+    "landing2": [
+      "walls",
+      "doors"
+    ],
+    "store": [
+      "walls",
+      "doors"
+    ],
+    "store2": [
+      "walls",
+      "doors"
+    ]
+  },
+  "exterior": {
+    "hero": {
+      "800": "/assets/cgi/exterior-hero-800.webp",
+      "1280": "/assets/cgi/exterior-hero-1280.webp",
+      "2000": "/assets/cgi/exterior-hero-2000.webp"
+    },
+    "plot-1": {
+      "800": "/assets/cgi/exterior-plot-1-800.webp",
+      "1280": "/assets/cgi/exterior-plot-1-1280.webp",
+      "2000": "/assets/cgi/exterior-plot-1-2000.webp"
+    },
+    "plot-2": {
+      "800": "/assets/cgi/exterior-plot-2-800.webp",
+      "1280": "/assets/cgi/exterior-plot-2-1280.webp",
+      "2000": "/assets/cgi/exterior-plot-2-2000.webp"
+    },
+    "frontage": {
+      "800": "/assets/cgi/exterior-frontage-800.webp",
+      "1280": "/assets/cgi/exterior-frontage-1280.webp",
+      "2000": "/assets/cgi/exterior-frontage-2000.webp"
+    },
+    "garden": {
+      "800": "/assets/cgi/exterior-garden-800.webp",
+      "1280": "/assets/cgi/exterior-garden-1280.webp",
+      "2000": "/assets/cgi/exterior-garden-2000.webp"
+    },
+    "street": {
+      "800": "/assets/cgi/exterior-street-800.webp",
+      "1280": "/assets/cgi/exterior-street-1280.webp",
+      "2000": "/assets/cgi/exterior-street-2000.webp"
+    },
+    "plot-1-card": {
+      "800": "/assets/cgi/exterior-plot-1-card-800.webp",
+      "1280": "/assets/cgi/exterior-plot-1-card-1280.webp",
+      "2000": "/assets/cgi/exterior-plot-1-card-2000.webp"
+    },
+    "plot-2-card": {
+      "800": "/assets/cgi/exterior-plot-2-card-800.webp",
+      "1280": "/assets/cgi/exterior-plot-2-card-1280.webp",
+      "2000": "/assets/cgi/exterior-plot-2-card-2000.webp"
+    }
+  },
+  "rooms": {
+    "hall": {
+      "640": "/assets/cgi/hall--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/hall--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/hall--graphite-chalk-white-1600.webp"
+    },
+    "kitchen": {
+      "640": "/assets/cgi/kitchen--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/kitchen--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--graphite-chalk-white-1600.webp"
+    },
+    "wc": {
+      "640": "/assets/cgi/wc--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/wc--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/wc--graphite-chalk-white-1600.webp"
+    },
+    "dining": {
+      "640": "/assets/cgi/dining--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/dining--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/dining--graphite-chalk-white-1600.webp"
+    },
+    "living": {
+      "640": "/assets/cgi/living--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/living--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/living--graphite-chalk-white-1600.webp"
+    },
+    "master": {
+      "640": "/assets/cgi/master--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/master--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/master--graphite-chalk-white-1600.webp"
+    },
+    "ensuite": {
+      "640": "/assets/cgi/ensuite--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/ensuite--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/ensuite--graphite-chalk-white-1600.webp"
+    },
+    "bath": {
+      "640": "/assets/cgi/bath--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/bath--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/bath--graphite-chalk-white-1600.webp"
+    },
+    "bed3": {
+      "640": "/assets/cgi/bed3--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/bed3--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/bed3--graphite-chalk-white-1600.webp"
+    },
+    "landing": {
+      "640": "/assets/cgi/landing--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/landing--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/landing--graphite-chalk-white-1600.webp"
+    },
+    "bed2": {
+      "640": "/assets/cgi/bed2--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/bed2--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/bed2--graphite-chalk-white-1600.webp"
+    },
+    "ensuite2": {
+      "640": "/assets/cgi/ensuite2--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/ensuite2--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/ensuite2--graphite-chalk-white-1600.webp"
+    },
+    "landing2": {
+      "640": "/assets/cgi/landing2--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/landing2--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/landing2--graphite-chalk-white-1600.webp"
+    },
+    "store": {
+      "640": "/assets/cgi/store--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/store--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/store--graphite-chalk-white-1600.webp"
+    },
+    "store2": {
+      "640": "/assets/cgi/store2--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/store2--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/store2--graphite-chalk-white-1600.webp"
+    }
+  },
+  "variants": {
+    "hall|graphite|chalk|white": {
+      "640": "/assets/cgi/hall--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/hall--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/hall--graphite-chalk-white-1600.webp"
+    },
+    "hall|graphite|chalk|oak": {
+      "640": "/assets/cgi/hall--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/hall--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/hall--graphite-chalk-oak-1600.webp"
+    },
+    "hall|graphite|chalk|grey": {
+      "640": "/assets/cgi/hall--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/hall--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/hall--graphite-chalk-grey-1600.webp"
+    },
+    "hall|graphite|clay|white": {
+      "640": "/assets/cgi/hall--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/hall--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/hall--graphite-clay-white-1600.webp"
+    },
+    "hall|graphite|clay|oak": {
+      "640": "/assets/cgi/hall--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/hall--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/hall--graphite-clay-oak-1600.webp"
+    },
+    "hall|graphite|clay|grey": {
+      "640": "/assets/cgi/hall--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/hall--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/hall--graphite-clay-grey-1600.webp"
+    },
+    "hall|graphite|slate|white": {
+      "640": "/assets/cgi/hall--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/hall--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/hall--graphite-slate-white-1600.webp"
+    },
+    "hall|graphite|slate|oak": {
+      "640": "/assets/cgi/hall--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/hall--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/hall--graphite-slate-oak-1600.webp"
+    },
+    "hall|graphite|slate|grey": {
+      "640": "/assets/cgi/hall--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/hall--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/hall--graphite-slate-grey-1600.webp"
+    },
+    "kitchen|graphite|chalk|white": {
+      "640": "/assets/cgi/kitchen--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/kitchen--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--graphite-chalk-white-1600.webp"
+    },
+    "kitchen|graphite|chalk|oak": {
+      "640": "/assets/cgi/kitchen--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--graphite-chalk-oak-1600.webp"
+    },
+    "kitchen|graphite|chalk|grey": {
+      "640": "/assets/cgi/kitchen--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--graphite-chalk-grey-1600.webp"
+    },
+    "kitchen|graphite|clay|white": {
+      "640": "/assets/cgi/kitchen--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/kitchen--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--graphite-clay-white-1600.webp"
+    },
+    "kitchen|graphite|clay|oak": {
+      "640": "/assets/cgi/kitchen--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--graphite-clay-oak-1600.webp"
+    },
+    "kitchen|graphite|clay|grey": {
+      "640": "/assets/cgi/kitchen--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--graphite-clay-grey-1600.webp"
+    },
+    "kitchen|graphite|slate|white": {
+      "640": "/assets/cgi/kitchen--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/kitchen--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--graphite-slate-white-1600.webp"
+    },
+    "kitchen|graphite|slate|oak": {
+      "640": "/assets/cgi/kitchen--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--graphite-slate-oak-1600.webp"
+    },
+    "kitchen|graphite|slate|grey": {
+      "640": "/assets/cgi/kitchen--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--graphite-slate-grey-1600.webp"
+    },
+    "kitchen|sage|chalk|white": {
+      "640": "/assets/cgi/kitchen--sage-chalk-white-640.webp",
+      "1000": "/assets/cgi/kitchen--sage-chalk-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--sage-chalk-white-1600.webp"
+    },
+    "kitchen|sage|chalk|oak": {
+      "640": "/assets/cgi/kitchen--sage-chalk-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--sage-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--sage-chalk-oak-1600.webp"
+    },
+    "kitchen|sage|chalk|grey": {
+      "640": "/assets/cgi/kitchen--sage-chalk-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--sage-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--sage-chalk-grey-1600.webp"
+    },
+    "kitchen|sage|clay|white": {
+      "640": "/assets/cgi/kitchen--sage-clay-white-640.webp",
+      "1000": "/assets/cgi/kitchen--sage-clay-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--sage-clay-white-1600.webp"
+    },
+    "kitchen|sage|clay|oak": {
+      "640": "/assets/cgi/kitchen--sage-clay-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--sage-clay-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--sage-clay-oak-1600.webp"
+    },
+    "kitchen|sage|clay|grey": {
+      "640": "/assets/cgi/kitchen--sage-clay-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--sage-clay-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--sage-clay-grey-1600.webp"
+    },
+    "kitchen|sage|slate|white": {
+      "640": "/assets/cgi/kitchen--sage-slate-white-640.webp",
+      "1000": "/assets/cgi/kitchen--sage-slate-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--sage-slate-white-1600.webp"
+    },
+    "kitchen|sage|slate|oak": {
+      "640": "/assets/cgi/kitchen--sage-slate-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--sage-slate-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--sage-slate-oak-1600.webp"
+    },
+    "kitchen|sage|slate|grey": {
+      "640": "/assets/cgi/kitchen--sage-slate-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--sage-slate-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--sage-slate-grey-1600.webp"
+    },
+    "kitchen|oak|chalk|white": {
+      "640": "/assets/cgi/kitchen--oak-chalk-white-640.webp",
+      "1000": "/assets/cgi/kitchen--oak-chalk-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--oak-chalk-white-1600.webp"
+    },
+    "kitchen|oak|chalk|oak": {
+      "640": "/assets/cgi/kitchen--oak-chalk-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--oak-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--oak-chalk-oak-1600.webp"
+    },
+    "kitchen|oak|chalk|grey": {
+      "640": "/assets/cgi/kitchen--oak-chalk-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--oak-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--oak-chalk-grey-1600.webp"
+    },
+    "kitchen|oak|clay|white": {
+      "640": "/assets/cgi/kitchen--oak-clay-white-640.webp",
+      "1000": "/assets/cgi/kitchen--oak-clay-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--oak-clay-white-1600.webp"
+    },
+    "kitchen|oak|clay|oak": {
+      "640": "/assets/cgi/kitchen--oak-clay-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--oak-clay-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--oak-clay-oak-1600.webp"
+    },
+    "kitchen|oak|clay|grey": {
+      "640": "/assets/cgi/kitchen--oak-clay-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--oak-clay-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--oak-clay-grey-1600.webp"
+    },
+    "kitchen|oak|slate|white": {
+      "640": "/assets/cgi/kitchen--oak-slate-white-640.webp",
+      "1000": "/assets/cgi/kitchen--oak-slate-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--oak-slate-white-1600.webp"
+    },
+    "kitchen|oak|slate|oak": {
+      "640": "/assets/cgi/kitchen--oak-slate-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--oak-slate-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--oak-slate-oak-1600.webp"
+    },
+    "kitchen|oak|slate|grey": {
+      "640": "/assets/cgi/kitchen--oak-slate-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--oak-slate-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--oak-slate-grey-1600.webp"
+    },
+    "kitchen|ivory|chalk|white": {
+      "640": "/assets/cgi/kitchen--ivory-chalk-white-640.webp",
+      "1000": "/assets/cgi/kitchen--ivory-chalk-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--ivory-chalk-white-1600.webp"
+    },
+    "kitchen|ivory|chalk|oak": {
+      "640": "/assets/cgi/kitchen--ivory-chalk-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--ivory-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--ivory-chalk-oak-1600.webp"
+    },
+    "kitchen|ivory|chalk|grey": {
+      "640": "/assets/cgi/kitchen--ivory-chalk-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--ivory-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--ivory-chalk-grey-1600.webp"
+    },
+    "kitchen|ivory|clay|white": {
+      "640": "/assets/cgi/kitchen--ivory-clay-white-640.webp",
+      "1000": "/assets/cgi/kitchen--ivory-clay-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--ivory-clay-white-1600.webp"
+    },
+    "kitchen|ivory|clay|oak": {
+      "640": "/assets/cgi/kitchen--ivory-clay-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--ivory-clay-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--ivory-clay-oak-1600.webp"
+    },
+    "kitchen|ivory|clay|grey": {
+      "640": "/assets/cgi/kitchen--ivory-clay-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--ivory-clay-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--ivory-clay-grey-1600.webp"
+    },
+    "kitchen|ivory|slate|white": {
+      "640": "/assets/cgi/kitchen--ivory-slate-white-640.webp",
+      "1000": "/assets/cgi/kitchen--ivory-slate-white-1000.webp",
+      "1600": "/assets/cgi/kitchen--ivory-slate-white-1600.webp"
+    },
+    "kitchen|ivory|slate|oak": {
+      "640": "/assets/cgi/kitchen--ivory-slate-oak-640.webp",
+      "1000": "/assets/cgi/kitchen--ivory-slate-oak-1000.webp",
+      "1600": "/assets/cgi/kitchen--ivory-slate-oak-1600.webp"
+    },
+    "kitchen|ivory|slate|grey": {
+      "640": "/assets/cgi/kitchen--ivory-slate-grey-640.webp",
+      "1000": "/assets/cgi/kitchen--ivory-slate-grey-1000.webp",
+      "1600": "/assets/cgi/kitchen--ivory-slate-grey-1600.webp"
+    },
+    "wc|graphite|chalk|white": {
+      "640": "/assets/cgi/wc--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/wc--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/wc--graphite-chalk-white-1600.webp"
+    },
+    "wc|graphite|chalk|oak": {
+      "640": "/assets/cgi/wc--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/wc--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/wc--graphite-chalk-oak-1600.webp"
+    },
+    "wc|graphite|chalk|grey": {
+      "640": "/assets/cgi/wc--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/wc--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/wc--graphite-chalk-grey-1600.webp"
+    },
+    "wc|graphite|clay|white": {
+      "640": "/assets/cgi/wc--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/wc--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/wc--graphite-clay-white-1600.webp"
+    },
+    "wc|graphite|clay|oak": {
+      "640": "/assets/cgi/wc--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/wc--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/wc--graphite-clay-oak-1600.webp"
+    },
+    "wc|graphite|clay|grey": {
+      "640": "/assets/cgi/wc--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/wc--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/wc--graphite-clay-grey-1600.webp"
+    },
+    "wc|graphite|slate|white": {
+      "640": "/assets/cgi/wc--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/wc--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/wc--graphite-slate-white-1600.webp"
+    },
+    "wc|graphite|slate|oak": {
+      "640": "/assets/cgi/wc--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/wc--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/wc--graphite-slate-oak-1600.webp"
+    },
+    "wc|graphite|slate|grey": {
+      "640": "/assets/cgi/wc--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/wc--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/wc--graphite-slate-grey-1600.webp"
+    },
+    "dining|graphite|chalk|white": {
+      "640": "/assets/cgi/dining--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/dining--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/dining--graphite-chalk-white-1600.webp"
+    },
+    "dining|graphite|chalk|oak": {
+      "640": "/assets/cgi/dining--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/dining--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/dining--graphite-chalk-oak-1600.webp"
+    },
+    "dining|graphite|chalk|grey": {
+      "640": "/assets/cgi/dining--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/dining--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/dining--graphite-chalk-grey-1600.webp"
+    },
+    "dining|graphite|clay|white": {
+      "640": "/assets/cgi/dining--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/dining--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/dining--graphite-clay-white-1600.webp"
+    },
+    "dining|graphite|clay|oak": {
+      "640": "/assets/cgi/dining--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/dining--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/dining--graphite-clay-oak-1600.webp"
+    },
+    "dining|graphite|clay|grey": {
+      "640": "/assets/cgi/dining--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/dining--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/dining--graphite-clay-grey-1600.webp"
+    },
+    "dining|graphite|slate|white": {
+      "640": "/assets/cgi/dining--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/dining--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/dining--graphite-slate-white-1600.webp"
+    },
+    "dining|graphite|slate|oak": {
+      "640": "/assets/cgi/dining--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/dining--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/dining--graphite-slate-oak-1600.webp"
+    },
+    "dining|graphite|slate|grey": {
+      "640": "/assets/cgi/dining--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/dining--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/dining--graphite-slate-grey-1600.webp"
+    },
+    "living|graphite|chalk|white": {
+      "640": "/assets/cgi/living--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/living--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/living--graphite-chalk-white-1600.webp"
+    },
+    "living|graphite|chalk|oak": {
+      "640": "/assets/cgi/living--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/living--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/living--graphite-chalk-oak-1600.webp"
+    },
+    "living|graphite|chalk|grey": {
+      "640": "/assets/cgi/living--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/living--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/living--graphite-chalk-grey-1600.webp"
+    },
+    "living|graphite|clay|white": {
+      "640": "/assets/cgi/living--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/living--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/living--graphite-clay-white-1600.webp"
+    },
+    "living|graphite|clay|oak": {
+      "640": "/assets/cgi/living--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/living--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/living--graphite-clay-oak-1600.webp"
+    },
+    "living|graphite|clay|grey": {
+      "640": "/assets/cgi/living--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/living--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/living--graphite-clay-grey-1600.webp"
+    },
+    "living|graphite|slate|white": {
+      "640": "/assets/cgi/living--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/living--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/living--graphite-slate-white-1600.webp"
+    },
+    "living|graphite|slate|oak": {
+      "640": "/assets/cgi/living--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/living--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/living--graphite-slate-oak-1600.webp"
+    },
+    "living|graphite|slate|grey": {
+      "640": "/assets/cgi/living--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/living--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/living--graphite-slate-grey-1600.webp"
+    },
+    "master|graphite|chalk|white": {
+      "640": "/assets/cgi/master--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/master--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/master--graphite-chalk-white-1600.webp"
+    },
+    "master|graphite|chalk|oak": {
+      "640": "/assets/cgi/master--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/master--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/master--graphite-chalk-oak-1600.webp"
+    },
+    "master|graphite|chalk|grey": {
+      "640": "/assets/cgi/master--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/master--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/master--graphite-chalk-grey-1600.webp"
+    },
+    "master|graphite|clay|white": {
+      "640": "/assets/cgi/master--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/master--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/master--graphite-clay-white-1600.webp"
+    },
+    "master|graphite|clay|oak": {
+      "640": "/assets/cgi/master--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/master--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/master--graphite-clay-oak-1600.webp"
+    },
+    "master|graphite|clay|grey": {
+      "640": "/assets/cgi/master--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/master--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/master--graphite-clay-grey-1600.webp"
+    },
+    "master|graphite|slate|white": {
+      "640": "/assets/cgi/master--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/master--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/master--graphite-slate-white-1600.webp"
+    },
+    "master|graphite|slate|oak": {
+      "640": "/assets/cgi/master--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/master--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/master--graphite-slate-oak-1600.webp"
+    },
+    "master|graphite|slate|grey": {
+      "640": "/assets/cgi/master--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/master--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/master--graphite-slate-grey-1600.webp"
+    },
+    "ensuite|graphite|chalk|white": {
+      "640": "/assets/cgi/ensuite--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/ensuite--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/ensuite--graphite-chalk-white-1600.webp"
+    },
+    "ensuite|graphite|chalk|oak": {
+      "640": "/assets/cgi/ensuite--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/ensuite--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/ensuite--graphite-chalk-oak-1600.webp"
+    },
+    "ensuite|graphite|chalk|grey": {
+      "640": "/assets/cgi/ensuite--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/ensuite--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/ensuite--graphite-chalk-grey-1600.webp"
+    },
+    "ensuite|graphite|clay|white": {
+      "640": "/assets/cgi/ensuite--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/ensuite--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/ensuite--graphite-clay-white-1600.webp"
+    },
+    "ensuite|graphite|clay|oak": {
+      "640": "/assets/cgi/ensuite--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/ensuite--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/ensuite--graphite-clay-oak-1600.webp"
+    },
+    "ensuite|graphite|clay|grey": {
+      "640": "/assets/cgi/ensuite--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/ensuite--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/ensuite--graphite-clay-grey-1600.webp"
+    },
+    "ensuite|graphite|slate|white": {
+      "640": "/assets/cgi/ensuite--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/ensuite--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/ensuite--graphite-slate-white-1600.webp"
+    },
+    "ensuite|graphite|slate|oak": {
+      "640": "/assets/cgi/ensuite--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/ensuite--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/ensuite--graphite-slate-oak-1600.webp"
+    },
+    "ensuite|graphite|slate|grey": {
+      "640": "/assets/cgi/ensuite--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/ensuite--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/ensuite--graphite-slate-grey-1600.webp"
+    },
+    "bath|graphite|chalk|white": {
+      "640": "/assets/cgi/bath--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/bath--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/bath--graphite-chalk-white-1600.webp"
+    },
+    "bath|graphite|chalk|oak": {
+      "640": "/assets/cgi/bath--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/bath--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/bath--graphite-chalk-oak-1600.webp"
+    },
+    "bath|graphite|chalk|grey": {
+      "640": "/assets/cgi/bath--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/bath--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/bath--graphite-chalk-grey-1600.webp"
+    },
+    "bath|graphite|clay|white": {
+      "640": "/assets/cgi/bath--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/bath--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/bath--graphite-clay-white-1600.webp"
+    },
+    "bath|graphite|clay|oak": {
+      "640": "/assets/cgi/bath--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/bath--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/bath--graphite-clay-oak-1600.webp"
+    },
+    "bath|graphite|clay|grey": {
+      "640": "/assets/cgi/bath--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/bath--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/bath--graphite-clay-grey-1600.webp"
+    },
+    "bath|graphite|slate|white": {
+      "640": "/assets/cgi/bath--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/bath--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/bath--graphite-slate-white-1600.webp"
+    },
+    "bath|graphite|slate|oak": {
+      "640": "/assets/cgi/bath--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/bath--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/bath--graphite-slate-oak-1600.webp"
+    },
+    "bath|graphite|slate|grey": {
+      "640": "/assets/cgi/bath--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/bath--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/bath--graphite-slate-grey-1600.webp"
+    },
+    "bed3|graphite|chalk|white": {
+      "640": "/assets/cgi/bed3--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/bed3--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/bed3--graphite-chalk-white-1600.webp"
+    },
+    "bed3|graphite|chalk|oak": {
+      "640": "/assets/cgi/bed3--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/bed3--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/bed3--graphite-chalk-oak-1600.webp"
+    },
+    "bed3|graphite|chalk|grey": {
+      "640": "/assets/cgi/bed3--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/bed3--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/bed3--graphite-chalk-grey-1600.webp"
+    },
+    "bed3|graphite|clay|white": {
+      "640": "/assets/cgi/bed3--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/bed3--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/bed3--graphite-clay-white-1600.webp"
+    },
+    "bed3|graphite|clay|oak": {
+      "640": "/assets/cgi/bed3--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/bed3--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/bed3--graphite-clay-oak-1600.webp"
+    },
+    "bed3|graphite|clay|grey": {
+      "640": "/assets/cgi/bed3--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/bed3--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/bed3--graphite-clay-grey-1600.webp"
+    },
+    "bed3|graphite|slate|white": {
+      "640": "/assets/cgi/bed3--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/bed3--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/bed3--graphite-slate-white-1600.webp"
+    },
+    "bed3|graphite|slate|oak": {
+      "640": "/assets/cgi/bed3--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/bed3--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/bed3--graphite-slate-oak-1600.webp"
+    },
+    "bed3|graphite|slate|grey": {
+      "640": "/assets/cgi/bed3--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/bed3--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/bed3--graphite-slate-grey-1600.webp"
+    },
+    "landing|graphite|chalk|white": {
+      "640": "/assets/cgi/landing--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/landing--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/landing--graphite-chalk-white-1600.webp"
+    },
+    "landing|graphite|chalk|oak": {
+      "640": "/assets/cgi/landing--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/landing--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/landing--graphite-chalk-oak-1600.webp"
+    },
+    "landing|graphite|chalk|grey": {
+      "640": "/assets/cgi/landing--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/landing--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/landing--graphite-chalk-grey-1600.webp"
+    },
+    "landing|graphite|clay|white": {
+      "640": "/assets/cgi/landing--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/landing--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/landing--graphite-clay-white-1600.webp"
+    },
+    "landing|graphite|clay|oak": {
+      "640": "/assets/cgi/landing--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/landing--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/landing--graphite-clay-oak-1600.webp"
+    },
+    "landing|graphite|clay|grey": {
+      "640": "/assets/cgi/landing--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/landing--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/landing--graphite-clay-grey-1600.webp"
+    },
+    "landing|graphite|slate|white": {
+      "640": "/assets/cgi/landing--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/landing--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/landing--graphite-slate-white-1600.webp"
+    },
+    "landing|graphite|slate|oak": {
+      "640": "/assets/cgi/landing--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/landing--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/landing--graphite-slate-oak-1600.webp"
+    },
+    "landing|graphite|slate|grey": {
+      "640": "/assets/cgi/landing--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/landing--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/landing--graphite-slate-grey-1600.webp"
+    },
+    "bed2|graphite|chalk|white": {
+      "640": "/assets/cgi/bed2--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/bed2--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/bed2--graphite-chalk-white-1600.webp"
+    },
+    "bed2|graphite|chalk|oak": {
+      "640": "/assets/cgi/bed2--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/bed2--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/bed2--graphite-chalk-oak-1600.webp"
+    },
+    "bed2|graphite|chalk|grey": {
+      "640": "/assets/cgi/bed2--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/bed2--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/bed2--graphite-chalk-grey-1600.webp"
+    },
+    "bed2|graphite|clay|white": {
+      "640": "/assets/cgi/bed2--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/bed2--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/bed2--graphite-clay-white-1600.webp"
+    },
+    "bed2|graphite|clay|oak": {
+      "640": "/assets/cgi/bed2--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/bed2--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/bed2--graphite-clay-oak-1600.webp"
+    },
+    "bed2|graphite|clay|grey": {
+      "640": "/assets/cgi/bed2--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/bed2--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/bed2--graphite-clay-grey-1600.webp"
+    },
+    "bed2|graphite|slate|white": {
+      "640": "/assets/cgi/bed2--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/bed2--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/bed2--graphite-slate-white-1600.webp"
+    },
+    "bed2|graphite|slate|oak": {
+      "640": "/assets/cgi/bed2--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/bed2--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/bed2--graphite-slate-oak-1600.webp"
+    },
+    "bed2|graphite|slate|grey": {
+      "640": "/assets/cgi/bed2--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/bed2--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/bed2--graphite-slate-grey-1600.webp"
+    },
+    "ensuite2|graphite|chalk|white": {
+      "640": "/assets/cgi/ensuite2--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/ensuite2--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/ensuite2--graphite-chalk-white-1600.webp"
+    },
+    "ensuite2|graphite|chalk|oak": {
+      "640": "/assets/cgi/ensuite2--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/ensuite2--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/ensuite2--graphite-chalk-oak-1600.webp"
+    },
+    "ensuite2|graphite|chalk|grey": {
+      "640": "/assets/cgi/ensuite2--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/ensuite2--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/ensuite2--graphite-chalk-grey-1600.webp"
+    },
+    "ensuite2|graphite|clay|white": {
+      "640": "/assets/cgi/ensuite2--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/ensuite2--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/ensuite2--graphite-clay-white-1600.webp"
+    },
+    "ensuite2|graphite|clay|oak": {
+      "640": "/assets/cgi/ensuite2--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/ensuite2--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/ensuite2--graphite-clay-oak-1600.webp"
+    },
+    "ensuite2|graphite|clay|grey": {
+      "640": "/assets/cgi/ensuite2--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/ensuite2--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/ensuite2--graphite-clay-grey-1600.webp"
+    },
+    "ensuite2|graphite|slate|white": {
+      "640": "/assets/cgi/ensuite2--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/ensuite2--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/ensuite2--graphite-slate-white-1600.webp"
+    },
+    "ensuite2|graphite|slate|oak": {
+      "640": "/assets/cgi/ensuite2--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/ensuite2--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/ensuite2--graphite-slate-oak-1600.webp"
+    },
+    "ensuite2|graphite|slate|grey": {
+      "640": "/assets/cgi/ensuite2--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/ensuite2--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/ensuite2--graphite-slate-grey-1600.webp"
+    },
+    "landing2|graphite|chalk|white": {
+      "640": "/assets/cgi/landing2--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/landing2--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/landing2--graphite-chalk-white-1600.webp"
+    },
+    "landing2|graphite|chalk|oak": {
+      "640": "/assets/cgi/landing2--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/landing2--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/landing2--graphite-chalk-oak-1600.webp"
+    },
+    "landing2|graphite|chalk|grey": {
+      "640": "/assets/cgi/landing2--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/landing2--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/landing2--graphite-chalk-grey-1600.webp"
+    },
+    "landing2|graphite|clay|white": {
+      "640": "/assets/cgi/landing2--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/landing2--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/landing2--graphite-clay-white-1600.webp"
+    },
+    "landing2|graphite|clay|oak": {
+      "640": "/assets/cgi/landing2--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/landing2--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/landing2--graphite-clay-oak-1600.webp"
+    },
+    "landing2|graphite|clay|grey": {
+      "640": "/assets/cgi/landing2--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/landing2--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/landing2--graphite-clay-grey-1600.webp"
+    },
+    "landing2|graphite|slate|white": {
+      "640": "/assets/cgi/landing2--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/landing2--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/landing2--graphite-slate-white-1600.webp"
+    },
+    "landing2|graphite|slate|oak": {
+      "640": "/assets/cgi/landing2--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/landing2--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/landing2--graphite-slate-oak-1600.webp"
+    },
+    "landing2|graphite|slate|grey": {
+      "640": "/assets/cgi/landing2--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/landing2--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/landing2--graphite-slate-grey-1600.webp"
+    },
+    "store|graphite|chalk|white": {
+      "640": "/assets/cgi/store--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/store--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/store--graphite-chalk-white-1600.webp"
+    },
+    "store|graphite|chalk|oak": {
+      "640": "/assets/cgi/store--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/store--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/store--graphite-chalk-oak-1600.webp"
+    },
+    "store|graphite|chalk|grey": {
+      "640": "/assets/cgi/store--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/store--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/store--graphite-chalk-grey-1600.webp"
+    },
+    "store|graphite|clay|white": {
+      "640": "/assets/cgi/store--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/store--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/store--graphite-clay-white-1600.webp"
+    },
+    "store|graphite|clay|oak": {
+      "640": "/assets/cgi/store--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/store--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/store--graphite-clay-oak-1600.webp"
+    },
+    "store|graphite|clay|grey": {
+      "640": "/assets/cgi/store--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/store--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/store--graphite-clay-grey-1600.webp"
+    },
+    "store|graphite|slate|white": {
+      "640": "/assets/cgi/store--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/store--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/store--graphite-slate-white-1600.webp"
+    },
+    "store|graphite|slate|oak": {
+      "640": "/assets/cgi/store--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/store--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/store--graphite-slate-oak-1600.webp"
+    },
+    "store|graphite|slate|grey": {
+      "640": "/assets/cgi/store--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/store--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/store--graphite-slate-grey-1600.webp"
+    },
+    "store2|graphite|chalk|white": {
+      "640": "/assets/cgi/store2--graphite-chalk-white-640.webp",
+      "1000": "/assets/cgi/store2--graphite-chalk-white-1000.webp",
+      "1600": "/assets/cgi/store2--graphite-chalk-white-1600.webp"
+    },
+    "store2|graphite|chalk|oak": {
+      "640": "/assets/cgi/store2--graphite-chalk-oak-640.webp",
+      "1000": "/assets/cgi/store2--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/cgi/store2--graphite-chalk-oak-1600.webp"
+    },
+    "store2|graphite|chalk|grey": {
+      "640": "/assets/cgi/store2--graphite-chalk-grey-640.webp",
+      "1000": "/assets/cgi/store2--graphite-chalk-grey-1000.webp",
+      "1600": "/assets/cgi/store2--graphite-chalk-grey-1600.webp"
+    },
+    "store2|graphite|clay|white": {
+      "640": "/assets/cgi/store2--graphite-clay-white-640.webp",
+      "1000": "/assets/cgi/store2--graphite-clay-white-1000.webp",
+      "1600": "/assets/cgi/store2--graphite-clay-white-1600.webp"
+    },
+    "store2|graphite|clay|oak": {
+      "640": "/assets/cgi/store2--graphite-clay-oak-640.webp",
+      "1000": "/assets/cgi/store2--graphite-clay-oak-1000.webp",
+      "1600": "/assets/cgi/store2--graphite-clay-oak-1600.webp"
+    },
+    "store2|graphite|clay|grey": {
+      "640": "/assets/cgi/store2--graphite-clay-grey-640.webp",
+      "1000": "/assets/cgi/store2--graphite-clay-grey-1000.webp",
+      "1600": "/assets/cgi/store2--graphite-clay-grey-1600.webp"
+    },
+    "store2|graphite|slate|white": {
+      "640": "/assets/cgi/store2--graphite-slate-white-640.webp",
+      "1000": "/assets/cgi/store2--graphite-slate-white-1000.webp",
+      "1600": "/assets/cgi/store2--graphite-slate-white-1600.webp"
+    },
+    "store2|graphite|slate|oak": {
+      "640": "/assets/cgi/store2--graphite-slate-oak-640.webp",
+      "1000": "/assets/cgi/store2--graphite-slate-oak-1000.webp",
+      "1600": "/assets/cgi/store2--graphite-slate-oak-1600.webp"
+    },
+    "store2|graphite|slate|grey": {
+      "640": "/assets/cgi/store2--graphite-slate-grey-640.webp",
+      "1000": "/assets/cgi/store2--graphite-slate-grey-1000.webp",
+      "1600": "/assets/cgi/store2--graphite-slate-grey-1600.webp"
+    }
+  }
+}

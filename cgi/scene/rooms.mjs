@@ -1,0 +1,657 @@
+import * as THREE from 'three';
+import {
+  box, boxAt, cyl, group, wall, glazing, door, skirting, tiledWalls,
+  sofa, bed, table, chair, unitRun, panelOnWall, pendant, plant, rug, stair, bulkhead,
+} from './kit.mjs';
+
+/**
+ * Room sets.
+ *
+ * Dimensions are the plan sizes off dwg 26/1362/03 converted to metres.
+ * Second-floor rooms carry `y0` — their distance from the front external wall
+ * — because the ceiling there follows the 40° rafters and its height depends
+ * on where in the 9.49 m depth you are standing.
+ */
+
+/** Building section constants, off dwg 26/1362/04. */
+export const SECTION = {
+  storeyClear: 2.49,
+  floorZone: 0.205,
+  wallPlate: 5.47,   // above ground-floor FFL
+  secondFFL: 5.39,
+  depth: 9.49,
+  pitchDeg: 40,
+};
+
+const TAN_PITCH = Math.tan((SECTION.pitchDeg * Math.PI) / 180);
+const EAVES_ABOVE_FFL = SECTION.wallPlate - SECTION.secondFFL; // 0.08 m
+const RIDGE_Y = SECTION.depth / 2;
+
+/** Ceiling height above second-floor FFL at distance `y` from the front wall. */
+export function pitchedHeightAt(y) {
+  return EAVES_ABOVE_FFL + Math.min(y, SECTION.depth - y) * TAN_PITCH;
+}
+
+/** Sloping ceiling planes that follow the rafters across a room. */
+function pitchedCeiling(room, materials, y0) {
+  const g = new THREE.Group();
+  const { width: w, depth: d } = room;
+  const y1 = y0 + d;
+  const t = 0.05;
+
+  const plane = (zA, zB) => {
+    const hA = pitchedHeightAt(y0 + zA);
+    const hB = pitchedHeightAt(y0 + zB);
+    const run = zB - zA;
+    const len = Math.hypot(run, hB - hA);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, t, len), materials.ceiling);
+    mesh.position.set(w / 2, (hA + hB) / 2 + t / 2, (zA + zB) / 2);
+    mesh.rotation.x = -Math.atan2(hB - hA, run);
+    mesh.receiveShadow = true;
+    mesh.castShadow = true;
+    g.add(mesh);
+  };
+
+  if (y0 < RIDGE_Y && y1 > RIDGE_Y) {
+    plane(0, RIDGE_Y - y0);
+    plane(RIDGE_Y - y0, d);
+  } else {
+    plane(0, d);
+  }
+  return g;
+}
+
+/** Flat ceiling slab. */
+function flatCeiling(room, materials, height) {
+  return box(room.width, 0.05, room.depth, materials.ceiling, 0, height, 0);
+}
+
+const GROUND_H = SECTION.storeyClear;
+const FIRST_H = SECTION.storeyClear;
+
+/**
+ * Each entry describes one room: its size, how it is enclosed, what is in it
+ * and where the camera stands. `build` receives the room box, the material set
+ * and the resolved finishes.
+ */
+export const ROOM_SETS = {
+  /* ------------------------------------------------------------------ GROUND */
+  hall: {
+    width: 2.0, depth: 3.61, height: GROUND_H, floor: 'oakFloor',
+    camera: { pos: [1.62, 1.6, 0.62], target: [0.62, 1.05, 3.1], fov: 70 },
+    walls: (r, m) => [
+      // Front door D07 in the front wall, with a glazed top light beside it.
+      wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 0.5, w: 0.95, sill: 0, h: 2.08, kind: 'door' }] }),
+      wall({ side: 'back', ...r, material: m.wall }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall, openings: [{ u: 0.45, w: 0.82, sill: 0, h: 2.0, kind: 'door' }] }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      // External door leaf with a glazed panel over.
+      g.add(box(0.95, 2.08, 0.06, m.timberDark, 0.5, 0, -0.03));
+      g.add(box(0.5, 0.9, 0.02, m.sky, 0.72, 0.85, -0.055));
+      g.add(box(0.05, 0.05, 0.05, m.brass, 1.34, 1.02, -0.06));
+      // Stair rising against the left wall, away from the door.
+      const s = stair(m, { steps: 9, rise: 0.19, going: 0.235, width: 0.88 });
+      s.position.set(0.06, 0, 1.3);
+      g.add(s);
+      // Door through to the kitchen.
+      g.add(door({ side: 'right', room: r, u: 0.45, width: 0.82, materials: m, open: 0.55 }));
+      // Console table, mirror and a runner.
+      const c = table(m, { width: 0.85, depth: 0.32, height: 0.78 });
+      c.position.set(1.05, 0, 0.42);
+      g.add(c);
+      g.add(panelOnWall('left', r, m, { u: 0.4, sill: 0.95, width: 0.5, height: 0.95, material: m.mirror }));
+      g.add(rug(m, 1.0, 0.25, 0.85, 1.1));
+      g.add(plant(m, 1.7, 3.28, { height: 0.95 }));
+      g.add(bulkhead(m, 1.0, 1.0, r.height));
+      return g;
+    },
+  },
+
+  kitchen: {
+    width: 2.81, depth: 3.61, height: GROUND_H, floor: 'oakFloor',
+    camera: { pos: [0.42, 1.56, 3.32], target: [1.85, 1.05, 0.3], fov: 68 },
+    walls: (r, m) => [
+      // W05 and W06 to the front, as noted on the elevations.
+      wall({ side: 'front', ...r, material: m.wall, openings: [
+        { u: 0.36, w: 0.95, sill: 0.9, h: 1.2 },
+        { u: 1.5, w: 0.95, sill: 0.9, h: 1.2 },
+      ] }),
+      wall({ side: 'back', ...r, material: m.wall }),
+      wall({ side: 'left', ...r, material: m.wall, openings: [{ u: 2.3, w: 0.82, sill: 0, h: 2.0, kind: 'door' }] }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.36, w: 0.95, sill: 0.9, h: 1.2 } }));
+      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 1.5, w: 0.95, sill: 0.9, h: 1.2 } }));
+
+      // Base run down the right-hand wall, under the windows and returning.
+      const run = unitRun(m, { length: 3.0, height: 0.87, depth: 0.6, doorMat: m.kitchenUnit, count: 5 });
+      run.rotation.y = -Math.PI / 2;
+      run.position.set(r.width, 0, 0.3);
+      g.add(run);
+      const wtop = box(0.64, 0.04, 3.0, m.worktop, r.width - 0.64, 0.87, 0.3);
+      g.add(wtop);
+
+      // Wall units above, stopping short of the window reveal.
+      const wallRun = unitRun(m, { length: 1.5, height: 0.72, depth: 0.34, doorMat: m.kitchenWall, count: 3, plinth: 0 });
+      wallRun.rotation.y = -Math.PI / 2;
+      wallRun.position.set(r.width, 1.48, 1.8);
+      g.add(wallRun);
+
+      // Tall housing with the oven stack against the back wall.
+      const tall = unitRun(m, { length: 1.2, height: 2.15, depth: 0.6, doorMat: m.kitchenUnit, count: 2 });
+      tall.position.set(1.45, 0, r.depth - 0.6);
+      g.add(tall);
+      g.add(box(0.58, 0.58, 0.04, m.frame, 1.76, 0.92, r.depth - 0.62));
+      g.add(box(0.5, 0.06, 0.03, m.steel, 1.8, 1.16, r.depth - 0.65));
+
+      // Splashback and sink under the window.
+      g.add(box(0.02, 0.5, 2.9, m.tileWall, r.width - 0.66, 0.91, 0.35));
+      g.add(box(0.44, 0.02, 0.38, m.steel, r.width - 0.56, 0.885, 1.6));
+      g.add(cyl(0.018, 0.3, m.chrome, r.width - 0.2, 1.04, 1.6, 10));
+      g.add(box(0.2, 0.02, 0.03, m.chrome, r.width - 0.36, 1.18, 1.585));
+
+      // Island with a breakfast overhang and two stools.
+      const island = unitRun(m, { length: 1.5, height: 0.87, depth: 0.7, doorMat: m.kitchenUnit, count: 3 });
+      island.position.set(0.28, 0, 1.35);
+      g.add(island);
+      g.add(box(1.62, 0.045, 0.86, m.worktop, 0.22, 0.87, 1.27));
+      [0.6, 1.15].forEach((x) => {
+        g.add(cyl(0.03, 0.62, m.steel, x, 0.31, 2.28, 10));
+        g.add(cyl(0.16, 0.05, m.timberDark, x, 0.64, 2.28, 14));
+      });
+
+      g.add(pendant(m, 0.7, 1.7, r.height, { drop: 0.95, radius: 0.14 }));
+      g.add(pendant(m, 1.25, 1.7, r.height, { drop: 0.95, radius: 0.14 }));
+      g.add(door({ side: 'left', room: r, u: 2.3, width: 0.82, materials: m, open: 0.7 }));
+      return g;
+    },
+  },
+
+  wc: {
+    width: 1.06, depth: 1.68, height: GROUND_H, floor: 'tileFloor',
+    camera: { pos: [0.82, 1.5, 1.5], target: [0.45, 1.0, 0.2], fov: 74 },
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 0.28, w: 0.5, sill: 1.35, h: 0.7 }] }),
+      wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 0.15, w: 0.72, sill: 0, h: 2.0, kind: 'door' }] }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      g.add(tiledWalls(r, m, 1.15));
+      // Obscure-glazed W08: the sky plane sits behind a milky pane.
+      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.28, w: 0.5, sill: 1.35, h: 0.7 } }));
+      // Back-to-wall W/C with a concealed cistern, and a small basin.
+      g.add(box(0.55, 0.42, 0.22, m.tileWall, 0.25, 0, 0.02));
+      g.add(boxAt(0.37, 0.4, 0.56, m.sanitary, 0.52, 0.2, 0.46));
+      g.add(box(0.42, 0.04, 0.5, m.sanitary, 0.31, 0.4, 0.2));
+      g.add(box(0.5, 0.12, 0.34, m.sanitary, 0.28, 0.8, r.depth - 0.36));
+      g.add(cyl(0.015, 0.2, m.chrome, 0.53, 1.0, r.depth - 0.18, 10));
+      g.add(panelOnWall('back', r, m, { u: 0.3, sill: 1.15, width: 0.44, height: 0.6, material: m.mirror }));
+      g.add(box(0.06, 0.7, 0.06, m.chrome, r.width - 0.14, 0.75, 0.75));
+      return g;
+    },
+  },
+
+  dining: {
+    width: 3.79, depth: 1.68, height: GROUND_H, floor: 'oakFloor',
+    camera: { pos: [3.62, 1.56, 0.84], target: [0.15, 0.9, 0.84], fov: 66 },
+    walls: (r, m) => [
+      // Doors D03 / D04 off the hall, and a wide cased opening through to
+      // the living room at the rear — the plan's open middle band.
+      wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 0.3, w: 0.8, sill: 0, h: 2.0, kind: 'door' }] }),
+      wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 1.0, w: 2.2, sill: 0, h: 2.1, kind: 'door' }] }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      // Daylight borrowed from the living room beyond the cased opening.
+      g.add(box(2.2, 2.1, 0.02, m.interiorBeyond, r.width - 3.2, 0, r.depth + 0.04));
+      g.add(door({ side: 'front', room: r, u: 0.3, width: 0.8, materials: m, open: 0.6 }));
+
+      const t = table(m, { width: 1.7, depth: 0.88, height: 0.75 });
+      t.position.set(1.05, 0, 0.4);
+      g.add(t);
+      [[0.95, 0.02], [1.55, 0.02], [0.95, 1.22], [1.55, 1.22]].forEach(([x, z], i) => {
+        const c = chair(m);
+        c.position.set(x, 0, z);
+        if (i > 1) c.rotation.y = Math.PI;
+        g.add(c);
+      });
+      // Sideboard against the outer wall.
+      const sb = unitRun(m, { length: 1.3, height: 0.72, depth: 0.4, doorMat: m.timberDark, count: 3, plinth: 0.06 });
+      sb.position.set(2.3, 0, 0.04);
+      g.add(sb);
+      g.add(panelOnWall('front', r, m, { u: 2.5, sill: 1.05, width: 0.9, height: 0.66, material: m.fabricDeep }));
+      g.add(pendant(m, 1.9, 0.84, r.height, { drop: 1.0, radius: 0.19 }));
+      g.add(rug(m, 0.7, 0.18, 2.4, 1.32));
+      return g;
+    },
+  },
+
+  living: {
+    width: 4.95, depth: 3.23, height: GROUND_H, floor: 'oakFloor',
+    camera: { pos: [4.56, 1.6, 0.52], target: [1.35, 0.95, 2.82], fov: 64 },
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 1.2, w: 2.2, sill: 0, h: 2.1, kind: 'door' }] }),
+      // Rear wall: garden doors D01/D02 with window W01 alongside.
+      wall({ side: 'back', ...r, material: m.wall, openings: [
+        { u: 0.6, w: 1.75, sill: 0, h: 2.1 },
+        { u: 2.75, w: 1.5, sill: 0.9, h: 1.2 },
+      ] }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 0.6, w: 1.75, sill: 0, h: 2.1 } }));
+      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 2.75, w: 1.5, sill: 0.9, h: 1.2 } }));
+      // Steel beam over, encased and expressed as a shallow downstand.
+      g.add(box(r.width, 0.16, 0.22, m.ceiling, 0, r.height - 0.16, r.depth - 0.34));
+
+      // Seating down the left-hand wall so the garden doors stay in view.
+      const s = sofa(m, { width: 2.3, depth: 0.9 });
+      s.rotation.y = -Math.PI / 2;
+      s.position.set(0.98, 0, 0.42);
+      g.add(s);
+      const arm = sofa(m, { width: 0.98, depth: 0.86 });
+      arm.rotation.y = Math.PI;
+      arm.position.set(3.15, 0.0, 0.92);
+      g.add(arm);
+      const ct = table(m, { width: 1.05, depth: 0.58, height: 0.38 });
+      ct.position.set(1.72, 0, 1.28);
+      g.add(ct);
+      g.add(box(0.26, 0.03, 0.19, m.linen, 2.1, 0.38, 1.47));
+      g.add(rug(m, 1.35, 0.72, 2.3, 1.7));
+
+      // Low shelving on the right-hand wall, and planting by the doors.
+      const shelf = unitRun(m, { length: 1.5, height: 0.52, depth: 0.4, doorMat: m.timberDark, count: 3, plinth: 0.05 });
+      shelf.rotation.y = -Math.PI / 2;
+      shelf.position.set(r.width - 0.04, 0, 0.95);
+      g.add(shelf);
+      g.add(box(0.04, 0.58, 1.02, m.frame, r.width - 0.12, 0.82, 1.2));
+      g.add(plant(m, 2.35, 2.78, { height: 1.3 }));
+      // Floor lamp in the corner by the window.
+      g.add(cyl(0.035, 1.45, m.frame, 0.42, 0.72, 2.85, 10));
+      g.add(cyl(0.16, 0.26, m.linen, 0.42, 1.55, 2.85, 16));
+      return g;
+    },
+  },
+
+  /* ------------------------------------------------------------------- FIRST */
+  master: {
+    width: 3.64, depth: 2.76, height: FIRST_H, floor: 'carpet',
+    camera: { pos: [3.45, 1.66, 0.28], target: [1.5, 1.0, 2.62], fov: 70 },
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 0.4, w: 0.82, sill: 0, h: 2.0, kind: 'door' }] }),
+      // W10 and W11 over the garden.
+      wall({ side: 'back', ...r, material: m.wall, openings: [
+        { u: 0.5, w: 1.1, sill: 0.9, h: 1.2 },
+        { u: 2.05, w: 1.1, sill: 0.9, h: 1.2 },
+      ] }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 0.5, w: 1.1, sill: 0.9, h: 1.2 } }));
+      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 2.05, w: 1.1, sill: 0.9, h: 1.2 } }));
+      const b = bed(m, { width: 1.5, length: 2.0 });
+      b.position.set(1.02, 0, 0.12);
+      g.add(b);
+      [[0.6, 0.55], [2.62, 0.55]].forEach(([x, z]) => {
+        const t = unitRun(m, { length: 0.42, height: 0.5, depth: 0.38, doorMat: m.timberDark, count: 1, plinth: 0.05 });
+        t.position.set(x - 0.21, 0, z);
+        g.add(t);
+        g.add(cyl(0.11, 0.2, m.linen, x, 0.62, z + 0.19, 14));
+      });
+      // Wardrobe run against the left wall.
+      const wr = unitRun(m, { length: 2.0, height: 2.15, depth: 0.6, doorMat: m.door, count: 3 });
+      wr.rotation.y = Math.PI / 2;
+      wr.position.set(0.04, 0, 2.55);
+      g.add(wr);
+      g.add(door({ side: 'front', room: r, u: 0.4, width: 0.82, materials: m, open: 0 }));
+      g.add(rug(m, 0.82, 0.16, 1.9, 0.8, m.carpet));
+      return g;
+    },
+  },
+
+  ensuite: {
+    width: 1.21, depth: 2.76, height: FIRST_H, floor: 'tileFloor',
+    camera: { pos: [0.95, 1.55, 2.5], target: [0.5, 1.05, 0.25], fov: 72 },
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 0.3, w: 0.55, sill: 1.3, h: 0.75 }] }),
+      wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 0.22, w: 0.76, sill: 0, h: 2.0, kind: 'door' }] }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      g.add(tiledWalls(r, m, 2.1));
+      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.3, w: 0.55, sill: 1.3, h: 0.75 } }));
+      // Walk-in shower at the window end behind a glazed screen.
+      g.add(box(r.width, 0.03, 1.0, m.tileFloor, 0, 0.005, 0.02));
+      g.add(box(0.02, 2.0, 0.75, m.glass, r.width - 0.32, 0.03, 1.0));
+      g.add(cyl(0.11, 0.03, m.chrome, 0.6, 2.06, 0.5, 16));
+      g.add(cyl(0.016, 0.42, m.chrome, 0.6, 1.85, 0.5, 10));
+      g.add(box(0.44, 0.14, 0.34, m.sanitary, 0.38, 0.82, 1.55));
+      g.add(cyl(0.014, 0.18, m.chrome, 0.6, 1.0, 1.78, 10));
+      g.add(panelOnWall('right', r, m, { u: 1.4, sill: 1.15, width: 0.5, height: 0.68, material: m.mirror }));
+      g.add(boxAt(0.36, 0.4, 0.55, m.sanitary, 0.55, 0.2, 2.35));
+      g.add(box(0.06, 0.8, 0.06, m.chrome, 0.06, 0.9, 1.5));
+      return g;
+    },
+  },
+
+  bath: {
+    width: 3.75, depth: 1.7, height: FIRST_H, floor: 'tileFloor',
+    camera: { pos: [3.4, 1.52, 1.42], target: [1.2, 0.95, 0.6], fov: 72 },
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall }),
+      wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 0.35, w: 0.76, sill: 0, h: 2.0, kind: 'door' }] }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      g.add(tiledWalls(r, m, 2.1));
+      // Bath along the front wall with an overhead shower.
+      // Bath: panel, rim and a recessed inner surface.
+      g.add(box(1.7, 0.56, 0.72, m.sanitary, 0.22, 0, 0.05));
+      g.add(box(1.7, 0.03, 0.09, m.sanitary, 0.22, 0.56, 0.05));
+      g.add(box(1.7, 0.03, 0.09, m.sanitary, 0.22, 0.56, 0.68));
+      g.add(box(0.09, 0.03, 0.72, m.sanitary, 0.22, 0.56, 0.05));
+      g.add(box(0.09, 0.03, 0.72, m.sanitary, 1.83, 0.56, 0.05));
+      g.add(box(1.52, 0.04, 0.54, m.tileFloor, 0.31, 0.4, 0.14));
+      g.add(cyl(0.1, 0.03, m.chrome, 1.07, 2.0, 0.28, 16));
+      g.add(cyl(0.015, 0.45, m.chrome, 1.07, 1.78, 0.28, 10));
+      g.add(box(0.02, 1.35, 0.7, m.glass, 1.92, 0.56, 0.06));
+      g.add(cyl(0.016, 0.16, m.chrome, 0.32, 0.64, 0.4, 10));
+      // Vanity and W/C along the run.
+      g.add(unitRun(m, { length: 0.9, height: 0.8, depth: 0.45, doorMat: m.door, count: 2, plinth: 0.06 }).translateX(2.25));
+      g.add(box(0.96, 0.05, 0.48, m.worktop, 2.22, 0.8, 0));
+      g.add(box(0.44, 0.12, 0.3, m.sanitary, 2.48, 0.85, 0.06));
+      g.add(cyl(0.014, 0.2, m.chrome, 2.7, 1.0, 0.32, 10));
+      g.add(panelOnWall('front', r, m, { u: 2.35, sill: 1.1, width: 0.7, height: 0.7, material: m.mirror }));
+      g.add(boxAt(0.37, 0.4, 0.56, m.sanitary, 3.4, 0.2, 0.42));
+      g.add(box(0.5, 0.42, 0.2, m.tileWall, 3.15, 0, 0.02));
+      g.add(box(0.06, 0.85, 0.06, m.chrome, 3.62, 0.9, 1.15));
+      return g;
+    },
+  },
+
+  bed3: {
+    width: 3.75, depth: 2.95, height: FIRST_H, floor: 'carpet',
+    camera: { pos: [3.4, 1.55, 2.62], target: [1.5, 1.1, 0.3], fov: 66 },
+    walls: (r, m) => [
+      // W16 and W17 to the front.
+      wall({ side: 'front', ...r, material: m.wall, openings: [
+        { u: 0.55, w: 1.05, sill: 0.9, h: 1.2 },
+        { u: 2.15, w: 1.05, sill: 0.9, h: 1.2 },
+      ] }),
+      wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 0.4, w: 0.82, sill: 0, h: 2.0, kind: 'door' }] }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.55, w: 1.05, sill: 0.9, h: 1.2 } }));
+      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 2.15, w: 1.05, sill: 0.9, h: 1.2 } }));
+      const b = bed(m, { width: 1.35, length: 1.95 });
+      b.rotation.y = Math.PI / 2;
+      b.position.set(0.12, 0, 0.55);
+      g.add(b);
+      const t = unitRun(m, { length: 0.4, height: 0.5, depth: 0.36, doorMat: m.timberDark, count: 1, plinth: 0.05 });
+      t.position.set(0.18, 0, 2.05);
+      g.add(t);
+      g.add(cyl(0.1, 0.19, m.linen, 0.38, 0.6, 2.23, 14));
+      // Desk under the second window.
+      const d = table(m, { width: 1.2, depth: 0.55, height: 0.74 });
+      d.position.set(2.1, 0, 0.1);
+      g.add(d);
+      const c = chair(m);
+      c.position.set(2.5, 0, 0.72);
+      c.rotation.y = Math.PI;
+      g.add(c);
+      const wr = unitRun(m, { length: 1.1, height: 2.1, depth: 0.58, doorMat: m.door, count: 2 });
+      wr.position.set(1.35, 0, r.depth - 0.58);
+      g.add(wr);
+      g.add(rug(m, 1.5, 1.35, 1.4, 1.05, m.carpet));
+      return g;
+    },
+  },
+
+  landing: {
+    width: 1.11, depth: 6.035, height: FIRST_H, floor: 'oakFloor',
+    camera: { pos: [0.24, 1.64, 5.75], target: [0.95, 1.05, 0.9], fov: 76 },
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall }),
+      wall({ side: 'back', ...r, material: m.wall }),
+      wall({ side: 'left', ...r, material: m.wall, openings: [{ u: 1.6, w: 0.5, sill: 1.0, h: 1.0 }] }),
+      // Doors off the landing: bedroom 3, bathroom, cupboard, master.
+      wall({ side: 'right', ...r, material: m.wall, openings: [
+        { u: 0.55, w: 0.8, sill: 0, h: 2.0, kind: 'door' },
+        { u: 1.9, w: 0.76, sill: 0, h: 2.0, kind: 'door' },
+        { u: 3.2, w: 0.76, sill: 0, h: 2.0, kind: 'door' },
+        { u: 4.6, w: 0.82, sill: 0, h: 2.0, kind: 'door' },
+      ] }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      g.add(glazing({ side: 'left', room: r, materials: m, opening: { u: 1.6, w: 0.5, sill: 1.0, h: 1.0 } }));
+      [0.55, 1.9, 3.2, 4.6].forEach((u, i) =>
+        g.add(door({ side: 'right', room: r, u, width: i === 0 || i === 3 ? 0.82 : 0.76, materials: m, open: i === 1 ? 0.5 : 0 })),
+      );
+      // Stair void with a balustrade down the middle of the run.
+      g.add(box(0.06, 0.95, 2.3, m.skirting, 0.02, 0, 2.3));
+      g.add(box(0.1, 0.06, 2.3, m.timberDark, 0.0, 0.95, 2.3));
+      g.add(rug(m, 0.14, 4.6, 0.82, 1.2));
+      g.add(panelOnWall('back', r, m, { u: 0.3, sill: 1.2, width: 0.5, height: 0.64, material: m.fabricDeep }));
+      g.add(bulkhead(m, 0.55, 1.4, r.height));
+      g.add(bulkhead(m, 0.55, 4.6, r.height));
+      return g;
+    },
+  },
+
+  /* ------------------------------------------------------------------ SECOND */
+  bed2: {
+    width: 3.93, depth: 4.89, y0: 1.75, pitched: true, floor: 'carpet',
+    camera: { pos: [3.55, 1.5, 4.5], target: [1.6, 1.15, 0.6], fov: 68 },
+    rooflights: [{ u: 1.1, along: 1.4 }, { u: 2.5, along: 1.4 }],
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall }),
+      wall({ side: 'back', ...r, material: m.wall }),
+      wall({ side: 'left', ...r, material: m.wall, openings: [{ u: 3.6, w: 0.76, sill: 0, h: 2.0, kind: 'door' }] }),
+      wall({ side: 'right', ...r, material: m.wall, openings: [{ u: 2.0, w: 0.9, sill: 0.6, h: 1.1 }] }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      // W18 in the gable wall.
+      g.add(glazing({ side: 'right', room: r, materials: m, opening: { u: 2.0, w: 0.9, sill: 0.6, h: 1.1 } }));
+      const b = bed(m, { width: 1.6, length: 2.05 });
+      b.position.set(1.1, 0, 0.35);
+      g.add(b);
+      [[0.78, 0.8], [2.92, 0.8]].forEach(([x, z]) => {
+        const t = unitRun(m, { length: 0.4, height: 0.48, depth: 0.36, doorMat: m.timberDark, count: 1, plinth: 0.05 });
+        t.position.set(x - 0.2, 0, z);
+        g.add(t);
+        g.add(cyl(0.1, 0.18, m.linen, x, 0.58, z + 0.18, 14));
+      });
+      // Low chest tucked where the ceiling comes down at the rear.
+      const chest = unitRun(m, { length: 1.3, height: 0.8, depth: 0.45, doorMat: m.door, count: 3, plinth: 0.06 });
+      chest.position.set(1.3, 0, r.depth - 0.46);
+      g.add(chest);
+      g.add(door({ side: 'left', room: r, u: 3.6, width: 0.76, materials: m, open: 0.4 }));
+      g.add(rug(m, 1.15, 2.55, 1.9, 1.35, m.carpet));
+      g.add(plant(m, 0.55, 3.9, { height: 1.05 }));
+      return g;
+    },
+  },
+
+  ensuite2: {
+    width: 1.21, depth: 1.9, y0: 1.75, pitched: true, floor: 'tileFloor',
+    camera: { pos: [0.95, 1.45, 1.72], target: [0.5, 1.0, 0.2], fov: 74 },
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall }),
+      wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 0.22, w: 0.76, sill: 0, h: 2.0, kind: 'door' }] }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      g.add(tiledWalls(r, m, 1.5));
+      g.add(box(r.width, 0.03, 0.9, m.tileFloor, 0, 0.005, 0.02));
+      g.add(box(0.02, 1.9, 0.7, m.glass, r.width - 0.3, 0.03, 0.9));
+      g.add(cyl(0.1, 0.03, m.chrome, 0.6, 1.95, 0.45, 16));
+      g.add(cyl(0.015, 0.4, m.chrome, 0.6, 1.74, 0.45, 10));
+      g.add(box(0.42, 0.13, 0.32, m.sanitary, 0.4, 0.82, 1.1));
+      g.add(cyl(0.014, 0.17, m.chrome, 0.61, 1.0, 1.32, 10));
+      g.add(panelOnWall('right', r, m, { u: 1.0, sill: 1.1, width: 0.42, height: 0.56, material: m.mirror }));
+      g.add(boxAt(0.35, 0.4, 0.54, m.sanitary, 0.55, 0.2, 1.62));
+      // Soil and vent pipe alongside, as noted on the plan.
+      g.add(cyl(0.055, 1.9, m.skirting, 0.12, 0.95, 1.75, 12));
+      return g;
+    },
+  },
+
+  landing2: {
+    width: 0.98, depth: 4.89, y0: 1.75, pitched: true, floor: 'oakFloor',
+    camera: { pos: [0.49, 1.52, 4.6], target: [0.49, 1.02, 0.35], fov: 72 },
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall }),
+      wall({ side: 'back', ...r, material: m.wall }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall, openings: [
+        { u: 0.6, w: 0.76, sill: 0, h: 2.0, kind: 'door' },
+        { u: 2.4, w: 0.76, sill: 0, h: 2.0, kind: 'door' },
+      ] }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      [0.6, 2.4].forEach((u, i) =>
+        g.add(door({ side: 'right', room: r, u, width: 0.76, materials: m, open: i === 0 ? 0.45 : 0 })),
+      );
+      // Stair arriving from the first floor, with a balustrade to the void.
+      g.add(box(0.06, 0.95, 1.9, m.skirting, 0.02, 0, 2.6));
+      g.add(box(0.1, 0.06, 1.9, m.timberDark, 0.0, 0.95, 2.6));
+      const s = stair(m, { steps: 5, rise: 0.19, going: 0.235, width: 0.78 });
+      s.rotation.y = Math.PI;
+      s.position.set(0.88, -0.95, 4.6);
+      g.add(s);
+      // Low access door into the front eaves store.
+      g.add(box(0.72, 0.95, 0.04, m.door, 0.14, 0, 0.03));
+      g.add(bulkhead(m, 0.49, 1.6, 2.2));
+      return g;
+    },
+  },
+
+  store: {
+    width: 4.945, depth: 1.3, y0: 0.35, pitched: true, floor: 'boarded',
+    camera: { pos: [4.7, 0.78, 0.66], target: [0.25, 0.4, 0.66], fov: 66 },
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall }),
+      wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 1.9, w: 0.76, sill: 0, h: 1.0, kind: 'door' }] }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      // Boarded-out eaves with shelving and stored boxes — the space the
+      // 40° pitch leaves behind the second-floor rooms.
+      g.add(box(2.3, 0.035, 0.42, m.boarded, 0.45, 0.46, 0.1));
+      [[0.55, 0.16, 'a'], [1.18, 0.2, 'b'], [1.78, 0.14, 'a']].forEach(([x, z, k]) => {
+        g.add(box(0.34, 0.24, 0.28, k === 'b' ? m.timberDark : m.fabricWarm, x, 0.5, z));
+      });
+      g.add(box(0.4, 0.3, 0.32, m.fabricWarm, 3.15, 0, 0.16));
+      g.add(box(0.34, 0.24, 0.28, m.timberDark, 3.18, 0.3, 0.2));
+      g.add(box(0.42, 0.26, 0.3, m.fabricWarm, 3.72, 0, 0.22));
+      g.add(box(0.55, 0.42, 0.05, m.timberDark, 4.2, 0, 0.42));
+      g.add(bulkhead(m, 2.3, 0.62, 1.08));
+      // Light spilling in from the top landing through door D18.
+      g.add(box(0.76, 0.98, 0.02, m.interiorBeyond, 1.9, 0, r.depth + 0.02));
+      return g;
+    },
+  },
+
+  store2: {
+    width: 4.945, depth: 1.45, y0: 7.695, pitched: true, floor: 'boarded',
+    camera: { pos: [4.7, 0.84, 0.78], target: [0.25, 0.42, 0.78], fov: 66 },
+    walls: (r, m) => [
+      wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 1.9, w: 0.76, sill: 0, h: 1.05, kind: 'door' }] }),
+      wall({ side: 'back', ...r, material: m.wall }),
+      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'right', ...r, material: m.wall }),
+    ],
+    build: (r, m) => {
+      const g = new THREE.Group();
+      g.add(box(2.4, 0.035, 0.46, m.boarded, 0.52, 0.52, 0.76));
+      [[0.66, 0.82, 'a'], [1.28, 0.86, 'b'], [1.9, 0.8, 'a']].forEach(([x, z, k]) => {
+        g.add(box(0.36, 0.26, 0.3, k === 'b' ? m.timberDark : m.fabricWarm, x, 0.56, z));
+      });
+      g.add(box(0.42, 0.32, 0.34, m.fabricWarm, 3.2, 0, 0.88));
+      g.add(box(0.36, 0.26, 0.3, m.timberDark, 3.23, 0.32, 0.9));
+      g.add(box(0.44, 0.28, 0.32, m.fabricWarm, 3.8, 0, 0.92));
+      g.add(box(0.6, 0.44, 0.05, m.timberDark, 4.25, 0, 0.9));
+      // Air admittance valve within the eaves, as noted on sheet 03.
+      g.add(cyl(0.05, 0.5, m.skirting, 0.22, 0.25, 1.15, 10));
+      g.add(bulkhead(m, 2.4, 0.85, 1.16));
+      // Light spilling in from the top landing through door D21.
+      g.add(box(0.76, 1.03, 0.02, m.interiorBeyond, 1.9, 0, -0.02));
+      return g;
+    },
+  },
+};
+
+/** Assembles one room: shell, openings, fit-out and lighting rig. */
+export function buildRoom(key, materials) {
+  const set = ROOM_SETS[key];
+  if (!set) throw new Error(`No room set for "${key}"`);
+
+  // Under the pitch there is no single ceiling height, so the walls are built
+  // to the tallest point the room reaches and the sloping ceiling planes cut
+  // across them. Anything above the slope is hidden from inside the room.
+  const peak = set.pitched
+    ? Math.max(
+        pitchedHeightAt(set.y0),
+        pitchedHeightAt(set.y0 + set.depth),
+        set.y0 < RIDGE_Y && set.y0 + set.depth > RIDGE_Y ? pitchedHeightAt(RIDGE_Y) : 0,
+      )
+    : set.height;
+  const room = { width: set.width, depth: set.depth, height: Math.max(peak, 1.0) };
+
+  const g = new THREE.Group();
+  const floorMat = materials[set.floor].clone();
+  if (floorMat.map) {
+    // One texture tile per 2 m of floor, so board and tile sizes stay
+    // consistent from the 1.06 m W/C to the 4.95 m living room.
+    floorMat.map = floorMat.map.clone();
+    floorMat.map.needsUpdate = true;
+    floorMat.map.repeat.set(Math.max(1, room.width / 2), Math.max(1, room.depth / 2));
+  }
+  g.add(box(room.width, 0.04, room.depth, floorMat, 0, -0.04, 0));
+  set.walls(room, materials).forEach((w) => g.add(w));
+
+  if (set.pitched) {
+    g.add(pitchedCeiling(room, materials, set.y0));
+    // Rooflights let daylight down the slope where the drawings show them.
+    (set.rooflights ?? []).forEach((rl) => {
+      const h = pitchedHeightAt(set.y0 + rl.along);
+      const pane = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.03, 0.9), materials.sky);
+      pane.position.set(rl.u, h - 0.03, rl.along);
+      pane.rotation.x = -((SECTION.pitchDeg * Math.PI) / 180);
+      g.add(pane);
+    });
+  } else {
+    g.add(flatCeiling(room, materials, room.height));
+    g.add(skirting(room, materials));
+  }
+
+  g.add(set.build(room, materials));
+  return { group: g, room, set };
+}

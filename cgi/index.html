@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Walker Good Homes — CGI render stage</title>
+<style>html,body{margin:0;background:#111;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">
+{ "imports": {
+    "three": "/node_modules/three/build/three.module.js",
+    "three/addons/": "/node_modules/three/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import { buildRoom, ROOM_SETS } from '/cgi/scene/rooms.mjs';
+import { makeMaterials } from '/cgi/scene/materials.mjs';
+import { lightInterior, makeRenderer, makeCamera } from '/cgi/scene/stage.mjs';
+import { buildExterior, lightExterior, EXTERIOR_VIEWS, BLOCK } from '/cgi/scene/exterior.mjs';
+
+const canvas = document.getElementById('stage');
+let renderer = null;
+let size = { w: 0, h: 0 };
+
+function ensureRenderer(w, h) {
+  if (!renderer || size.w !== w || size.h !== h) {
+    canvas.width = w;
+    canvas.height = h;
+    if (renderer) renderer.dispose();
+    renderer = makeRenderer(canvas, w, h);
+    size = { w, h };
+  }
+  return renderer;
+}
+
+function disposeScene(scene) {
+  scene.traverse((o) => {
+    if (o.geometry) o.geometry.dispose();
+    if (o.material) {
+      const mats = Array.isArray(o.material) ? o.material : [o.material];
+      mats.forEach((m) => {
+        if (m.map) m.map.dispose();
+        m.dispose();
+      });
+    }
+  });
+}
+
+/** Renders one interior. Returns the room's metadata for the manifest. */
+const LEVEL_OF = {
+  hall: 'ground', kitchen: 'ground', wc: 'ground', dining: 'ground', living: 'ground',
+  master: 'first', ensuite: 'first', bath: 'first', bed3: 'first', landing: 'first',
+  bed2: 'second', ensuite2: 'second', landing2: 'second', store: 'second', store2: 'second',
+};
+
+function renderRoom(roomKey, finishes, width, height) {
+  const r = ensureRenderer(width, height);
+  const materials = makeMaterials(finishes, LEVEL_OF[roomKey] ?? 'ground');
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#0d1117');
+
+  const { group, room, set } = buildRoom(roomKey, materials);
+  scene.add(group);
+  lightInterior(scene, group, room);
+
+  const camera = makeCamera(set.camera, width, height);
+  r.render(scene, camera);
+  const meta = { room: roomKey, width: room.width, depth: room.depth };
+  disposeScene(scene);
+  return meta;
+}
+
+function renderExterior(view, width, height) {
+  const r = ensureRenderer(width, height);
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#c3d8e8');
+  scene.fog = new THREE.Fog('#c8dbe9', 55, 165);
+  scene.add(buildExterior({}));
+  lightExterior(scene);
+  const cam = EXTERIOR_VIEWS[view];
+  if (!cam) throw new Error(`No exterior view "${view}"`);
+  const camera = makeCamera(cam, width, height);
+  r.render(scene, camera);
+  disposeScene(scene);
+  return { view, block: BLOCK.width };
+}
+
+/**
+ * Hands the driver the rendered pixels as a data URL.
+ *
+ * Reading the canvas directly rather than screenshotting the element keeps the
+ * capture independent of the page viewport — an element wider than the viewport
+ * screenshots with the overflow blacked out.
+ */
+function capture() {
+  return canvas.toDataURL('image/png');
+}
+
+function limits() {
+  const gl = renderer.getContext();
+  return {
+    maxViewport: gl.getParameter(gl.MAX_VIEWPORT_DIMS),
+    maxRenderbuffer: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
+    maxTexture: gl.getParameter(gl.MAX_TEXTURE_SIZE),
+  };
+}
+
+window.CGI = {
+  rooms: Object.keys(ROOM_SETS),
+  views: Object.keys(EXTERIOR_VIEWS),
+  viewAspects: Object.fromEntries(
+    Object.entries(EXTERIOR_VIEWS).map(([k, v]) => [k, v.aspect ?? [16, 9]]),
+  ),
+  renderRoom,
+  renderExterior,
+  capture,
+  limits,
+};
+window.__CGI_READY = true;
+</script>
+</body>
+</html>
