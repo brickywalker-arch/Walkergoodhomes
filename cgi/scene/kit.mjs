@@ -508,43 +508,57 @@ export function pendant(materials, cx, cz, ceilingH, { drop = 0.85, radius = 0.1
 export function plant(materials, cx, cz, { height: h = 0.95 } = {}) {
   const g = new THREE.Group();
 
-  // Tapered pot with a rim.
-  const pot = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.15, 0.115, 0.3, 24),
-    materials.frame,
-  );
+  // Tapered pot with a rim and compost.
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.115, 0.3, 24), materials.frame);
   pot.position.set(cx, 0.15, cz);
   pot.castShadow = true;
   pot.receiveShadow = true;
   g.add(pot);
   g.add(cyl(0.158, 0.022, materials.frame, cx, 0.3, cz, 24));
-  // Compost, so the pot is not an empty tube.
   g.add(cyl(0.142, 0.02, materials.timberDark, cx, 0.3, cz, 20));
 
-  const leaves = 16;
-  for (let i = 0; i < leaves; i += 1) {
-    const a = (i / leaves) * Math.PI * 2 * 1.618;
-    const t = i / (leaves - 1);
-    const stemH = h * (0.2 + t * 0.34);
-    const lean = 0.3 + t * 0.4;
-    const reach = 0.07 + t * 0.14;
-    const sx = cx + Math.cos(a) * reach;
-    const sz = cz + Math.sin(a) * reach;
+  /*
+   * Read as a bush, not a bunch of sticks. Foliage fills a rough ellipsoid
+   * sitting on the pot, dense enough that the stems inside it barely show;
+   * leaves are leaf-sized rather than the half-metre discs this used to have,
+   * and every one gets its own tilt so no two catch the light the same way.
+   */
+  const base = 0.32;
+  const crownH = h * 0.78;
+  const crownR = 0.3;
+  const cy = base + crownH * 0.52;
 
-    // Stem, leaning outward from the pot.
-    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.011, stemH, 8), materials.timberDark);
-    stem.position.set((cx + sx) / 2, 0.3 + stemH / 2, (cz + sz) / 2);
-    stem.rotation.set(Math.sin(a) * lean * 0.7, 0, -Math.cos(a) * lean * 0.7);
-    stem.castShadow = true;
-    g.add(stem);
+  // A few short stems rising out of the compost into the mass.
+  for (let i = 0; i < 4; i += 1) {
+    const a = i * 1.9;
+    const lean = 0.18;
+    const st = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.013, crownH * 0.7, 6), materials.timberDark);
+    st.position.set(cx + Math.cos(a) * 0.03, base + crownH * 0.33, cz + Math.sin(a) * 0.03);
+    st.rotation.set(Math.sin(a) * lean, 0, -Math.cos(a) * lean);
+    g.add(st);
+  }
 
-    // Broad leaf: a flattened sphere, tilted and turned.
-    const leaf = new THREE.Mesh(new THREE.SphereGeometry(1, 14, 9), materials.plant);
-    const size = 0.2 + t * 0.12;
-    // Flattened and elongated: a broad leaf, not a ball.
-    leaf.scale.set(size * 0.54, size * 0.07, size);
-    leaf.position.set(sx + Math.cos(a) * size * 0.52, 0.3 + stemH, sz + Math.sin(a) * size * 0.52);
-    leaf.rotation.set(Math.sin(a) * 0.42 - 0.3, -a, Math.cos(a) * 0.42);
+  const LEAVES = 150;
+  for (let i = 0; i < LEAVES; i += 1) {
+    // Distribute through the volume, biased outward so the centre is not bald.
+    const a = i * 2.399963;
+    const u = (i + 0.5) / LEAVES;
+    const rr = Math.cbrt(0.25 + u * 0.75);
+    const phi = Math.acos(1 - 2 * ((i * 0.618) % 1));
+    const px = cx + Math.sin(phi) * Math.cos(a) * crownR * rr;
+    const py = cy + Math.cos(phi) * crownH * 0.46 * rr;
+    const pz = cz + Math.sin(phi) * Math.sin(a) * crownR * rr;
+    if (py < base + 0.03) continue;
+
+    const size = 0.055 + ((i * 7) % 5) * 0.008;
+    const leaf = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 6), materials.plant);
+    leaf.scale.set(size * 0.46, size * 0.055, size);
+    leaf.position.set(px, py, pz);
+    leaf.rotation.set(
+      (((i * 13) % 17) / 17 - 0.5) * 1.5,
+      -a + ((i % 3) - 1) * 0.35,
+      (((i * 29) % 11) / 11 - 0.5) * 1.1,
+    );
     leaf.castShadow = true;
     leaf.receiveShadow = true;
     g.add(leaf);
@@ -552,7 +566,6 @@ export function plant(materials, cx, cz, { height: h = 0.95 } = {}) {
   return g;
 }
 
-/** A rug lying just above the floor so it never z-fights. */
 export function rug(materials, x, z, w, d, material) {
   const mat = (material ?? materials.rug).clone();
   if (mat.map) {

@@ -252,31 +252,33 @@ export function viewTexture(level = 'ground') {
   const H = S * horizon;
 
   /*
-   * What made the old view read as a cartoon was that everything sat at the
-   * same contrast: hard-edged clouds, one flat ridge, blobs for a hedge. Real
-   * distance desaturates and lightens — aerial perspective — so this builds
-   * the view in receding bands, each one paler, softer and lower in contrast
-   * than the one in front of it.
+   * Built the way a landscape actually reads: soft fractal cloud rather than
+   * drawn shapes, trees made of overlapping crowns with trunks instead of a
+   * zigzag silhouette, and every band further away paler, softer and lower in
+   * contrast than the one in front of it. Straight lines and repeated shapes
+   * are what made the old one look painted.
    */
   const sky = g.createLinearGradient(0, 0, 0, H);
-  sky.addColorStop(0, '#6f9cc4');
-  sky.addColorStop(0.45, '#9dc2dc');
-  sky.addColorStop(0.82, '#c9dee9');
-  sky.addColorStop(1, '#e4eef2');       // haze sitting on the horizon
+  sky.addColorStop(0, '#5d90bd');
+  sky.addColorStop(0.4, '#8fb8d6');
+  sky.addColorStop(0.78, '#c3dbe8');
+  sky.addColorStop(1, '#e6eef1');
   g.fillStyle = sky;
   g.fillRect(0, 0, S, H);
 
-  // Cloud, built from many soft low-alpha passes rather than a few hard ovals.
-  for (let band = 0; band < 3; band += 1) {
-    const y0 = H * (0.08 + band * 0.22);
-    const alpha = 0.10 - band * 0.025;
-    for (let i = 0; i < 90; i += 1) {
+  // Cloud: several octaves of soft blobs, each finer and fainter.
+  for (let oct = 0; oct < 4; oct += 1) {
+    const r = 340 / (oct + 1);
+    const alpha = 0.055 / (oct * 0.6 + 1);
+    const count = 40 * (oct + 1);
+    for (let i = 0; i < count; i += 1) {
       const x = Math.random() * S;
-      const y = y0 + (Math.random() - 0.5) * H * 0.26;
-      const rx = 90 + Math.random() * 300;
-      const ry = 14 + Math.random() * 30;
+      const y = Math.random() * H * 0.82;
+      const rx = r * (0.5 + Math.random());
+      const ry = rx * (0.2 + Math.random() * 0.2);
       const grad = g.createRadialGradient(x, y, 0, x, y, rx);
       grad.addColorStop(0, `rgba(255,255,255,${alpha})`);
+      grad.addColorStop(0.6, `rgba(255,255,255,${alpha * 0.4})`);
       grad.addColorStop(1, 'rgba(255,255,255,0)');
       g.fillStyle = grad;
       g.beginPath();
@@ -285,78 +287,97 @@ export function viewTexture(level = 'ground') {
     }
   }
 
-  /** One receding band of trees, hazed back toward the sky colour. */
-  const treeLine = (baseY, height, colour, haze, step) => {
+  /** A belt of trees: overlapping crowns on trunks, hazed by distance. */
+  const belt = (baseY, scale, tone, haze, spacing) => {
     g.save();
     g.globalAlpha = 1 - haze;
-    g.fillStyle = colour;
-    g.beginPath();
-    g.moveTo(0, baseY + height);
-    for (let x = -step; x <= S + step; x += step) {
-      const crown = height * (0.55 + Math.random() * 0.75);
-      g.lineTo(x, baseY + height - crown);
-      g.lineTo(x + step * 0.5, baseY + height - crown * (0.6 + Math.random() * 0.5));
+    for (let x = -spacing; x < S + spacing; x += spacing * (0.6 + Math.random() * 0.8)) {
+      const hgt = scale * (0.65 + Math.random() * 0.8);
+      const wid = hgt * (0.55 + Math.random() * 0.5);
+      // Trunk.
+      g.strokeStyle = tone;
+      g.lineWidth = Math.max(1, hgt * 0.06);
+      g.beginPath();
+      g.moveTo(x, baseY);
+      g.lineTo(x + (Math.random() - 0.5) * hgt * 0.1, baseY - hgt * 0.5);
+      g.stroke();
+      // Crown, from a dozen overlapping circles so the edge is broken.
+      g.fillStyle = tone;
+      for (let k = 0; k < 14; k += 1) {
+        const a = Math.random() * Math.PI * 2;
+        const rr = Math.random() ** 0.6;
+        const cxx = x + Math.cos(a) * wid * 0.45 * rr;
+        const cyy = baseY - hgt * 0.62 + Math.sin(a) * hgt * 0.26 * rr;
+        g.beginPath();
+        g.arc(cxx, cyy, wid * (0.18 + Math.random() * 0.2), 0, Math.PI * 2);
+        g.fill();
+      }
     }
-    g.lineTo(S, baseY + height);
-    g.closePath();
-    g.fill();
     g.restore();
   };
 
-  // Far moorland, then two nearer tree belts. Each is darker and crisper.
-  treeLine(H - S * 0.055, S * 0.055, '#8fa0a6', 0.62, 150);
-  treeLine(H - S * 0.042, S * 0.042, '#6f8478', 0.40, 96);
-  treeLine(H - S * 0.030, S * 0.030, '#4c6347', 0.18, 54);
+  // Distant moor, then three belts marching forward.
+  g.save();
+  g.globalAlpha = 0.34;
+  g.fillStyle = '#8fa2ac';
+  g.beginPath();
+  g.moveTo(0, H);
+  for (let x = 0; x <= S; x += 26) {
+    g.lineTo(x, H - S * 0.018 - Math.sin(x / 260) * S * 0.012 - Math.random() * S * 0.004);
+  }
+  g.lineTo(S, H);
+  g.closePath();
+  g.fill();
+  g.restore();
 
-  // Lawn, falling away with mown banding and a darker foreground.
+  belt(H + 2, S * 0.055, '#7e9298', 0.60, 42);
+  belt(H + 5, S * 0.048, '#5f7a63', 0.36, 58);
+  belt(H + 9, S * 0.038, '#3f5738', 0.14, 74);
+
+  // Lawn, falling away.
   const lawn = g.createLinearGradient(0, H, 0, S);
-  lawn.addColorStop(0, '#6d8352');
-  lawn.addColorStop(0.35, '#5f7746');
-  lawn.addColorStop(1, '#43562f');
+  lawn.addColorStop(0, '#728853');
+  lawn.addColorStop(0.3, '#61793f');
+  lawn.addColorStop(1, '#3f5329');
   g.fillStyle = lawn;
   g.fillRect(0, H, S, S - H);
 
-  // Mown banding, kept faint — it should be felt rather than seen.
-  g.globalAlpha = 0.022;
-  for (let i = 0; i < 18; i += 1) {
-    const y = H + (i / 18) ** 1.8 * (S - H);
-    const band = ((S - H) / 18) * (0.45 + (i / 18) * 0.9);
-    g.fillStyle = i % 2 ? '#ffffff' : '#1d2a14';
-    g.fillRect(0, y, S, band);
+  // Close-boarded fence on the boundary, in front of the nearest belt.
+  const fy = H + (S - H) * 0.03;
+  const fh = (S - H) * 0.1;
+  g.fillStyle = '#7c6a4c';
+  g.fillRect(0, fy, S, fh);
+  g.globalAlpha = 0.3;
+  for (let x = 0; x < S; x += 17) {
+    g.fillStyle = ['#4d4030', '#8d7a58', '#6a5a41'][x % 3];
+    g.fillRect(x, fy, 4, fh);
   }
-  // Patchy colour across the lawn so it is not one flat green.
+  g.globalAlpha = 0.5;
+  g.fillStyle = '#3c3324';
+  g.fillRect(0, fy + fh - 3, S, 3);
+  g.globalAlpha = 1;
+
+  // Mottled grass, kept faint so it is felt rather than seen.
   g.globalAlpha = 0.05;
-  for (let i = 0; i < 70; i += 1) {
+  for (let i = 0; i < 160; i += 1) {
     const x = Math.random() * S;
-    const y = H + Math.random() * (S - H);
-    const rx = 80 + Math.random() * 260;
+    const y = fy + fh + Math.random() * (S - fy - fh);
+    const rx = 50 + Math.random() * 230;
     const grad = g.createRadialGradient(x, y, 0, x, y, rx);
-    grad.addColorStop(0, Math.random() > 0.5 ? '#89a05f' : '#3c4f28');
+    grad.addColorStop(0, Math.random() > 0.5 ? '#93a967' : '#35471f');
     grad.addColorStop(1, 'rgba(0,0,0,0)');
     g.fillStyle = grad;
     g.beginPath();
-    g.ellipse(x, y, rx, rx * 0.3, 0, 0, Math.PI * 2);
+    g.ellipse(x, y, rx, rx * 0.26, 0, 0, Math.PI * 2);
     g.fill();
   }
   g.globalAlpha = 1;
 
-  // Timber boundary fence along the hedge line.
-  const fenceY = H + (S - H) * 0.055;
-  const fenceH = (S - H) * 0.085;
-  g.fillStyle = '#7a6748';
-  g.fillRect(0, fenceY, S, fenceH);
-  g.globalAlpha = 0.28;
-  for (let x = 0; x < S; x += 22) {
-    g.fillStyle = x % 44 ? '#4a3d2a' : '#98835f';
-    g.fillRect(x, fenceY, 3, fenceH);
-  }
-  g.globalAlpha = 1;
-
-  // Grain, so nothing sits perfectly flat.
+  // Grain over everything, so no area sits perfectly flat.
   const img = g.getImageData(0, 0, S, S);
   const d = img.data;
   for (let i = 0; i < d.length; i += 4) {
-    const n = (Math.random() - 0.5) * 7;
+    const n = (Math.random() - 0.5) * 8;
     d[i] += n; d[i + 1] += n; d[i + 2] += n;
   }
   g.putImageData(img, 0, 0);

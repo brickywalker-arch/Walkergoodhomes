@@ -238,7 +238,7 @@ export const ROOM_SETS = {
     // Looks through the cased opening and on out at the garden doors, which
     // is what the open middle band actually gives you.
     // From the head of the table, looking down it and out at the doors.
-    camera: { pos: [1.66, 1.52, 0.04], target: [2.02, 1.06, 4.7], fov: 74 },
+    camera: { pos: [0.42, 1.58, 0.1], target: [2.25, 1.02, 4.6], fov: 76 },
     walls: (r, m) => [
       // Doors D03 / D04 off the hall, and a wide cased opening through to
       // the living room at the rear — the plan's open middle band.
@@ -291,14 +291,15 @@ export const ROOM_SETS = {
       const t = table(m, { width: 0.92, depth: 1.62, height: 0.75 });
       t.position.set(1.24, 0, 0.12);
       g.add(t);
-      [0.42, 1.06, 1.7].forEach((z) => {
+      // Tucked in, with the front of each seat under the edge of the top.
+      [0.38, 1.0, 1.62].forEach((z) => {
         const l = chair(m);
         l.rotation.y = Math.PI / 2;
-        l.position.set(0.74, 0, z);
+        l.position.set(1.05, 0, z);
         g.add(l);
         const rr = chair(m);
         rr.rotation.y = -Math.PI / 2;
-        rr.position.set(2.66, 0, z);
+        rr.position.set(2.35, 0, z);
         g.add(rr);
       });
       // Sideboard against the outer wall.
@@ -343,17 +344,17 @@ export const ROOM_SETS = {
        * side wall.
        */
       const s = sofa(m, { width: 2.25, depth: 0.9 });
-      s.position.set(2.95, 0, 2.25);
+      s.position.set(2.62, 0, 2.24);
       g.add(s);
       // Armchair opposite, turned back toward the sofa and the garden.
       const arm = sofa(m, { width: 0.98, depth: 0.86 });
       arm.position.set(0.85, 0, 0.35);
       g.add(arm);
       const ct = table(m, { width: 1.15, depth: 0.6, height: 0.38 });
-      ct.position.set(2.72, 0, 1.55);
+      ct.position.set(2.5, 0, 1.5);
       g.add(ct);
-      g.add(box(0.26, 0.03, 0.19, m.linen, 3.16, 0.38, 1.74));
-      g.add(rug(m, 2.3, 1.2, 2.3, 1.5));
+      g.add(box(0.26, 0.03, 0.19, m.linen, 2.94, 0.38, 1.69));
+      g.add(rug(m, 2.05, 1.12, 2.4, 1.55));
 
       // Low shelving on the side wall, and planting beside the doors.
       const shelf = unitRun(m, { length: 1.5, height: 0.52, depth: 0.4, doorMat: m.timberDark, count: 3, plinth: 0.05 });
