@@ -43,7 +43,10 @@ const FIXED = {
   brass: { color: '#c0983f', roughness: 0.3, metalness: 0.8 },
   chrome: { color: '#dfe4e8', roughness: 0.12, metalness: 0.95 },
   sanitary: { color: '#fdfdfc', roughness: 0.16 },
-  glass: { color: '#dceaf0', roughness: 0.05, metalness: 0.0, opacity: 0.22, transparent: true },
+  // Real glass carries a reflection of the room and a little colour in
+  // the sheet; flat transparency is most of why the old windows read as a
+  // hole cut in the wall.
+  glass: { color: '#cfe0e6', roughness: 0.02, metalness: 0.08, opacity: 0.16, transparent: true },
   frame: { color: '#34383c', roughness: 0.42 },
   fabricWarm: { color: '#a9a294', roughness: 0.95 },
   fabricDeep: { color: '#4a5560', roughness: 0.95 },

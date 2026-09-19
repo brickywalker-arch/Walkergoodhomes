@@ -243,7 +243,9 @@ export const ROOM_SETS = {
       // Doors D03 / D04 off the hall, and a wide cased opening through to
       // the living room at the rear — the plan's open middle band.
       wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 0.3, w: 0.8, sill: 0, h: 2.0, kind: 'door' }] }),
-      wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 1.0, w: 2.2, sill: 0, h: 2.1, kind: 'door' }] }),
+      // No wall here at all — the plan spans this side with a steel beam,
+      // so the only thing over the gap is the downstand.
+      wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 0.18, w: r.width - 0.36, sill: 0, h: 2.24, kind: 'door' }] }),
       wall({ side: 'left', ...r, material: m.wall }),
       wall({ side: 'right', ...r, material: m.wall }),
     ],
@@ -256,21 +258,30 @@ export const ROOM_SETS = {
        * view is built here rather than faked with a flat panel.
        */
       const BEYOND = 3.23;             // the living room's depth
-      g.add(box(r.width, 0.02, BEYOND, m.oakFloor, 0, 0, r.depth));
-      g.add(box(r.width, 0.06, BEYOND, m.ceiling, 0, r.height, r.depth));
-      g.add(box(0.03, r.height, BEYOND, m.wall, 0, 0, r.depth));
-      g.add(box(0.03, r.height, BEYOND, m.wall, r.width - 0.03, 0, r.depth));
+      const BW = 4.95;                 // and its full width
+      const BX = -(BW - r.width) / 2;  // centred on the opening
+      g.add(box(BW, 0.02, BEYOND, m.oakFloor, BX, 0, r.depth));
+      g.add(box(BW, 0.06, BEYOND, m.ceiling, BX, r.height, r.depth));
+      g.add(box(0.03, r.height, BEYOND, m.wall, BX, 0, r.depth));
+      g.add(box(0.03, r.height, BEYOND, m.wall, BX + BW - 0.03, 0, r.depth));
+      // The downstand the beam sits in, expressed across the opening.
+      g.add(box(r.width, 0.16, 0.2, m.ceiling, 0, r.height - 0.16, r.depth - 0.1));
       // The rear wall of the living room, with D01 in it.
-      const beyondRoom = { width: r.width, depth: r.depth + BEYOND, height: r.height };
-      g.add(wall({ side: 'back', ...beyondRoom, material: m.wall, openings: [
-        { u: 0.85, w: 1.75, sill: 0, h: 2.1 },
-      ] }));
-      g.add(glazing({ side: 'back', room: beyondRoom, materials: m,
-        opening: { u: 0.85, w: 1.75, sill: 0, h: 2.1 } }));
+      const beyondRoom = { width: BW, depth: r.depth + BEYOND, height: r.height };
+      const bw = wall({ side: 'back', ...beyondRoom, material: m.wall, openings: [
+        { u: 2.6, w: 1.75, sill: 0, h: 2.1 },
+        { u: 0.45, w: 1.4, sill: 0.9, h: 1.2 },
+      ] });
+      bw.position.x = BX;
+      g.add(bw);
+      for (const op of [{ u: 2.6, w: 1.75, sill: 0, h: 2.1 }, { u: 0.45, w: 1.4, sill: 0.9, h: 1.2 }]) {
+        const gl = glazing({ side: 'back', room: beyondRoom, materials: m, opening: op });
+        gl.position.x = BX;
+        g.add(gl);
+      }
       // A sofa glimpsed in the living room, to the left of those doors.
       const beyondSofa = sofa(m, { width: 1.9, depth: 0.85 });
-      beyondSofa.rotation.y = Math.PI / 2;
-      beyondSofa.position.set(3.46, 0, r.depth + 0.85);
+      beyondSofa.position.set(BX + 2.95, 0, r.depth + BEYOND - 0.98);
       g.add(beyondSofa);
       g.add(door({ side: 'front', room: r, u: 0.3, width: 0.8, materials: m, open: 0.6 }));
 
@@ -332,8 +343,7 @@ export const ROOM_SETS = {
        * side wall.
        */
       const s = sofa(m, { width: 2.25, depth: 0.9 });
-      s.rotation.y = Math.PI;
-      s.position.set(5.2, 0, 3.15);
+      s.position.set(2.95, 0, 2.25);
       g.add(s);
       // Armchair opposite, turned back toward the sofa and the garden.
       const arm = sofa(m, { width: 0.98, depth: 0.86 });

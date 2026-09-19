@@ -245,65 +245,128 @@ export function grassCanvas() {
  * the eye expects from a three-storey plan.
  */
 export function viewTexture(level = 'ground') {
-  const c = canvas(1024);
+  const c = canvas(2048);
   const g = c.getContext('2d');
   const S = c.width;
   const horizon = { ground: 0.62, first: 0.5, second: 0.34 }[level] ?? 0.62;
+  const H = S * horizon;
 
-  const sky = g.createLinearGradient(0, 0, 0, S * horizon);
-  sky.addColorStop(0, '#7fa9cd');
-  sky.addColorStop(0.55, '#b6d2e6');
-  sky.addColorStop(1, '#dcebf4');
+  /*
+   * What made the old view read as a cartoon was that everything sat at the
+   * same contrast: hard-edged clouds, one flat ridge, blobs for a hedge. Real
+   * distance desaturates and lightens — aerial perspective — so this builds
+   * the view in receding bands, each one paler, softer and lower in contrast
+   * than the one in front of it.
+   */
+  const sky = g.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, '#6f9cc4');
+  sky.addColorStop(0.45, '#9dc2dc');
+  sky.addColorStop(0.82, '#c9dee9');
+  sky.addColorStop(1, '#e4eef2');       // haze sitting on the horizon
   g.fillStyle = sky;
-  g.fillRect(0, 0, S, S * horizon);
+  g.fillRect(0, 0, S, H);
 
-  // Soft cloud banding.
-  g.globalAlpha = 0.45;
-  for (let i = 0; i < 14; i += 1) {
-    g.fillStyle = '#ffffff';
+  // Cloud, built from many soft low-alpha passes rather than a few hard ovals.
+  for (let band = 0; band < 3; band += 1) {
+    const y0 = H * (0.08 + band * 0.22);
+    const alpha = 0.10 - band * 0.025;
+    for (let i = 0; i < 90; i += 1) {
+      const x = Math.random() * S;
+      const y = y0 + (Math.random() - 0.5) * H * 0.26;
+      const rx = 90 + Math.random() * 300;
+      const ry = 14 + Math.random() * 30;
+      const grad = g.createRadialGradient(x, y, 0, x, y, rx);
+      grad.addColorStop(0, `rgba(255,255,255,${alpha})`);
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      g.fillStyle = grad;
+      g.beginPath();
+      g.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+      g.fill();
+    }
+  }
+
+  /** One receding band of trees, hazed back toward the sky colour. */
+  const treeLine = (baseY, height, colour, haze, step) => {
+    g.save();
+    g.globalAlpha = 1 - haze;
+    g.fillStyle = colour;
     g.beginPath();
-    g.ellipse(Math.random() * S, Math.random() * S * horizon * 0.8, 90 + Math.random() * 240, 20 + Math.random() * 36, 0, 0, Math.PI * 2);
+    g.moveTo(0, baseY + height);
+    for (let x = -step; x <= S + step; x += step) {
+      const crown = height * (0.55 + Math.random() * 0.75);
+      g.lineTo(x, baseY + height - crown);
+      g.lineTo(x + step * 0.5, baseY + height - crown * (0.6 + Math.random() * 0.5));
+    }
+    g.lineTo(S, baseY + height);
+    g.closePath();
+    g.fill();
+    g.restore();
+  };
+
+  // Far moorland, then two nearer tree belts. Each is darker and crisper.
+  treeLine(H - S * 0.055, S * 0.055, '#8fa0a6', 0.62, 150);
+  treeLine(H - S * 0.042, S * 0.042, '#6f8478', 0.40, 96);
+  treeLine(H - S * 0.030, S * 0.030, '#4c6347', 0.18, 54);
+
+  // Lawn, falling away with mown banding and a darker foreground.
+  const lawn = g.createLinearGradient(0, H, 0, S);
+  lawn.addColorStop(0, '#6d8352');
+  lawn.addColorStop(0.35, '#5f7746');
+  lawn.addColorStop(1, '#43562f');
+  g.fillStyle = lawn;
+  g.fillRect(0, H, S, S - H);
+
+  // Mown banding, kept faint — it should be felt rather than seen.
+  g.globalAlpha = 0.022;
+  for (let i = 0; i < 18; i += 1) {
+    const y = H + (i / 18) ** 1.8 * (S - H);
+    const band = ((S - H) / 18) * (0.45 + (i / 18) * 0.9);
+    g.fillStyle = i % 2 ? '#ffffff' : '#1d2a14';
+    g.fillRect(0, y, S, band);
+  }
+  // Patchy colour across the lawn so it is not one flat green.
+  g.globalAlpha = 0.05;
+  for (let i = 0; i < 70; i += 1) {
+    const x = Math.random() * S;
+    const y = H + Math.random() * (S - H);
+    const rx = 80 + Math.random() * 260;
+    const grad = g.createRadialGradient(x, y, 0, x, y, rx);
+    grad.addColorStop(0, Math.random() > 0.5 ? '#89a05f' : '#3c4f28');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grad;
+    g.beginPath();
+    g.ellipse(x, y, rx, rx * 0.3, 0, 0, Math.PI * 2);
     g.fill();
   }
   g.globalAlpha = 1;
 
-  // Distant moorland ridge.
-  g.fillStyle = '#7f8a79';
-  g.beginPath();
-  g.moveTo(0, S * horizon);
-  for (let x = 0; x <= S; x += 48) {
-    g.lineTo(x, S * horizon - 26 - Math.sin(x / 130) * 22 - Math.random() * 12);
+  // Timber boundary fence along the hedge line.
+  const fenceY = H + (S - H) * 0.055;
+  const fenceH = (S - H) * 0.085;
+  g.fillStyle = '#7a6748';
+  g.fillRect(0, fenceY, S, fenceH);
+  g.globalAlpha = 0.28;
+  for (let x = 0; x < S; x += 22) {
+    g.fillStyle = x % 44 ? '#4a3d2a' : '#98835f';
+    g.fillRect(x, fenceY, 3, fenceH);
   }
-  g.lineTo(S, S * horizon);
-  g.closePath();
-  g.fill();
+  g.globalAlpha = 1;
 
-  // Garden: hedge line then lawn falling away.
-  const lawn = g.createLinearGradient(0, S * horizon, 0, S);
-  lawn.addColorStop(0, '#56693f');
-  lawn.addColorStop(1, '#6f8250');
-  g.fillStyle = lawn;
-  g.fillRect(0, S * horizon, S, S * (1 - horizon));
-  g.fillStyle = '#3f5232';
-  for (let x = 0; x < S; x += 34) {
-    g.beginPath();
-    g.ellipse(x, S * horizon + 12, 30, 42 + Math.random() * 20, 0, 0, Math.PI * 2);
-    g.fill();
+  // Grain, so nothing sits perfectly flat.
+  const img = g.getImageData(0, 0, S, S);
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const n = (Math.random() - 0.5) * 7;
+    d[i] += n; d[i + 1] += n; d[i + 2] += n;
   }
+  g.putImageData(img, 0, 0);
 
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
   return tex;
 }
 
-/**
- * Sky dome and outdoor environment map.
- *
- * Drawn for a sphere rather than for a window: zenith at the top of the
- * canvas, horizon across the middle, ground below. On a SphereGeometry with
- * the default flipY the image's top row lands at the zenith, which is what
- * this ordering assumes.
- */
 export function skyTexture() {
   const c = canvas(2048);
   const g = c.getContext('2d');
