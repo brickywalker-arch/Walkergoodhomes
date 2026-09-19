@@ -1,4 +1,4 @@
-import { FINISHES as CATALOGUE, FINISH_GROUP_KEYS } from '@/data/interior';
+import { FINISHES as CATALOGUE, FINISH_GROUP_KEYS, type FinishGroupKey } from '@/data/interior';
 import { VISIT_SLOTS } from '@/data/development';
 
 /**
@@ -7,6 +7,6 @@ import { VISIT_SLOTS } from '@/data/development';
  */
 export const FINISHES = Object.fromEntries(
   FINISH_GROUP_KEYS.map((k) => [k, CATALOGUE[k].options.map((o) => o.id)]),
-) as Record<'kitchen' | 'walls' | 'doors', string[]>;
+) as Record<FinishGroupKey, string[]>;
 
 export const VISIT_SLOTS_SET = new Set(VISIT_SLOTS);

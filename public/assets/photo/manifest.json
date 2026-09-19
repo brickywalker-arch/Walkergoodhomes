@@ -1,23 +1,27 @@
 {
-  "generated": "2026-09-18T15:05:04.904Z",
-  "source": "reference/client-supplied/hero-exterior.png",
+  "generated": "2026-09-19T22:46:24.411Z",
+  "source": "reference/generated/hero-exterior-stone.jpg",
+  "approved": "reference/client-supplied/hero-exterior.png",
   "native": {
-    "width": 864,
-    "height": 552
+    "width": 5056,
+    "height": 3392
   },
   "images": {
     "hero": {
       "864": "/assets/photo/exterior-dusk-864.webp",
       "1300": "/assets/photo/exterior-dusk-1300.webp",
-      "1728": "/assets/photo/exterior-dusk-1728.webp"
+      "1728": "/assets/photo/exterior-dusk-1728.webp",
+      "2400": "/assets/photo/exterior-dusk-2400.webp"
     },
     "plot-1": {
       "442": "/assets/photo/plot-1-442.webp",
-      "884": "/assets/photo/plot-1-884.webp"
+      "884": "/assets/photo/plot-1-884.webp",
+      "1326": "/assets/photo/plot-1-1326.webp"
     },
     "plot-2": {
       "442": "/assets/photo/plot-2-442.webp",
-      "884": "/assets/photo/plot-2-884.webp"
+      "884": "/assets/photo/plot-2-884.webp",
+      "1326": "/assets/photo/plot-2-1326.webp"
     }
   }
 }

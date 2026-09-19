@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { DEVELOPMENT } from '@/data/development';
 import { FINISHES, VISIT_SLOTS_SET } from '@/lib/constants';
+import type { FinishGroupKey, Finishes } from '@/data/interior';
 
 export type PlotChoice = 'Plot 1' | 'Plot 2' | 'Either';
 
@@ -13,7 +14,7 @@ export type Lead = {
   email: string;
   phone: string;
   plot: PlotChoice;
-  finishes: { kitchen: string; walls: string; doors: string };
+  finishes: Finishes;
   message: string;
   source: string;
   userAgent: string;
@@ -58,13 +59,16 @@ export function validateEnquiry(body: unknown): { lead: Omit<Lead, 'ref' | 'rece
     kitchen: pickFinish('kitchen', b.finishes),
     walls: pickFinish('walls', b.finishes),
     doors: pickFinish('doors', b.finishes),
+    floors: pickFinish('floors', b.finishes),
+    tiles: pickFinish('tiles', b.finishes),
+    stairs: pickFinish('stairs', b.finishes),
   };
 
   if (Object.keys(errors).length || !plot) return { lead: null, errors };
   return { lead: { name, email, phone, plot, finishes, message }, errors: {} };
 }
 
-function pickFinish(group: 'kitchen' | 'walls' | 'doors', raw: unknown): string {
+function pickFinish(group: FinishGroupKey, raw: unknown): string {
   const value = (raw as Record<string, unknown> | undefined)?.[group];
   const allowed = FINISHES[group];
   return typeof value === 'string' && allowed.includes(value) ? value : allowed[0];
@@ -152,6 +156,7 @@ export async function recordLead(lead: Lead): Promise<{ stored: boolean; emailed
     `Phone:      ${lead.phone || '—'}`,
     `Plot:       ${lead.plot}`,
     `Finishes:   ${lead.finishes.kitchen} kitchen / ${lead.finishes.walls} walls / ${lead.finishes.doors} doors`,
+    `            ${lead.finishes.floors} floors / ${lead.finishes.tiles} tiles / ${lead.finishes.stairs} staircase`,
     `Received:   ${lead.receivedAt}`,
     '',
     lead.message ? `Message:\n${lead.message}` : 'No message.',

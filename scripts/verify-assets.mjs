@@ -24,7 +24,23 @@ const FINISHES = {
   kitchen: ['graphite', 'sage', 'oak', 'ivory'],
   walls: ['chalk', 'clay', 'slate'],
   doors: ['white', 'oak', 'grey'],
+  floors: ['oak', 'smoked', 'grey', 'stone'],
+  tiles: ['calacatta', 'capel', 'bardiglio', 'noir'],
+  stairs: ['chamfered', 'oak', 'glass'],
 };
+/** The order the axes appear in a manifest key. Must match src/lib/cgi.ts. */
+const AXES = ['kitchen', 'walls', 'doors', 'floors', 'tiles', 'stairs'];
+
+/** Every combination the chooser can produce — the full selection space. */
+function allSelections() {
+  let out = [{}];
+  for (const axis of AXES) {
+    const next = [];
+    for (const base of out) for (const v of FINISHES[axis]) next.push({ ...base, [axis]: v });
+    out = next;
+  }
+  return out;
+}
 const ROOMS = [
   'hall', 'kitchen', 'wc', 'dining', 'living',
   'master', 'ensuite', 'bath', 'bed3', 'landing',
@@ -46,9 +62,9 @@ const fail = (msg) => problems.push(msg);
 
 /** Mirrors src/lib/cgi.ts: axes that cannot be seen in a room are pinned. */
 function key(room, sel) {
-  const relevant = cgi.axes?.[room] ?? ['kitchen', 'walls', 'doors'];
+  const relevant = cgi.axes?.[room] ?? AXES;
   const pick = (axis) => (relevant.includes(axis) ? sel[axis] : cgi.defaults[axis]);
-  return `${room}|${pick('kitchen')}|${pick('walls')}|${pick('doors')}`;
+  return [room, ...AXES.map(pick)].join('|');
 }
 
 /** Mirrors the photoreal branch of src/lib/cgi.ts. */
@@ -56,9 +72,10 @@ function photorealKey(room, sel) {
   const relevant = photoreal.axes?.[room];
   if (!relevant) return null;
   const pick = (axis) => (relevant.includes(axis) ? sel[axis] : photoreal.defaults[axis]);
-  return `${room}|${pick('kitchen')}|${pick('walls')}|${pick('doors')}`;
+  return [room, ...AXES.map(pick)].join('|');
 }
 
+const SELECTIONS = allSelections();
 const seen = new Set();
 const photorealSeen = new Set();
 let selections = 0;
@@ -68,25 +85,21 @@ for (const room of ROOMS) {
   if (!cgi.rooms[room]) fail(`no base render for room "${room}"`);
   if (!cgi.axes?.[room]) fail(`no finish axes recorded for room "${room}"`);
 
-  for (const kitchen of FINISHES.kitchen) {
-    for (const walls of FINISHES.walls) {
-      for (const doors of FINISHES.doors) {
-        selections += 1;
-        const k = key(room, { kitchen, walls, doors });
-        seen.add(k);
-        if (!cgi.variants[k]) {
-          fail(`selection ${room} / ${kitchen} / ${walls} / ${doors} resolves to "${k}", which has no render`);
-        }
+  for (const sel of SELECTIONS) {
+    selections += 1;
+    const k = key(room, sel);
+    seen.add(k);
+    if (!cgi.variants[k]) {
+      fail(`selection ${room} / ${AXES.map((a) => sel[a]).join(' / ')} resolves to "${k}", which has no render`);
+    }
 
-        // A photoreal image is optional, but if one is claimed for this
-        // selection its files have to be there — otherwise the page would
-        // serve a broken src in preference to a working render.
-        const pk = photorealKey(room, { kitchen, walls, doors });
-        if (pk && photoreal.images?.[pk]) {
-          photorealSelections += 1;
-          photorealSeen.add(pk);
-        }
-      }
+    // A photoreal image is optional, but if one is claimed for this
+    // selection its files have to be there — otherwise the page would
+    // serve a broken src in preference to a working render.
+    const pk = photorealKey(room, sel);
+    if (pk && photoreal.images?.[pk]) {
+      photorealSelections += 1;
+      photorealSeen.add(pk);
     }
   }
 }

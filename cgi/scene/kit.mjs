@@ -584,22 +584,312 @@ export function rug(materials, x, z, w, d, material) {
   return g;
 }
 
-/** Straight stair flight with treads, risers and a balustrade. */
-export function stair(materials, { steps = 13, rise = 0.19, going = 0.24, width: w = 0.9 } = {}) {
-  const g = new THREE.Group();
-  for (let i = 0; i < steps; i += 1) {
-    g.add(box(w, 0.045, going, materials.oakFloor, 0, i * rise, i * going));
-    g.add(box(w, rise - 0.045, 0.02, materials.skirting, 0, i * rise + 0.045, i * going));
+/* ------------------------------------------------------------- staircase */
+
+/** Standard Howdens stair-part sections, in metres. */
+const SPINDLE = 0.041;   // 41 mm square spindle
+const NEWEL = 0.09;      // 90 mm newel post
+const RAIL_W = 0.062;    // handrail width
+const RAIL_H = 0.054;
+
+/**
+ * One spindle, in the profile the chosen stair parts use.
+ *
+ * A stop-chamfered spindle is a square section with the corners taken off
+ * along its middle and left square at each end, where it meets the base rail
+ * and the handrail. That is what the eight-sided middle here is: an octagon of
+ * the same width across the flats is exactly a chamfered square.
+ */
+function spindle(materials, height, profile) {
+  const mat = materials.stair.spindle;
+  if (profile !== 'chamfered') {
+    const g = new THREE.Group();
+    g.add(rbox(SPINDLE, height, SPINDLE, mat, -SPINDLE / 2, 0, -SPINDLE / 2, 0.003));
+    return g;
   }
-  const runH = steps * rise;
-  const runD = steps * going;
-  const rail = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.055, Math.hypot(runH, runD)), materials.timberDark);
-  rail.position.set(w - 0.03, runH / 2 + 0.95, runD / 2);
-  rail.rotation.x = -Math.atan2(runH, runD);
+  const g = new THREE.Group();
+  const block = Math.min(0.13, height * 0.16);
+  g.add(rbox(SPINDLE, block, SPINDLE, mat, -SPINDLE / 2, 0, -SPINDLE / 2, 0.003));
+  g.add(rbox(SPINDLE, block, SPINDLE, mat, -SPINDLE / 2, height - block, -SPINDLE / 2, 0.003));
+  const mid = new THREE.Mesh(
+    new THREE.CylinderGeometry(SPINDLE / 2 / Math.cos(Math.PI / 8), SPINDLE / 2 / Math.cos(Math.PI / 8), height - block * 2, 8),
+    mat,
+  );
+  mid.rotation.y = Math.PI / 8;
+  mid.position.set(0, height / 2, 0);
+  mid.castShadow = true;
+  mid.receiveShadow = true;
+  g.add(mid);
+  return g;
+}
+
+/** A newel post with a chamfered shaft and a capped top. */
+function newel(materials, height, profile) {
+  const g = new THREE.Group();
+  const mat = materials.stair.newel;
+  if (profile === 'chamfered') {
+    const block = 0.2;
+    g.add(rbox(NEWEL, block, NEWEL, mat, -NEWEL / 2, 0, -NEWEL / 2, 0.004));
+    g.add(rbox(NEWEL, block, NEWEL, mat, -NEWEL / 2, height - block, -NEWEL / 2, 0.004));
+    const shaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(NEWEL / 2 / Math.cos(Math.PI / 8), NEWEL / 2 / Math.cos(Math.PI / 8), height - block * 2, 8),
+      mat,
+    );
+    shaft.rotation.y = Math.PI / 8;
+    shaft.position.set(0, height / 2, 0);
+    shaft.castShadow = true;
+    g.add(shaft);
+  } else {
+    g.add(rbox(NEWEL, height, NEWEL, mat, -NEWEL / 2, 0, -NEWEL / 2, 0.004));
+  }
+  // Cap: a collar and a shallow pyramid, which is the stock Howdens ball-less
+  // cap and the thing that stops a newel reading as a fence post.
+  g.add(rbox(NEWEL + 0.022, 0.026, NEWEL + 0.022, mat, -(NEWEL + 0.022) / 2, height, -(NEWEL + 0.022) / 2, 0.004));
+  const cap = new THREE.Mesh(new THREE.ConeGeometry((NEWEL + 0.022) * 0.72, 0.05, 4), mat);
+  cap.rotation.y = Math.PI / 4;
+  cap.position.set(0, height + 0.026 + 0.025, 0);
+  cap.castShadow = true;
+  g.add(cap);
+  return g;
+}
+
+/**
+ * A straight run of balustrade between two newels, level or raking.
+ *
+ * Built along +z from the origin, with the handrail `height` above the point
+ * the spindles stand on. `rake` is the rise over the run, so the same builder
+ * does a flight's balustrade and a landing's.
+ */
+export function balustrade(materials, { run, height = 0.9, rake = 0, newels = 'both' } = {}) {
+  const g = new THREE.Group();
+  const st = materials.stair;
+  const angle = Math.atan2(rake, run);
+  const len = Math.hypot(run, rake);
+  const at = (t) => ({ z: run * t, y: rake * t });
+
+  // Base rail the spindles stand in, raking with the flight.
+  const baseH = 0.032;
+  const base = new THREE.Mesh(new THREE.BoxGeometry(SPINDLE + 0.014, baseH, len), st.string);
+  base.position.set(0, rake / 2 + baseH / 2, run / 2);
+  base.rotation.x = -angle;
+  base.castShadow = true;
+  g.add(base);
+
+  // Handrail.
+  const rail = new THREE.Mesh(new RoundedBoxGeometry(RAIL_W, RAIL_H, len, 2, 0.016), st.handrail);
+  rail.position.set(0, rake / 2 + height + RAIL_H / 2, run / 2);
+  rail.rotation.x = -angle;
   rail.castShadow = true;
   g.add(rail);
-  for (let i = 0; i < steps; i += 2) {
-    g.add(box(0.03, 0.9, 0.03, materials.skirting, w - 0.045, i * rise + 0.045, i * going + going / 2));
+
+  const clear = height - baseH;
+  if (st.kind === 'glass') {
+    // Richard Burbidge panel: one sheet between the newels, held on clamps.
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(0.012, clear - 0.02, len - 0.12), st.glass);
+    panel.position.set(0, rake / 2 + baseH + clear / 2, run / 2);
+    panel.rotation.x = -angle;
+    g.add(panel);
+    [0.18, 0.5, 0.82].forEach((t) => {
+      const p = at(t);
+      g.add(cyl(0.022, 0.05, st.clamp, 0, p.y + baseH + 0.06, p.z, 12));
+      g.add(cyl(0.022, 0.05, st.clamp, 0, p.y + baseH + clear - 0.06, p.z, 12));
+    });
+  } else {
+    // Spindles at 99 mm clear, which is the spacing that keeps a 100 mm
+    // sphere out and is why a flight gets two to a tread.
+    const gap = SPINDLE + 0.099;
+    const count = Math.max(2, Math.floor((len - 0.14) / gap));
+    const step = (len - 0.14) / count;
+    for (let i = 0; i <= count; i += 1) {
+      const t = (0.07 + i * step) / len;
+      const p = at(t);
+      const s = spindle(materials, clear / Math.cos(angle), st.profile);
+      s.position.set(0, p.y + baseH, p.z);
+      g.add(s);
+    }
   }
+
+  const nh = height + RAIL_H;
+  if (newels === 'both' || newels === 'start') {
+    const n = newel(materials, nh + 0.06, st.profile);
+    n.position.set(0, 0, -NEWEL / 2 - 0.01);
+    g.add(n);
+  }
+  if (newels === 'both' || newels === 'end') {
+    const n = newel(materials, nh + rake + 0.06, st.profile);
+    n.position.set(0, 0, run + NEWEL / 2 + 0.01);
+    g.add(n);
+  }
+  return g;
+}
+
+/**
+ * Straight stair flight with treads, risers, a closed string and the chosen
+ * balustrade down its open side.
+ *
+ * The flight is built along +z rising in +y, with its open side at +x.
+ */
+export function stair(materials, { steps = 13, rise = 0.19, going = 0.24, width: w = 0.9, balustrade: rail = true } = {}) {
+  const g = new THREE.Group();
+  const st = materials.stair;
+  const nose = 0.022;
+
+  for (let i = 0; i < steps; i += 1) {
+    // Tread with a bullnose lipping over the riser below it.
+    g.add(rbox(w, 0.045, going + nose, st.tread, 0, i * rise, i * going - nose, 0.008));
+    g.add(box(w, rise - 0.045, 0.019, st.string, 0, i * rise + 0.045, i * going));
+  }
+
+  const runH = steps * rise;
+  const runD = steps * going;
+  const len = Math.hypot(runH, runD);
+  const angle = Math.atan2(runH, runD);
+
+  // Closed strings either side: a raking board the treads housed into, which
+  // is what a domestic flight actually looks like from the hall.
+  [[-0.026, 'wall'], [w + 0.026, 'open']].forEach(([x]) => {
+    const s = new THREE.Mesh(new THREE.BoxGeometry(0.032, 0.27, len + 0.1), st.string);
+    s.position.set(x, runH / 2 + 0.02, runD / 2);
+    s.rotation.x = -angle;
+    s.castShadow = true;
+    g.add(s);
+  });
+
+  if (rail) {
+    const b = balustrade(materials, { run: runD, height: 0.9, rake: runH, newels: 'both' });
+    b.position.set(w + 0.026, 0.1, 0);
+    g.add(b);
+  }
+  return g;
+}
+
+/* ------------------------------------------------- living room fit-out */
+
+/**
+ * The media wall: a shallow chimney-breast panel with an inset electric fire,
+ * a television over it and a low unit beneath.
+ *
+ * Nothing structural is implied — the drawings show no chimney and none is
+ * claimed. This is a 170 mm studwork panel of the kind that gets built in a
+ * living room after handover, which is why it is drawn as furniture and not as
+ * part of the shell.
+ *
+ * Built against a wall at z = 0, running +x, with `width` its overall face.
+ */
+export function mediaWall(materials, { width: w = 2.2, tv = 1.22 } = {}) {
+  const g = new THREE.Group();
+  const D = 0.17;
+  const H = 2.2;
+
+  // The panel itself, with a shadow gap at each side so it reads as an
+  // applied face rather than as a patch of repainted wall.
+  g.add(rbox(w, H, D - 0.03, materials.skirting, 0, 0, 0, 0.004));
+  g.add(rbox(w - 0.09, H - 0.05, D, materials.skirting, 0.045, 0, 0, 0.004));
+
+  // Fire: a recessed landscape opening with a glass front and an ember bed.
+  const fw = Math.min(1.0, w * 0.52);
+  const fh = 0.34;
+  const fy = 0.62;
+  const fx = (w - fw) / 2;
+  // A dark recess around the opening, which is what actually reads as a fire
+  // from across a room — the glass alone disappears into the panel.
+  g.add(box(fw + 0.13, fh + 0.13, 0.026, materials.frame, fx - 0.065, fy - 0.065, D - 0.026));
+  g.add(box(fw, fh, 0.02, materials.timberDark, fx, fy, D - 0.046));
+  const ember = new THREE.Mesh(
+    new THREE.BoxGeometry(fw - 0.06, fh - 0.08, 0.012),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color('#ff9e3d') }),
+  );
+  ember.position.set(fx + fw / 2, fy + fh / 2, D - 0.05);
+  g.add(ember);
+  // Glass front over it, and a surround.
+  g.add(box(fw + 0.04, fh + 0.04, 0.012, materials.glass, fx - 0.02, fy - 0.02, D - 0.03));
+  // The light it actually throws, which is most of why a fire makes a room
+  // feel warm: low, amber, and short-range.
+  const glow = new THREE.PointLight(0xff9a34, 3.2, 3.8, 2);
+  glow.position.set(fx + fw / 2, fy + fh / 2, D + 0.3);
+  g.add(glow);
+
+  // Television above, switched off: a dark panel on a slim bezel.
+  const th = tv * 0.5625;
+  const ty = fy + fh + 0.34;
+  const tx = (w - tv) / 2;
+  g.add(rbox(tv, th, 0.028, materials.frame, tx, ty, D, 0.006));
+  const screen = new THREE.Mesh(
+    new THREE.BoxGeometry(tv - 0.022, th - 0.022, 0.006),
+    new THREE.MeshStandardMaterial({ color: new THREE.Color('#0d1116'), roughness: 0.07, metalness: 0.55 }),
+  );
+  screen.position.set(tx + tv / 2, ty + th / 2, D + 0.03);
+  g.add(screen);
+
+  // Low unit under the fire, floating, with a shadow gap beneath.
+  const uw = w * 0.78;
+  g.add(rbox(uw, 0.3, 0.36, materials.timberDark, (w - uw) / 2, 0.18, D - 0.02, 0.008));
+  g.add(box(uw - 0.4, 0.008, 0.02, materials.steel, (w - uw) / 2 + 0.2, 0.33, D + 0.336));
+
+  // A shelf over the television with a couple of objects on it.
+  g.add(rbox(w * 0.62, 0.04, 0.16, materials.timberDark, w * 0.19, ty + th + 0.2, D - 0.02, 0.006));
+  g.add(cyl(0.05, 0.19, materials.linen, w * 0.31, ty + th + 0.335, D + 0.05, 14));
+  g.add(rbox(0.13, 0.17, 0.03, materials.fabricDeep, w * 0.56, ty + th + 0.24, D + 0.03, 0.004));
+  g.add(rbox(0.11, 0.15, 0.03, materials.fabricWarm, w * 0.6, ty + th + 0.24, D + 0.04, 0.004));
+  return g;
+}
+
+/**
+ * A coffee table with something on it.
+ *
+ * Solid top on a recessed frame with a lower shelf, which is what stops a
+ * coffee table reading as a floating slab. Anchored at its front-left corner
+ * like everything else in the kit.
+ */
+export function coffeeTable(materials, { width: w = 1.1, depth: d = 0.6, height: h = 0.4 } = {}) {
+  const g = new THREE.Group();
+  const t = 0.042;
+  g.add(rbox(w, t, d, materials.timberDark, 0, h - t, 0, 0.008));
+  // Legs set in from the corners, with a stretcher shelf between them.
+  const inset = 0.07;
+  const leg = 0.045;
+  [[inset, inset], [w - inset - leg, inset], [inset, d - inset - leg], [w - inset - leg, d - inset - leg]].forEach(
+    ([x, z]) => g.add(rbox(leg, h - t, leg, materials.timberDark, x, 0, z, 0.005)),
+  );
+  g.add(rbox(w - inset * 2 - 0.02, 0.026, d - inset * 2 - 0.02, materials.timberDark, inset + 0.01, 0.13, inset + 0.01, 0.005));
+
+  // A tray, a stack of books and a bowl — the things that are always there.
+  g.add(rbox(0.34, 0.022, 0.24, materials.steel, w * 0.1, h, d * 0.3, 0.006));
+  g.add(rbox(0.21, 0.028, 0.15, materials.fabricDeep, w * 0.13, h + 0.022, d * 0.36, 0.004));
+  g.add(rbox(0.2, 0.026, 0.145, materials.linen, w * 0.14, h + 0.05, d * 0.38, 0.004));
+  const bowl = new THREE.Mesh(new THREE.SphereGeometry(0.1, 18, 12, 0, Math.PI * 2, 0, Math.PI / 2), materials.sanitary);
+  bowl.rotation.x = Math.PI;
+  bowl.scale.set(1, 0.5, 1);
+  bowl.position.set(w * 0.68, h + 0.05, d * 0.5);
+  bowl.castShadow = true;
+  g.add(bowl);
+  // Books stacked on the lower shelf.
+  g.add(rbox(0.26, 0.032, 0.19, materials.fabricWarm, w * 0.55, 0.156, d * 0.28, 0.004));
+  g.add(rbox(0.24, 0.03, 0.18, materials.fabricDeep, w * 0.57, 0.188, d * 0.3, 0.004));
+  return g;
+}
+
+/**
+ * A throw draped over the arm of a seat.
+ *
+ * Kept to the width of the arm it sits on. An earlier version was wider than
+ * the arm and read as a white shelf sticking out of the sofa, which is the
+ * opposite of the point. Anchored at the arm's top front-outside corner:
+ * `armW` across, `width` along the arm, falling `drop` down each face.
+ */
+export function throwOver(materials, { armW = 0.2, width: w = 0.62, drop = 0.4 } = {}) {
+  const g = new THREE.Group();
+  // Over the top of the arm, with a little overhang each side.
+  const top = rbox(armW + 0.05, 0.028, w, materials.linen, -0.025, 0, 0, 0.014);
+  top.rotation.x = 0.02;
+  g.add(top);
+  // Falling down the outside face, swinging out at the hem.
+  const outer = rbox(0.03, drop, w - 0.02, materials.linen, -0.022, -drop, 0.01, 0.014);
+  outer.rotation.z = -0.07;
+  g.add(outer);
+  // A shorter fall onto the seat on the inside, rumpled across the first.
+  const inner = rbox(0.028, drop * 0.5, w * 0.7, materials.linen, armW + 0.012, -drop * 0.5, w * 0.16, 0.014);
+  inner.rotation.set(0.05, 0.08, 0.11);
+  g.add(inner);
   return g;
 }

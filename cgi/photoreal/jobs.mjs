@@ -12,27 +12,72 @@
  */
 
 /** Only these rooms are worth generating. See docs/photoreal-plan.md. */
-export const PHOTOREAL_ROOMS = ['kitchen', 'living', 'dining', 'master', 'bath', 'bed2'];
+export const PHOTOREAL_ROOMS = ['kitchen', 'living', 'dining', 'master', 'bath', 'bed2', 'hall'];
 
 /**
- * Which finish axes change a photoreal image. Coarser than the renders'
- * axes: the internal-door colour is barely visible in these six rooms, so it
- * is pinned and the door axis collapses.
+ * Which finish axes change a photoreal image. Coarser than the renders' axes:
+ * the internal-door colour is barely visible in these rooms, so it is pinned
+ * and the door axis collapses.
+ *
+ * An axis listed here is not necessarily generated across — see
+ * PHOTOREAL_VALUES. Listing it is what makes the fallback work.
  */
 export const PHOTOREAL_AXES = {
-  kitchen: ['kitchen', 'walls'],
-  living: ['walls'],
-  dining: ['walls'],
-  master: ['walls'],
-  bath: ['walls'],
-  bed2: ['walls'],
+  kitchen: ['kitchen', 'walls', 'floors'],
+  living: ['walls', 'floors'],
+  dining: ['walls', 'floors'],
+  master: ['walls', 'floors'],
+  bath: ['walls', 'tiles'],
+  bed2: ['walls', 'floors'],
+  hall: ['walls', 'floors', 'stairs'],
 };
 
 /** Pinned values for the axes a photoreal image does not vary. */
-export const PINNED = { kitchen: 'graphite', walls: 'chalk', doors: 'white' };
+export const PINNED = {
+  kitchen: 'graphite',
+  walls: 'chalk',
+  doors: 'white',
+  floors: 'oak',
+  tiles: 'calacatta',
+  stairs: 'chamfered',
+};
+
+/** The order the axes appear in a manifest key. Must match src/lib/cgi.ts. */
+export const AXES = ['kitchen', 'walls', 'doors', 'floors', 'tiles', 'stairs'];
 
 export const KITCHEN_FINISHES = ['graphite', 'sage', 'oak', 'ivory'];
 export const WALL_FINISHES = ['chalk', 'clay', 'slate'];
+export const TILE_FINISHES = ['calacatta', 'capel', 'bardiglio', 'noir'];
+
+/**
+ * The values each axis is actually generated across.
+ *
+ * Where this lists only the pinned value, the axis is declared in
+ * PHOTOREAL_AXES but not generated: a buyer choosing anything else gets a key
+ * the photoreal manifest has no image for, and `roomImage` falls back to the
+ * render — which does show their choice. Leaving the axis undeclared instead
+ * would have served the same photograph for every value and made the chooser
+ * look broken.
+ *
+ * Floors and stairs sit there for now. Tiles do not: the bathroom is the one
+ * room where the finish *is* the room, and a photograph of grey stone served
+ * as a white marble selection would be a claim about what is being fitted.
+ */
+export const PHOTOREAL_VALUES = {
+  kitchen: KITCHEN_FINISHES,
+  walls: WALL_FINISHES,
+  tiles: TILE_FINISHES,
+  floors: [PINNED.floors],
+  stairs: [PINNED.stairs],
+};
+
+/** Wall paint as it should read in a photograph. */
+const TILE_DESC = {
+  calacatta: 'bright white Calacatta marble-effect porcelain with soft grey veining',
+  capel: 'warm white Calacatta Gold marble-effect porcelain with gold veining',
+  bardiglio: 'mid-grey Bardiglio marble-effect porcelain with darker grey veining',
+  noir: 'deep charcoal porcelain with a subtle darker figure',
+};
 
 /** Unit-door colour as it should read in a photograph. */
 const KITCHEN_DESC = {
@@ -56,21 +101,21 @@ const WALL_DESC = {
 const ROOM_SCENE = {
   kitchen: {
     subject:
-      'a new-build UK kitchen, 2.81 x 3.61 m, at the front of the ground floor. Two windows (W05 and W06) in the front elevation wall',
+      'a new-build UK kitchen, 2.81 x 3.61 m, at the front of the ground floor. One wide window (W06) in the front elevation wall',
     fitout:
-      'Howdens Shaker-style kitchen — rails and stiles around a recessed panel on every door — laid out as a U on three walls opening to the door, with a light quartz worktop, brushed-steel bar handles, the sink under the windows, a tall oven housing closing one leg, and a metro-tile splashback. There is no island: the room is only 2.81 m wide and the two facing runs leave a gangway between them',
+      'Howdens Shaker-style kitchen — rails and stiles around a recessed panel on every door — laid out as a U on three walls opening to the door, with a light quartz worktop, brushed-steel bar handles, the sink under the window, a tall oven housing closing one leg, and a metro-tile splashback. There is no island: the room is only 2.81 m wide and the two facing runs leave a gangway between them',
     floor: 'engineered oak floor',
     light:
-      'daylight from the two front windows, two pendants down the middle of the gangway, warm interior lighting',
+      'daylight from the wide front window, two pendants down the middle of the gangway, warm interior lighting',
   },
   living: {
     subject:
-      'a new-build UK living room, 4.95 x 3.23 m, across the full width of the rear ground floor. External garden doors (D01/D02) and a window (W01) in the rear wall',
+      'a new-build UK living room, 4.95 x 3.23 m, across the full width of the rear ground floor. External garden doors (D01) and a window (W01) in the rear wall, the window nearest the outer corner',
     fitout:
-      'a low fabric sofa with cushions, a slim media unit, a floor lamp and a large low-pile rug',
+      'a low fabric sofa with cushions and a throw over one arm set against the rear wall to the left of the garden doors, a media wall on the return wall opposite with an inset electric fire and a wall-mounted television over it, an armchair turned in toward the fire, a solid timber coffee table with a tray and books on it, a floor lamp and a large low-pile rug',
     floor: 'engineered oak floor',
     light:
-      'strong daylight flooding in through the rear garden doors, soft bounce onto the ceiling, warm lamplight in the corner',
+      'strong daylight flooding in through the rear garden doors, soft bounce onto the ceiling, warm lamplight in the corner and a low amber glow from the fire',
   },
   dining: {
     subject:
@@ -83,11 +128,11 @@ const ROOM_SCENE = {
   },
   master: {
     subject:
-      'a new-build UK master bedroom, 3.64 x 2.76 m, at the rear of the first floor looking over the garden. Two windows (W10 and W11) in the rear wall',
+      'a new-build UK master bedroom, 3.64 x 2.76 m, at the rear of the first floor looking over the garden. One wide window (W10) in the rear wall',
     fitout:
       'a double bed with layered linen that drapes and folds, two bedside tables with lamps, a wardrobe against the side wall',
     floor: 'soft pale carpet',
-    light: 'morning daylight from the two rear windows, warm bedside lamps',
+    light: 'morning daylight from the wide rear window, warm bedside lamps',
   },
   bath: {
     subject:
@@ -98,14 +143,23 @@ const ROOM_SCENE = {
     light:
       'even warm ceiling downlights as the only source, soft reflections in the tiling and the glass screen',
   },
+  hall: {
+    subject:
+      'a new-build UK entrance hall, 2.00 x 3.61 m, at the front of the ground floor beside the kitchen. A window (W07) and the front door (D07) side by side in the front wall behind the camera, and a door through to the kitchen',
+    fitout:
+      'a straight staircase rising against the outer side wall and carrying on up through all three floors, with a Howdens stop-chamfered balustrade — square-topped spindles chamfered along their middles, capped newel posts, a stained hardwood handrail and a closed painted string. A console table with a lamp and a mirror over it against the party wall, a runner on the floor, coat hooks and boots at the far end, and a cupboard door under the flight',
+    floor: 'engineered oak floor',
+    light:
+      'daylight coming in over the shoulder from the front door and window, a pendant down the middle, the stairwell above falling away into shadow',
+  },
   bed2: {
     subject:
-      'a new-build UK bedroom on the top floor under a 40 degree pitched roof, 4.89 m long, with the ceiling sloping down to low eaves on both sides. Two rooflights (RL01, RL02) in the slope and a window (W18) in the gable',
+      'a new-build UK bedroom on the top floor under a 40 degree pitched roof, 4.89 m long, with the ceiling sloping down to low eaves on both sides. A single rooflight (RL01) in the slope is its only opening — both side walls are internal',
     fitout:
-      'a double bed set along the low eaves wall, a bedside table with a lamp, a small armchair under the gable window',
+      'a double bed set along the low eaves wall, bedside tables with lamps, a low chest where the ceiling comes down at the rear',
     floor: 'soft pale carpet',
     light:
-      'daylight falling steeply through the two rooflights onto the bed and floor, softer light from the gable window',
+      'daylight falling steeply through the rooflight onto the bed and floor, and nothing else — the room is lit from above',
   },
 };
 
@@ -120,50 +174,81 @@ const CAMERA =
 export function photorealKey(room, finishes) {
   const axes = PHOTOREAL_AXES[room] ?? [];
   const pick = (axis) => (axes.includes(axis) ? finishes[axis] : PINNED[axis]);
-  return `${room}|${pick('kitchen')}|${pick('walls')}|${pick('doors')}`;
+  return [room, ...AXES.map(pick)].join('|');
 }
 
 /** The render that is this job's structural reference, by its CGI manifest key. */
 export function referenceKey(room, finishes) {
-  const kitchen = room === 'kitchen' ? finishes.kitchen : PINNED.kitchen;
-  return `${room}|${kitchen}|${finishes.walls}|${PINNED.doors}`;
+  const axes = PHOTOREAL_AXES[room] ?? [];
+  const pick = { ...PINNED };
+  for (const a of axes) pick[a] = finishes[a];
+  return [room, ...AXES.map((a) => pick[a])].join('|');
 }
 
 function buildPrompt(room, finishes) {
   const scene = ROOM_SCENE[room];
   const walls = WALL_DESC[finishes.walls];
-  const fitout =
-    room === 'kitchen'
-      ? scene.fitout.replace('Howdens Shaker-style kitchen', `Howdens Shaker-style kitchen in ${KITCHEN_DESC[finishes.kitchen]}`)
-      : scene.fitout;
+  let fitout = scene.fitout;
+  if (room === 'kitchen') {
+    fitout = fitout.replace(
+      'Howdens Shaker-style kitchen',
+      `Howdens Shaker-style kitchen in ${KITCHEN_DESC[finishes.kitchen]}`,
+    );
+  }
+  // In a bathroom the tile is the room, so the range goes in the fit-out
+  // rather than being left to the generic "large-format tiling".
+  if (room === 'bath') {
+    fitout = fitout.replace(
+      'large-format wall and floor tiling',
+      `large-format wall and floor tiling in ${TILE_DESC[finishes.tiles]}`,
+    );
+  }
+  const floor = room === 'bath' ? `a floor tiled to match in ${TILE_DESC[finishes.tiles]}` : scene.floor;
 
   return [
     `Photoreal interior photograph of ${scene.subject}.`,
     `${fitout[0].toUpperCase()}${fitout.slice(1)}.`,
-    `${walls[0].toUpperCase()}${walls.slice(1)}, ${scene.floor}, white-painted skirting and a four-panel moulded internal door.`,
+    `${walls[0].toUpperCase()}${walls.slice(1)}, ${floor}, white-painted skirting and a four-panel moulded internal door.`,
     `${scene.light[0].toUpperCase()}${scene.light.slice(1)}.`,
     'Match the reference image exactly for room shape, wall positions, window and door positions, furniture layout and camera angle — change only the material realism and the lighting.',
     CAMERA,
   ].join(' ');
 }
 
-/** All 27 jobs, in a stable order. */
+/** The slug a job's files are named by: the room's own axes, in order. */
+export function slugFor(room, finishes) {
+  return `${room}--${(PHOTOREAL_AXES[room] ?? []).map((a) => finishes[a]).join('-')}`;
+}
+
+/**
+ * Every job, in a stable order.
+ *
+ * One per combination of the values each of the room's axes is generated
+ * across, with everything else pinned. Axis-driven rather than hardcoded to
+ * units and walls, because the bathroom varies on its tile range and the hall
+ * would vary on its balustrade if the budget went that way.
+ */
 export function photorealJobs() {
   const jobs = [];
   for (const room of PHOTOREAL_ROOMS) {
-    const kitchens = room === 'kitchen' ? KITCHEN_FINISHES : [PINNED.kitchen];
-    for (const kitchen of kitchens) {
-      for (const walls of WALL_FINISHES) {
-        const finishes = { kitchen, walls, doors: PINNED.doors };
-        jobs.push({
-          room,
-          finishes,
-          key: photorealKey(room, finishes),
-          reference: referenceKey(room, finishes),
-          slug: `${room}--${kitchen}-${walls}`,
-          prompt: buildPrompt(room, finishes),
-        });
+    const axes = PHOTOREAL_AXES[room] ?? [];
+    let combos = [{ ...PINNED }];
+    for (const axis of axes) {
+      const next = [];
+      for (const base of combos) {
+        for (const value of PHOTOREAL_VALUES[axis] ?? [PINNED[axis]]) next.push({ ...base, [axis]: value });
       }
+      combos = next;
+    }
+    for (const finishes of combos) {
+      jobs.push({
+        room,
+        finishes,
+        key: photorealKey(room, finishes),
+        reference: referenceKey(room, finishes),
+        slug: slugFor(room, finishes),
+        prompt: buildPrompt(room, finishes),
+      });
     }
   }
   return jobs;
@@ -185,31 +270,49 @@ export function photorealJobs() {
  * render, otherwise it comes from that job's accepted image.
  */
 export function photorealChain() {
-  const bySlug = new Map(photorealJobs().map((j) => [j.slug, j]));
+  const jobs = photorealJobs();
+  const bySlug = new Map(jobs.map((j) => [j.slug, j]));
   const chain = [];
   const add = (slug, from, change) => {
     const job = bySlug.get(slug);
     if (!job) throw new Error(`chain references unknown job "${slug}"`);
     chain.push({ ...job, from, change });
   };
+  const seen = new Set();
+  const once = (slug, from, change) => {
+    if (seen.has(slug)) return;
+    seen.add(slug);
+    add(slug, from, change);
+  };
 
-  // Wave 0 — one base per room, from the corrected render.
-  for (const room of PHOTOREAL_ROOMS) add(`${room}--${PINNED.kitchen}-${PINNED.walls}`, null, null);
-
-  // Wave 1 — the kitchen's other unit colours, from the kitchen base.
-  const kitchenBase = `kitchen--${PINNED.kitchen}-${PINNED.walls}`;
-  for (const k of KITCHEN_FINISHES) {
-    if (k === PINNED.kitchen) continue;
-    add(`kitchen--${k}-${PINNED.walls}`, kitchenBase, `units:${k}`);
-  }
-
-  // Wave 2 — every wall colour, from the matching same-walls image.
   for (const room of PHOTOREAL_ROOMS) {
-    const kitchens = room === 'kitchen' ? KITCHEN_FINISHES : [PINNED.kitchen];
-    for (const k of kitchens) {
-      for (const w of WALL_FINISHES) {
+    const axes = PHOTOREAL_AXES[room] ?? [];
+    const base = slugFor(room, PINNED);
+
+    // Wave 0 — the room's base, the only image made from a render.
+    once(base, null, null);
+
+    // Wave 1 — every axis except the walls, varied off that base. These are
+    // the changes that alter a material rather than a colour, so each one is
+    // an edit of the finished photograph and the geometry cannot drift.
+    const others = axes.filter((a) => a !== 'walls');
+    const roots = [{ finishes: { ...PINNED }, slug: base }];
+    for (const axis of others) {
+      for (const value of PHOTOREAL_VALUES[axis] ?? []) {
+        if (value === PINNED[axis]) continue;
+        const finishes = { ...PINNED, [axis]: value };
+        const slug = slugFor(room, finishes);
+        once(slug, base, `${axis}:${value}`);
+        roots.push({ finishes, slug });
+      }
+    }
+
+    // Wave 2 — the wall colours, each off the matching chalk-walled image.
+    if (!axes.includes('walls')) continue;
+    for (const root of roots) {
+      for (const w of PHOTOREAL_VALUES.walls) {
         if (w === PINNED.walls) continue;
-        add(`${room}--${k}-${w}`, `${room}--${k}-${PINNED.walls}`, `walls:${w}`);
+        once(slugFor(room, { ...root.finishes, walls: w }), root.slug, `walls:${w}`);
       }
     }
   }
@@ -226,10 +329,17 @@ const WALL_PLAIN = { chalk: 'chalk white', clay: 'warm clay beige', slate: 'soft
  */
 export function recolourPrompt(change) {
   const [axis, value] = change.split(':');
-  const what =
-    axis === 'units'
-      ? `Repaint only the kitchen unit doors and drawer fronts to ${UNIT_PLAIN[value]}. The worktop stays light quartz, the splashback stays white metro tile, the handles stay brushed steel, the walls and floor are unchanged.`
-      : `Repaint only the painted wall surfaces to ${WALL_PLAIN[value]}. Tiling, joinery, skirting, doors, flooring, furniture and fittings all keep their existing colours.`;
+  let what;
+  if (axis === 'kitchen') {
+    what = `Repaint only the kitchen unit doors and drawer fronts to ${UNIT_PLAIN[value]}. The worktop stays light quartz, the splashback stays white metro tile, the handles stay brushed steel, the walls and floor are unchanged.`;
+  } else if (axis === 'tiles') {
+    // A tile swap is not a repaint, so it says so: same tiles in the same
+    // places and the same sizes, a different stone.
+    what =
+      `Replace the material of the wall and floor tiles with ${TILE_DESC[value]}. Every tile stays exactly where it is, the same size, in the same layout, with the same grout joints in the same places — only the stone they are cut from changes. The sanitaryware, the shower screen, the brassware, the vanity, the towel rail, the painted walls and the ceiling are all unchanged.`;
+  } else {
+    what = `Repaint only the painted wall surfaces to ${WALL_PLAIN[value]}. Tiling, joinery, skirting, doors, flooring, furniture and fittings all keep their existing colours.`;
+  }
   return [
     'Take this photograph and change one thing.',
     what,

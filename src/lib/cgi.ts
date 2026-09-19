@@ -16,7 +16,10 @@ import type { Finishes } from '@/data/interior';
 
 type SizeMap = Record<string, string>;
 
-type FinishAxis = 'kitchen' | 'walls' | 'doors';
+type FinishAxis = 'kitchen' | 'walls' | 'doors' | 'floors' | 'tiles' | 'stairs';
+
+/** The order the axes appear in a manifest key. Must match scripts/render-cgi.mjs. */
+const AXES: FinishAxis[] = ['kitchen', 'walls', 'doors', 'floors', 'tiles', 'stairs'];
 
 type CgiManifest = {
   generated: string;
@@ -85,10 +88,24 @@ function missing(what: string): never {
  * the kitchen colour is simply not visible from in there.
  */
 function manifestKey(roomKey: string, finishes: Finishes): string {
-  const relevant = CGI.axes?.[roomKey] ?? (['kitchen', 'walls', 'doors'] as FinishAxis[]);
+  const relevant = CGI.axes?.[roomKey] ?? AXES;
   const pick = (axis: FinishAxis) =>
     relevant.includes(axis) ? finishes[axis] : (CGI.defaults?.[axis] ?? finishes[axis]);
-  return `${roomKey}|${pick('kitchen')}|${pick('walls')}|${pick('doors')}`;
+  return [roomKey, ...AXES.map(pick)].join('|');
+}
+
+/**
+ * Which of the buyer's choices change this room's image.
+ *
+ * The page uses it to say what the render on screen is actually showing, so a
+ * visitor looking at a bedroom is not told their tile choice is in the picture
+ * when the nearest tile is two doors away.
+ */
+export function roomAxes(roomKey: string): FinishAxis[] {
+  // A photoreal image, where the room has them, is what the visitor sees, and
+  // it varies on fewer axes than the render behind it.
+  const live = PHOTOREAL.axes?.[roomKey] ?? CGI.axes?.[roomKey] ?? AXES;
+  return AXES.filter((a) => live.includes(a));
 }
 
 type PhotorealManifest = {
@@ -112,7 +129,7 @@ function photorealKey(roomKey: string, finishes: Finishes): string | null {
   if (!relevant) return null;
   const pick = (axis: FinishAxis) =>
     relevant.includes(axis) ? finishes[axis] : (PHOTOREAL.defaults?.[axis] ?? finishes[axis]);
-  return `${roomKey}|${pick('kitchen')}|${pick('walls')}|${pick('doors')}`;
+  return [roomKey, ...AXES.map(pick)].join('|');
 }
 
 /**

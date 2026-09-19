@@ -46,31 +46,69 @@ const FINISHES = {
   kitchen: ['graphite', 'sage', 'oak', 'ivory'],
   walls: ['chalk', 'clay', 'slate'],
   doors: ['white', 'oak', 'grey'],
+  floors: ['oak', 'smoked', 'grey', 'stone'],
+  tiles: ['calacatta', 'capel', 'bardiglio', 'noir'],
+  stairs: ['chamfered', 'oak', 'glass'],
 };
-const DEFAULTS = { kitchen: 'graphite', walls: 'chalk', doors: 'white' };
+const AXES = Object.keys(FINISHES);
+const DEFAULTS = {
+  kitchen: 'graphite',
+  walls: 'chalk',
+  doors: 'white',
+  floors: 'oak',
+  tiles: 'calacatta',
+  stairs: 'chamfered',
+};
 
 /**
  * Which finish axes actually change a given room's render.
  *
- * Only the kitchen shows the kitchen-unit choice, so every other room is
- * rendered once per wall/door pair. The manifest records this so the site can
- * tell "we have no render for that" apart from "that choice does not change
- * this room", which would otherwise look the same to a visitor.
+ * Every axis a room does not carry is pinned to its default, which collapses
+ * the matrix hard: without this, six axes would be 576 renders per room and
+ * 8,640 in total. The manifest records the list so the site can tell "we have
+ * no render for that" apart from "that choice does not change this room",
+ * which would otherwise look the same to a visitor.
+ *
+ *   kitchen  only the kitchen has kitchen units in it.
+ *   floors   the rooms with a boarded or carpeted floor. The wet rooms take
+ *            their floor from the tile choice and the eaves stores are boarded
+ *            out, so neither varies on it.
+ *   tiles    the bathroom, both en-suites and the W/C.
+ *   doors    pinned in the four wet rooms and the two stores, where the door
+ *            is behind the camera and never appears in the picture.
+ *   stairs   the hall and the two landings, which is everywhere a balustrade
+ *            is in shot.
  */
+const WET = ['wc', 'bath', 'ensuite', 'ensuite2'];
+const STORES = ['store', 'store2'];
+const WITH_STAIRS = ['hall', 'landing', 'landing2'];
+
 function axesFor(roomKey) {
-  return roomKey === 'kitchen' ? ['kitchen', 'walls', 'doors'] : ['walls', 'doors'];
+  const axes = ['walls'];
+  if (roomKey === 'kitchen') axes.unshift('kitchen');
+  if (!WET.includes(roomKey) && !STORES.includes(roomKey)) axes.push('doors');
+  if (!WET.includes(roomKey) && !STORES.includes(roomKey)) axes.push('floors');
+  if (WET.includes(roomKey)) axes.push('tiles');
+  if (WITH_STAIRS.includes(roomKey)) axes.push('stairs');
+  return axes;
 }
 
-/** Only the kitchen shows the kitchen-unit choice, so only it varies on that axis. */
+/** Every combination of the axes this room varies on, defaults for the rest. */
 function combinationsFor(roomKey) {
-  const kitchens = roomKey === 'kitchen' ? FINISHES.kitchen : [DEFAULTS.kitchen];
-  const out = [];
-  for (const kitchen of kitchens) {
-    for (const walls of FINISHES.walls) {
-      for (const doors of FINISHES.doors) out.push({ kitchen, walls, doors });
-    }
+  const live = axesFor(roomKey);
+  let out = [{ ...DEFAULTS }];
+  for (const axis of live) {
+    const next = [];
+    for (const base of out) for (const value of FINISHES[axis]) next.push({ ...base, [axis]: value });
+    out = next;
   }
   return out;
+}
+
+/** The manifest key for a combination, with the unused axes pinned. */
+function keyFor(roomKey, finishes) {
+  const live = axesFor(roomKey);
+  return [roomKey, ...AXES.map((a) => (live.includes(a) ? finishes[a] : DEFAULTS[a]))].join('|');
 }
 
 const argv = process.argv.slice(2);
@@ -206,17 +244,16 @@ async function main() {
     const combos = flag('base-only') ? [DEFAULTS] : combinationsFor(room);
     for (const finishes of combos) {
       const t0 = Date.now();
-      const key = `${room}|${finishes.kitchen}|${finishes.walls}|${finishes.doors}`;
-      const slug = `${room}--${finishes.kitchen}-${finishes.walls}-${finishes.doors}`;
+      const key = keyFor(room, finishes);
+      // The slug names only the axes this room varies on, so a bedroom's file
+      // is not stamped with a tile range that is not in the picture.
+      const slug = `${room}--${axesFor(room).map((a) => finishes[a]).join('-')}`;
       await page.evaluate(
         ([r, f, w, h]) => window.CGI.renderRoom(r, f, w, h),
         [room, finishes, ROOM_RENDER.w, ROOM_RENDER.h],
       );
       manifest.variants[key] = await writeVariants(await grab(page), slug, ROOM_OUT, 88);
-      const isDefault =
-        finishes.walls === DEFAULTS.walls &&
-        finishes.doors === DEFAULTS.doors &&
-        finishes.kitchen === DEFAULTS.kitchen;
+      const isDefault = AXES.every((a) => finishes[a] === DEFAULTS[a]);
       if (isDefault) manifest.rooms[room] = manifest.variants[key];
       console.log(`  ${slug}  ${((Date.now() - t0) / 1000).toFixed(1)}s`);
     }

@@ -52,11 +52,11 @@ export const PLAN: PlanFloor[] = [
     note: 'Master suite, bathroom, bedroom 3',
     foot: 'FRONT AT THE TOP · LANDING DOWN THE OUTER WALL',
     rooms: [
-      { key: 'landing', short: 'LANDING', dims: '1.11 wide', x: 350, y: 350, w: 1110, h: 6035 },
-      { key: 'bed3', short: 'BEDROOM 3', dims: '3.75 × 2.95', x: 1560, y: 350, w: 3735, h: 2950 },
-      { key: 'bath', short: 'BATHROOM', dims: '3.75 × 1.70', x: 1560, y: 3400, w: 3735, h: 1700 },
-      { key: 'ensuite', short: 'EN-SUITE', dims: '1.21 × 2.76', x: 350, y: 6385, w: 1210, h: 2760 },
-      { key: 'master', short: 'MASTER BED', dims: '3.64 × 2.76', x: 1660, y: 6385, w: 3635, h: 2760 },
+      { key: 'landing', short: 'LANDING', dims: '2.00 × 5.94', x: 350, y: 350, w: 2000, h: 5935 },
+      { key: 'bed3', short: 'BEDROOM 3', dims: '2.80 × 2.95', x: 2490, y: 350, w: 2795, h: 2950 },
+      { key: 'bath', short: 'BATHROOM', dims: '2.80 × 1.70', x: 2490, y: 3440, w: 2795, h: 1700 },
+      { key: 'ensuite', short: 'EN-SUITE', dims: '1.10 × 2.76', x: 350, y: 6385, w: 1100, h: 2760 },
+      { key: 'master', short: 'MASTER BED', dims: '3.75 × 2.76', x: 1550, y: 6385, w: 3745, h: 2760 },
     ],
   },
   {
@@ -67,8 +67,8 @@ export const PLAN: PlanFloor[] = [
     rooms: [
       { key: 'store', short: 'STORE', dims: '1.30 deep', x: 350, y: 350, w: 4945, h: 1300 },
       { key: 'landing2', short: 'LANDING', dims: '0.98 wide', x: 350, y: 1750, w: 975, h: 4890 },
-      { key: 'ensuite2', short: 'EN-SUITE', dims: '1.21 × 1.90', x: 1425, y: 1750, w: 1210, h: 1900 },
-      { key: 'bed2', short: 'BEDROOM 2', dims: '2.56 × 4.89', x: 2735, y: 1750, w: 2560, h: 4890 },
+      { key: 'ensuite2', short: 'EN-SUITE', dims: '0.98 × 2.61', x: 350, y: 2920, w: 975, h: 2610 },
+      { key: 'bed2', short: 'BEDROOM 2', dims: '3.93 × 5.70', x: 1425, y: 1810, w: 3930, h: 5695 },
       { key: 'store2', short: 'STORE', dims: '1.45 deep', x: 350, y: 7695, w: 4945, h: 1450 },
     ],
   },
@@ -96,7 +96,7 @@ export const ROOMS: Room[] = [
     level: 'Ground floor · front, off the drive',
     size: '2.00 × 3.61 m',
     openings: 'Front door D07 · window W07 · stairs to all three floors · smoke alarm',
-    desc: 'You come in at the front, beside the kitchen, into a proper entrance hall with the staircase rising through all three floors — not a corridor. Somewhere to put coats and boots down before the rest of the house begins.',
+    desc: 'You come in at the front, beside the kitchen, into a proper entrance hall with the staircase rising through all three floors — not a corridor. Somewhere to put coats and boots down before the rest of the house begins. The staircase and balustrade are Howdens, and which of the three sets goes in is yours to choose.',
   },
   {
     key: 'kitchen',
@@ -114,7 +114,7 @@ export const ROOMS: Room[] = [
     level: 'Ground floor · middle, off the hall',
     size: '1.06 × 1.68 m',
     openings: 'Obscure-glazed W08 · extract fan',
-    desc: 'A ground-floor W/C in the middle of the plan beside the stair, with obscured glazing and the same tiling and brassware family as the bathrooms above.',
+    desc: 'A ground-floor W/C in the middle of the plan beside the stair, with obscured glazing and the same Al Murad tiling and brassware family as the bathrooms above.',
   },
   {
     key: 'dining',
@@ -132,15 +132,15 @@ export const ROOMS: Room[] = [
     level: 'Ground floor · rear, garden doors',
     size: '4.95 × 3.23 m',
     openings: 'Garden doors D01 · window W01 · steel beam over',
-    desc: 'The full width of the house at the back — 4.96 m wide by 3.23 m — with external garden doors (D01/D02) and a window either side. Away from the drive and open to the rear garden.',
+    desc: 'The full width of the house at the back — 4.95 m wide by 3.23 m — with external garden doors (D01) and window W01 beside them in the same wall, the window nearest the outer corner. Away from the drive and open to the rear garden. The render shows a media wall on the return wall with a television and an inset electric fire; that is a fit-out idea rather than anything on the drawings, and it is not included.',
   },
   {
     key: 'master',
     label: 'MASTER BEDROOM',
     floor: 'FIRST',
     level: 'First floor · rear',
-    size: '3.64 × 2.76 m',
-    openings: 'Window W10 · door D10',
+    size: '3.75 × 2.76 m',
+    openings: 'Window W10 · door D10 off the landing',
     desc: 'The principal bedroom takes the rear of the first floor, 3.75 m wide, looking over the garden, with its own en-suite and a fitted cupboard off the landing.',
   },
   {
@@ -148,53 +148,49 @@ export const ROOMS: Room[] = [
     label: 'EN-SUITE',
     floor: 'FIRST',
     level: 'First floor · off the master bedroom',
-    size: '1.21 × 2.76 m',
-    openings: 'Obscure-glazed W09 · door D09 · extract',
-    desc: 'A walk-in shower room to the master bedroom — glazed screen, large-format tiling, heated towel rail. Mechanically extracted, as noted on the plan.',
+    size: '1.10 × 2.76 m',
+    openings: 'Obscure-glazed W09 · door D09 off the master · extract',
+    desc: 'A walk-in shower room to the master bedroom — glazed screen, large-format tiling, heated towel rail. Mechanically extracted, as noted on the plan. Tiled to match the family bathroom, from your Al Murad selection.',
   },
   {
     key: 'bath',
     label: 'BATHROOM',
     floor: 'FIRST',
     level: 'First floor · middle',
-    size: '3.75 × 1.70 m',
-    openings: 'Door D11 · mechanical extract',
-    desc: 'The family bathroom sits in the middle of the first floor beside the landing — bath with overhead shower, large-format tiling and a heated towel rail.',
+    size: '2.80 × 1.70 m',
+    openings: 'Door D11 off the landing · mechanical extract',
+    desc: 'The family bathroom sits in the middle of the first floor beside the landing, 2.80 m by 1.70 m. The plan puts the W/C and the basin along the long wall at the landing end and a 1500 mm bath across the far end against the party wall, with 100 mm clear at each end — which is exactly why the room is 1700 deep. Bath with overhead shower and a glazed screen, large-format tiling and a heated towel rail. Tiles are chosen from Al Murad; the four the renders show are a starting point, and the full range is open to you.',
   },
   {
     key: 'bed3',
     label: 'BEDROOM 3',
     floor: 'FIRST',
     level: 'First floor · front',
-    size: '3.75 × 2.95 m',
-    openings: 'Window W16 to the front · door D12',
-    desc: 'The third bedroom looks out over the front of the house, 2.95 m deep — a comfortable single or double, or a generous study.',
+    size: '2.80 × 2.95 m',
+    openings: 'Window W16 to the front · door D12 off the landing',
+    desc: 'The third bedroom looks out over the front of the house, 2.80 m by 2.95 m — a comfortable single or double, or a generous study.',
   },
   {
     key: 'bed2',
-    // NOTE — the two figures quoted for this room disagree, and both came
-    // through in the approved copy:
-    //   `size` (2.56 m) follows the plan graphic above, where the top landing
-    //   and en-suite are tiled across the full width alongside the bedroom.
-    //   `desc` (3.93 m) follows sheet 26/1362/03, where they only run part of
-    //   the depth, so the bedroom is wider than the plan graphic shows.
-    // Sheet 03 dimensions Bedroom 2 as 3930 x 4890. Confirm with the architect
-    // which figure should be published, then make both agree.
+    // Settled against sheet 26/1362/03 read at full resolution: the room is
+    // dimensioned 3930 x 5695 on the drawing itself. The two figures that
+    // used to disagree here — 2560 from the plan graphic and 3930 from the
+    // description — were both wrong about the depth.
     label: 'BEDROOM 2',
     floor: 'SECOND',
     level: 'Second floor · the whole top storey',
-    size: '2.56 × 4.89 m',
+    size: '3.93 × 5.70 m',
     openings: 'Rooflight RL01',
-    desc: 'The top floor is one large bedroom under a 40° pitched roof, with its own en-suite, a store and a rooflight. The biggest room in the house.',
+    desc: 'The top floor is one large bedroom under a 40° pitched roof — 3.93 m by 5.70 m, dimensioned on the plan — with its own en-suite, a store and a rooflight. The biggest room in the house by a distance.',
   },
   {
     key: 'landing',
     label: 'LANDING',
     floor: 'FIRST',
     level: 'First floor · down the outer wall',
-    size: '1.11 m wide',
+    size: '2.00 × 5.94 m',
     openings: 'Window W17 · cupboard (Cup’d) · smoke alarm SD',
-    desc: 'The first-floor landing runs the depth of the house against the outer wall — 1.11 m wide — serving every room on this floor, with the fitted cupboard marked Cup’d off it and a mains-powered interconnected smoke alarm shown on the plan.',
+    desc: 'The first-floor landing runs 5.94 m down the outer wall and is a full 2.00 m wide — the same band the entrance hall occupies below it, which is what lets the staircase run up this side of the house through all three storeys. It serves every room on this floor, with the fitted cupboard marked Cup’d off it and a mains-powered interconnected smoke alarm shown on the plan.',
   },
   {
     key: 'landing2',
@@ -210,9 +206,9 @@ export const ROOMS: Room[] = [
     label: 'EN-SUITE 2',
     floor: 'SECOND',
     level: 'Second floor · off bedroom 2',
-    size: '1.21 × 1.90 m',
+    size: '0.98 × 2.61 m',
     openings: 'Door D17 · extract · SVP alongside',
-    desc: 'The second en-suite serves bedroom 2 — 1.21 m by 1.90 m off the top landing, with the soil and vent pipe alongside and a mechanical extract into the eaves.',
+    desc: 'The second en-suite serves bedroom 2 — 0.98 m by 2.61 m off the top landing, with the soil and vent pipe alongside and a mechanical extract into the eaves. Tiled from the same Al Murad selection as the rooms below.',
   },
   {
     key: 'store2',
@@ -234,9 +230,9 @@ export const ROOMS: Room[] = [
   },
 ];
 
-export type FinishOption = { id: string; label: string; swatch: string };
-export type FinishGroupKey = 'kitchen' | 'walls' | 'doors';
-export type FinishGroup = { name: string; options: FinishOption[] };
+export type FinishOption = { id: string; label: string; swatch: string; note?: string };
+export type FinishGroupKey = 'kitchen' | 'walls' | 'doors' | 'floors' | 'tiles' | 'stairs';
+export type FinishGroup = { name: string; hint?: string; options: FinishOption[] };
 
 export const FINISHES: Record<FinishGroupKey, FinishGroup> = {
   kitchen: {
@@ -266,25 +262,102 @@ export const FINISHES: Record<FinishGroupKey, FinishGroup> = {
       { id: 'grey', label: 'Dark grey', swatch: '#4c5257' },
     ],
   },
+  floors: {
+    // One scheme covering the whole house rather than a choice per room: the
+    // boarded floor downstairs and on the landings, and the carpet in the
+    // bedrooms, are picked to sit together. The tiled rooms take their floor
+    // from the tile choice below instead.
+    name: 'Floor coverings',
+    hint: 'Boards downstairs and on the landings, carpet in the bedrooms',
+    options: [
+      { id: 'oak', label: 'Natural oak', swatch: '#b08a5f', note: 'Engineered oak board with a pale wool-look carpet above' },
+      { id: 'smoked', label: 'Smoked oak', swatch: '#7c5c3e', note: 'Deeper brown board with a warm greige carpet above' },
+      { id: 'grey', label: 'Grey wash', swatch: '#a8a29a', note: 'Grey-washed plank with a cool pebble carpet above' },
+      { id: 'stone', label: 'Stone', swatch: '#c2baae', note: 'Stone-effect plank with an oatmeal carpet above' },
+    ],
+  },
+  tiles: {
+    // Al Murad ranges. Al Murad is a UK tile retailer with a Huddersfield
+    // presence, and the four below are ranges they list. The buyer picks the
+    // exact tile in store; these four are what the renders show.
+    name: 'Bathroom tiles',
+    hint: 'Al Murad ranges — bathroom, en-suites and the W/C',
+    options: [
+      { id: 'calacatta', label: 'Calacatta Marmi', swatch: '#eeece6', note: 'Bright white marble effect with soft grey veining, Cosmopolitan range' },
+      { id: 'capel', label: 'Capel Gold', swatch: '#e6dcc8', note: 'Warm white marble effect with gold veining' },
+      { id: 'bardiglio', label: 'Bardiglio', swatch: '#98999a', note: 'Mid-grey marble effect' },
+      { id: 'noir', label: 'Noir Grey', swatch: '#4c4d50', note: 'Deep charcoal, 297 × 598' },
+    ],
+  },
+  stairs: {
+    // Howdens stair parts, which is the joinery supplier used throughout.
+    // Howdens' own stair-parts brand is Richard Burbidge, which is where the
+    // glass panel option comes from.
+    name: 'Staircase',
+    hint: 'Howdens stair parts — hall and landings',
+    options: [
+      { id: 'chamfered', label: 'Painted chamfered', swatch: '#f4f2ed', note: 'Stop-chamfered spindles and newels, primed and painted, oak handrail' },
+      { id: 'oak', label: 'Square oak', swatch: '#b1855a', note: 'Square oak spindles with oak newel caps and an oak handrail' },
+      { id: 'glass', label: 'Glass panel', swatch: '#cfe0e6', note: 'Richard Burbidge glass stair panels with an oak handrail' },
+    ],
+  },
 };
 
-export type Finishes = { kitchen: string; walls: string; doors: string };
+export type Finishes = {
+  kitchen: string;
+  walls: string;
+  doors: string;
+  floors: string;
+  tiles: string;
+  stairs: string;
+};
 
-export const DEFAULT_FINISHES: Finishes = { kitchen: 'graphite', walls: 'chalk', doors: 'white' };
+export const DEFAULT_FINISHES: Finishes = {
+  kitchen: 'graphite',
+  walls: 'chalk',
+  doors: 'white',
+  floors: 'oak',
+  tiles: 'calacatta',
+  stairs: 'chamfered',
+};
 
-export const FINISH_GROUP_KEYS: FinishGroupKey[] = ['kitchen', 'walls', 'doors'];
+export const FINISH_GROUP_KEYS: FinishGroupKey[] = [
+  'kitchen',
+  'walls',
+  'doors',
+  'floors',
+  'tiles',
+  'stairs',
+];
+
+/** How each group reads in a sentence: "Graphite kitchen", "Bardiglio tiles". */
+const FINISH_NOUN: Record<FinishGroupKey, string> = {
+  kitchen: 'kitchen',
+  walls: 'walls',
+  doors: 'doors',
+  floors: 'floors',
+  tiles: 'tiles',
+  stairs: 'staircase',
+};
 
 export function finishOption(group: FinishGroupKey, id: string): FinishOption {
   return FINISHES[group].options.find((o) => o.id === id) ?? FINISHES[group].options[0];
 }
 
-/** "Graphite kitchen · Chalk white walls · white panel doors" */
-export function finishSummary(finishes: Finishes): string {
-  return [
-    `${finishOption('kitchen', finishes.kitchen).label} kitchen`,
-    `${finishOption('walls', finishes.walls).label} walls`,
-    `${finishOption('doors', finishes.doors).label.toLowerCase()} doors`,
-  ].join(' · ');
+/**
+ * The selection written out, for the enquiry and for the summary line.
+ *
+ * `groups` narrows it to the axes that change the room on screen, so the line
+ * under the image describes what the visitor is actually looking at rather
+ * than listing six choices four of which are not in the picture.
+ */
+export function finishSummary(
+  finishes: Finishes,
+  groups: FinishGroupKey[] = FINISH_GROUP_KEYS,
+): string {
+  return groups
+    .map((g) => `${finishOption(g, finishes[g]).label} ${FINISH_NOUN[g]}`)
+    .join(' · ');
 }
 
 export function planFloor(floor: FloorTag): PlanFloor {

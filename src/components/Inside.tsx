@@ -6,7 +6,7 @@ import {
   finishOption, finishSummary, planFloor, roomTitle,
   type FinishGroupKey, type Finishes,
 } from '@/data/interior';
-import { roomImage } from '@/lib/cgi';
+import { roomAxes, roomImage } from '@/lib/cgi';
 import { CornerMarks } from './CornerMarks';
 
 /**
@@ -27,7 +27,11 @@ export function Inside({ onFinishes }: { onFinishes?: (f: Finishes) => void }) {
   const plan = planFloor(floor);
   const floorIdx = Math.max(0, FLOOR_TAGS.indexOf(floor));
 
-  const summary = useMemo(() => finishSummary(finishes), [finishes]);
+  // Which of the six choices this room's image actually varies on. A bedroom
+  // does not change when the tiles do, and saying so is better than letting a
+  // visitor click through four tile ranges watching nothing happen.
+  const liveAxes = useMemo(() => roomAxes(room.key) as FinishGroupKey[], [room.key]);
+  const summary = useMemo(() => finishSummary(finishes, liveAxes), [finishes, liveAxes]);
   const image = useMemo(() => roomImage(room.key, finishes), [room.key, finishes]);
 
   const kitchenSwatch = finishOption('kitchen', finishes.kitchen).swatch;
@@ -333,8 +337,10 @@ export function Inside({ onFinishes }: { onFinishes?: (f: Finishes) => void }) {
                 <span style={{ fontSize: 11.5, color: 'var(--ink-muted-2)' }}>{summary}</span>
               </div>
               <div style={{ display: 'grid', gap: 16, marginTop: 16 }}>
-                {FINISH_GROUP_KEYS.map((gk) => (
-                  <fieldset key={gk} style={{ border: 0, margin: 0, padding: 0 }}>
+                {FINISH_GROUP_KEYS.map((gk) => {
+                  const live = liveAxes.includes(gk);
+                  return (
+                  <fieldset key={gk} style={{ border: 0, margin: 0, padding: 0, opacity: live ? 1 : 0.62 }}>
                     <legend
                       style={{
                         fontWeight: 600,
@@ -347,6 +353,19 @@ export function Inside({ onFinishes }: { onFinishes?: (f: Finishes) => void }) {
                       }}
                     >
                       {FINISHES[gk].name}
+                      <span
+                        style={{
+                          marginLeft: 8,
+                          fontWeight: 500,
+                          letterSpacing: '.04em',
+                          textTransform: 'none',
+                          color: 'var(--ink-muted-2)',
+                        }}
+                      >
+                        {live
+                          ? (FINISHES[gk].hint ?? '')
+                          : `not shown in the ${roomTitle(room.label).toLowerCase()}`}
+                      </span>
                     </legend>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                       {FINISHES[gk].options.map((o) => {
@@ -356,7 +375,7 @@ export function Inside({ onFinishes }: { onFinishes?: (f: Finishes) => void }) {
                             key={o.id}
                             type="button"
                             aria-pressed={on}
-                            title={o.label}
+                            title={o.note ?? o.label}
                             onClick={() => setFinish(gk, o.id)}
                             style={{
                               display: 'flex',
@@ -390,8 +409,14 @@ export function Inside({ onFinishes }: { onFinishes?: (f: Finishes) => void }) {
                         );
                       })}
                     </div>
+                    {live && finishOption(gk, finishes[gk]).note ? (
+                      <p style={{ margin: '7px 0 0', fontSize: 11.5, color: 'var(--ink-muted-2)' }}>
+                        {finishOption(gk, finishes[gk]).note}
+                      </p>
+                    ) : null}
                   </fieldset>
-                ))}
+                  );
+                })}
               </div>
               <p style={{ margin: '16px 0 0', fontSize: 12.5, lineHeight: 1.65, color: 'var(--ink-muted-2)' }}>
                 {image.exact

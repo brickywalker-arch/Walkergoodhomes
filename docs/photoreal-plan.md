@@ -52,8 +52,14 @@ change that room's render, and `src/lib/cgi.ts` pins the ones that do not — so
 choosing sage units still resolves the exact image for a bedroom, because the
 kitchen cannot be seen from in there.
 
-Photoreal images can use a **coarser** set of axes than the renders, because
-the internal-door colour is barely visible in most rooms:
+This matters more since the chooser went to six axes — kitchen units, wall
+paint, internal doors, floor coverings, bathroom tiles and the staircase.
+Unpinned that is 576 combinations per room and 8,640 renders; pinned it is
+**702**, because a bedroom does not change when the tiles do and the four wet
+rooms never show a door.
+
+Photoreal images use a **coarser** set of axes again, because the
+internal-door colour is barely visible in most rooms:
 
 | Room | Photoreal axes | Images |
 |---|---|---|
@@ -61,8 +67,17 @@ the internal-door colour is barely visible in most rooms:
 | living, dining, master, bath, bed2 | walls | 5 × 3 = 15 |
 | | | **27 total** |
 
-At roughly 10–20 credits an image that is 270–540 credits, against 926
-available. There is room for two or three variations per image to choose from.
+At roughly 10–20 credits an image that is 270–540 credits. There is room for
+two or three variations per image to choose from.
+
+The floor covering and the tile range are **declared** in the photoreal axes
+but only the default of each has been generated. That is deliberate: declaring
+them means a buyer who picks smoked oak gets a key the photoreal manifest has
+no image for, and `roomImage()` falls back to the render — which does show
+smoked oak. Leaving them undeclared would have served the oak photograph for
+every floor choice and made the chooser look broken. Generating the other
+three floors and three tile ranges is the obvious next spend: it would take
+the photoreal set from 27 images to roughly 96.
 
 Where no photoreal image exists for a selection, the site falls back to the
 render — which is the behaviour `roomImage()` already has.

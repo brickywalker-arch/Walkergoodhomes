@@ -27,15 +27,104 @@ export const KITCHEN_FINISH = {
   ivory: { color: '#e6dfd0', roughness: 0.42 },
 };
 
+/**
+ * Floor coverings, chosen as one scheme for the whole house.
+ *
+ * `board` is what goes down on the ground floor and the landings and `carpet`
+ * what goes down in the bedrooms, picked as a pair so the two read together on
+ * the stairs between them. The wet rooms take their floor from TILE_FINISH
+ * instead, because there the floor tile is the tile choice.
+ */
+export const FLOOR_FINISH = {
+  oak: {
+    board: { color: '#b08a5f', roughness: 0.55, grain: 1, mottle: 0 },
+    carpet: { color: '#bdb6a9', roughness: 1.0 },
+  },
+  smoked: {
+    board: { color: '#7c5c3e', roughness: 0.52, grain: 1.15, mottle: 0 },
+    carpet: { color: '#aea496', roughness: 1.0 },
+  },
+  grey: {
+    board: { color: '#a8a29a', roughness: 0.58, grain: 0.75, mottle: 0 },
+    carpet: { color: '#aaa9a6', roughness: 1.0 },
+  },
+  stone: {
+    // A stone-effect plank, so the grain drops away and the face mottles.
+    board: { color: '#c2baae', roughness: 0.4, grain: 0.15, mottle: 1 },
+    carpet: { color: '#c0b6a3', roughness: 1.0 },
+  },
+};
+
+/**
+ * Bathroom tiling — the four Al Murad ranges the buyer chooses between.
+ *
+ * `floor` is the large-format floor tile and `wall` the wall tile, which in
+ * each of these ranges is the same stone in the same finish; `vein` and
+ * `veining` are what make a marble-effect range read as marble rather than as
+ * a flat coloured square.
+ */
+export const TILE_FINISH = {
+  calacatta: {
+    floor: { color: '#eeece6', roughness: 0.3 },
+    wall: { color: '#f3f1ec', roughness: 0.16 },
+    vein: '#aab0b6', veining: 0.95, grout: '#d9d5cd',
+  },
+  capel: {
+    floor: { color: '#e6dcc8', roughness: 0.32 },
+    wall: { color: '#ece3d2', roughness: 0.2 },
+    vein: '#b49a57', veining: 0.8, grout: '#cfc4ad',
+  },
+  bardiglio: {
+    floor: { color: '#98999a', roughness: 0.3 },
+    wall: { color: '#a3a4a5', roughness: 0.18 },
+    vein: '#6b6e72', veining: 0.9, grout: '#83858a',
+  },
+  noir: {
+    floor: { color: '#4c4d50', roughness: 0.26 },
+    wall: { color: '#55565a', roughness: 0.14 },
+    vein: '#2e3035', veining: 0.7, grout: '#3e4044',
+  },
+};
+
+/**
+ * Staircase and balustrade — Howdens stair parts.
+ *
+ * `kind` is what fills the space between the handrail and the string:
+ * `spindle` for turned timber, `glass` for a Richard Burbidge panel. `profile`
+ * picks the spindle section, which is the difference between a stop-chamfered
+ * spindle and a plain square one.
+ */
+export const STAIR_FINISH = {
+  chamfered: {
+    kind: 'spindle', profile: 'chamfered',
+    spindle: { color: '#f6f4ef', roughness: 0.46 },
+    newel: { color: '#f6f4ef', roughness: 0.46 },
+    handrail: { color: '#8a6540', roughness: 0.4 },
+    string: { color: '#fbfaf7', roughness: 0.5 },
+    tread: 'board',
+  },
+  oak: {
+    kind: 'spindle', profile: 'square',
+    spindle: { color: '#b1855a', roughness: 0.48 },
+    newel: { color: '#a97e54', roughness: 0.48 },
+    handrail: { color: '#9a6f45', roughness: 0.38 },
+    string: { color: '#fbfaf7', roughness: 0.5 },
+    tread: 'board',
+  },
+  glass: {
+    kind: 'glass',
+    spindle: { color: '#b1855a', roughness: 0.48 },
+    newel: { color: '#a97e54', roughness: 0.48 },
+    handrail: { color: '#9a6f45', roughness: 0.38 },
+    string: { color: '#fbfaf7', roughness: 0.5 },
+    tread: 'board',
+  },
+};
+
 /** Fixed materials — everything that is not a buyer choice. */
 const FIXED = {
   ceiling: { color: '#f6f5f2', roughness: 0.97 },
   skirting: { color: '#fbfaf7', roughness: 0.5 },
-  oakFloor: { color: '#b08a5f', roughness: 0.55 },
-  darkOakFloor: { color: '#8f6c46', roughness: 0.58 },
-  tileFloor: { color: '#cdc7bd', roughness: 0.32 },
-  tileWall: { color: '#ddd8cf', roughness: 0.26 },
-  carpet: { color: '#b9b2a6', roughness: 1.0 },
   boarded: { color: '#c3ac8b', roughness: 0.85 },
   worktop: { color: '#2a2d31', roughness: 0.22 },
   worktopLight: { color: '#e9e5dc', roughness: 0.25 },
@@ -103,8 +192,54 @@ export function makeMaterials(finishes, level = 'ground') {
   const wall = WALL_PAINT[finishes.walls] ?? WALL_PAINT.chalk;
   const door = DOOR_FINISH[finishes.doors] ?? DOOR_FINISH.white;
   const kitchen = KITCHEN_FINISH[finishes.kitchen] ?? KITCHEN_FINISH.graphite;
+  const floorId = FLOOR_FINISH[finishes.floors] ? finishes.floors : 'oak';
+  const tileId = TILE_FINISH[finishes.tiles] ? finishes.tiles : 'calacatta';
+  const stairId = STAIR_FINISH[finishes.stairs] ? finishes.stairs : 'chamfered';
+  const floors = FLOOR_FINISH[floorId];
+  const tiles = TILE_FINISH[tileId];
+  const stairs = STAIR_FINISH[stairId];
+
+  // The cache key has to carry the scheme. Without it the first render's
+  // boards and tiles would be handed to every later render, and a set of
+  // floor choices that all look identical is worse than not offering them.
+  const board = textured(
+    `board:${floorId}`,
+    floors.board,
+    () => plankCanvas(floors.board.color, { grain: floors.board.grain, mottle: floors.board.mottle }),
+    1.4,
+  );
+  const carpet = textured(`carpet:${floorId}`, floors.carpet, () => carpetCanvas(floors.carpet.color), 0.7);
+  const tileFloor = textured(
+    `tileFloor:${tileId}`,
+    tiles.floor,
+    () => tileCanvas(tiles.floor.color, 3, { vein: tiles.vein, veining: tiles.veining, grout: tiles.grout }),
+    2.2,
+  );
+  const tileWall = textured(
+    `tileWall:${tileId}`,
+    tiles.wall,
+    () => tileCanvas(tiles.wall.color, 2, { vein: tiles.vein, veining: tiles.veining, grout: tiles.grout }),
+    2.2,
+  );
 
   return {
+    board,
+    carpet,
+    tileFloor,
+    tileWall,
+    // The staircase's own parts, so a room that draws a balustrade does not
+    // have to know which of the three was chosen.
+    stair: {
+      kind: stairs.kind,
+      profile: stairs.profile ?? 'square',
+      spindle: std(stairs.spindle),
+      newel: std(stairs.newel),
+      handrail: std(stairs.handrail),
+      string: std(stairs.string),
+      tread: board,
+      glass: std({ color: '#d5e3e8', roughness: 0.04, metalness: 0.1, opacity: 0.22, transparent: true }),
+      clamp: std(FIXED.steel),
+    },
     wall: std(wall),
     // Reveals sit a shade darker so the opening reads as depth, not a decal.
     reveal: std({ color: wall.color, roughness: 0.95 }),
@@ -114,11 +249,6 @@ export function makeMaterials(finishes, level = 'ground') {
     kitchenWall: std({ ...kitchen, roughness: (kitchen.roughness ?? 0.4) + 0.04 }),
     ceiling: std(FIXED.ceiling),
     skirting: std(FIXED.skirting),
-    oakFloor: textured('oakFloor', FIXED.oakFloor, () => plankCanvas(FIXED.oakFloor.color), 1.4),
-    darkOakFloor: textured('darkOakFloor', FIXED.darkOakFloor, () => plankCanvas(FIXED.darkOakFloor.color), 1.4),
-    tileFloor: textured('tileFloor', FIXED.tileFloor, () => tileCanvas(FIXED.tileFloor.color, 3), 2.2),
-    tileWall: textured('tileWall', FIXED.tileWall, () => tileCanvas(FIXED.tileWall.color, 2), 2.2),
-    carpet: textured('carpet', FIXED.carpet, () => carpetCanvas(FIXED.carpet.color), 0.7),
     boarded: textured('boarded', FIXED.boarded, () => boardCanvas(), 1.3),
     worktop: std(finishes.kitchen === 'graphite' ? FIXED.worktopLight : FIXED.worktop),
     steel: std(FIXED.steel),

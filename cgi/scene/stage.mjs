@@ -141,7 +141,14 @@ export function slateCanvas() {
 }
 
 /** Engineered oak boards, laid in a broken bond. */
-export function plankCanvas(tone = '#b08a5f') {
+/**
+ * Boarded flooring.
+ *
+ * `grain` scales the length-running streaks that read as timber; a
+ * stone-effect plank sets it low and turns `mottle` on instead, which is what
+ * separates a stone LVT from a piece of oak at a glance.
+ */
+export function plankCanvas(tone = '#b08a5f', { grain = 1, mottle = 0 } = {}) {
   const c = canvas();
   const g = c.getContext('2d');
   const S = c.width;
@@ -158,14 +165,26 @@ export function plankCanvas(tone = '#b08a5f') {
       g.fillStyle = `#${base.clone().multiplyScalar(shade).getHexString()}`;
       g.fillRect(x + 2, y + 2, w - 4, plankH - 4);
       // Grain: darker streaks running the length of the board.
-      for (let i = 0; i < 16; i += 1) {
-        g.strokeStyle = `rgba(0,0,0,${0.03 + Math.random() * 0.07})`;
+      for (let i = 0; i < Math.round(16 * grain); i += 1) {
+        g.strokeStyle = `rgba(0,0,0,${(0.03 + Math.random() * 0.07) * grain})`;
         g.lineWidth = 1 + Math.random() * 3;
         const gy = y + 10 + Math.random() * (plankH - 20);
         g.beginPath();
         g.moveTo(x + 4, gy);
         g.bezierCurveTo(x + w * 0.3, gy + (Math.random() - 0.5) * 12, x + w * 0.7, gy + (Math.random() - 0.5) * 12, x + w - 4, gy);
         g.stroke();
+      }
+      // Stone effect: soft cloudy patches rather than directional grain.
+      for (let i = 0; i < Math.round(26 * mottle); i += 1) {
+        const px = x + 6 + Math.random() * (w - 12);
+        const py = y + 6 + Math.random() * (plankH - 12);
+        const rr = plankH * (0.14 + Math.random() * 0.4);
+        const blob = g.createRadialGradient(px, py, 0, px, py, rr);
+        const dark = Math.random() > 0.5;
+        blob.addColorStop(0, dark ? 'rgba(0,0,0,.09)' : 'rgba(255,255,255,.09)');
+        blob.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = blob;
+        g.fillRect(x + 2, y + 2, w - 4, plankH - 4);
       }
       g.fillStyle = 'rgba(0,0,0,.26)';
       g.fillRect(x, y, 3, plankH);
@@ -193,27 +212,85 @@ export function carpetCanvas(tone = '#b9b2a6') {
   return c;
 }
 
-/** Large-format tiling with a fine grout joint. */
-export function tileCanvas(tone = '#cdc7bd', across = 3) {
+/**
+ * Large-format tiling with a fine grout joint.
+ *
+ * `vein` and `veining` carry the marble-effect ranges: a marble tile's whole
+ * character is the veins wandering across the face and running off the edge of
+ * one tile to reappear somewhere unrelated on the next, so the veins are drawn
+ * per tile with their own origins rather than as one pattern over the sheet.
+ * `veining: 0` leaves the plain shaded tile the bathrooms had before.
+ */
+export function tileCanvas(tone = '#cdc7bd', across = 3, { vein = null, veining = 0, grout = null } = {}) {
   const c = canvas(1024);
   const g = c.getContext('2d');
   const S = c.width;
   const base = new THREE.Color(tone);
-  g.fillStyle = '#a49d94';
+  g.fillStyle = grout ?? '#a49d94';
   g.fillRect(0, 0, S, S);
   const cell = S / across;
+  const veinColour = vein ? new THREE.Color(vein) : null;
+
   for (let ty = 0; ty < across; ty += 1) {
     for (let tx = 0; tx < across; tx += 1) {
+      const x0 = tx * cell + 5;
+      const y0 = ty * cell + 5;
+      const w = cell - 10;
+      const h = cell - 10;
       const shade = 0.94 + Math.random() * 0.12;
       g.fillStyle = `#${base.clone().multiplyScalar(shade).getHexString()}`;
-      g.fillRect(tx * cell + 5, ty * cell + 5, cell - 10, cell - 10);
-      // A faint diagonal vein so the tiles are not dead flat.
+      g.fillRect(x0, y0, w, h);
+
+      if (veinColour && veining > 0) {
+        g.save();
+        g.beginPath();
+        g.rect(x0, y0, w, h);
+        g.clip();
+        // A few principal veins with hairlines branching off them, which is
+        // how marble actually reads: one strong direction, lots of detail.
+        const majors = 2 + Math.floor(Math.random() * 3);
+        for (let v = 0; v < majors; v += 1) {
+          const sx = x0 - w * 0.15 + Math.random() * w * 1.3;
+          const sy = y0 - h * 0.15;
+          const drift = (Math.random() - 0.5) * w * 0.9;
+          g.strokeStyle = `#${veinColour.getHexString()}`;
+          g.globalAlpha = (0.2 + Math.random() * 0.3) * veining;
+          g.lineWidth = 2 + Math.random() * 7;
+          g.beginPath();
+          g.moveTo(sx, sy);
+          g.bezierCurveTo(
+            sx + drift * 0.5, y0 + h * 0.35,
+            sx - drift * 0.4, y0 + h * 0.7,
+            sx + drift, y0 + h * 1.15,
+          );
+          g.stroke();
+          for (let b = 0; b < 4; b += 1) {
+            g.globalAlpha = (0.08 + Math.random() * 0.16) * veining;
+            g.lineWidth = 1 + Math.random() * 2;
+            const bt = 0.15 + Math.random() * 0.7;
+            const bx = sx + drift * bt;
+            const by = y0 + h * bt;
+            g.beginPath();
+            g.moveTo(bx, by);
+            g.bezierCurveTo(
+              bx + (Math.random() - 0.5) * w * 0.3, by + h * 0.1,
+              bx + (Math.random() - 0.5) * w * 0.4, by + h * 0.2,
+              bx + (Math.random() - 0.5) * w * 0.5, by + h * 0.3,
+            );
+            g.stroke();
+          }
+        }
+        g.globalAlpha = 1;
+        g.restore();
+      }
+
+      // A faint diagonal sheen so the tiles are not dead flat.
       const grad = g.createLinearGradient(tx * cell, ty * cell, (tx + 1) * cell, (ty + 1) * cell);
       grad.addColorStop(0, 'rgba(255,255,255,.07)');
       grad.addColorStop(0.55, 'rgba(255,255,255,0)');
       grad.addColorStop(1, 'rgba(0,0,0,.05)');
       g.fillStyle = grad;
-      g.fillRect(tx * cell + 5, ty * cell + 5, cell - 10, cell - 10);
+      g.fillRect(x0, y0, w, h);
     }
   }
   return c;
