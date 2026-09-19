@@ -235,7 +235,9 @@ export const ROOM_SETS = {
 
   dining: {
     width: 3.79, depth: 1.68, height: GROUND_H, floor: 'oakFloor',
-    camera: { pos: [3.62, 1.56, 0.84], target: [0.15, 0.9, 0.84], fov: 66 },
+    // Looks through the cased opening and on out at the garden doors, which
+    // is what the open middle band actually gives you.
+    camera: { pos: [1.72, 1.42, 0.1], target: [1.7, 1.12, 4.9], fov: 70 },
     walls: (r, m) => [
       // Doors D03 / D04 off the hall, and a wide cased opening through to
       // the living room at the rear — the plan's open middle band.
@@ -246,8 +248,29 @@ export const ROOM_SETS = {
     ],
     build: (r, m) => {
       const g = new THREE.Group();
-      // Daylight borrowed from the living room beyond the cased opening.
-      g.add(box(2.2, 2.1, 0.02, m.interiorBeyond, r.width - 3.2, 0, r.depth + 0.04));
+      /*
+       * Open plan. The plan carries a steel beam over this wall rather than
+       * a wall, so the dining room looks straight through the opening into
+       * the living room and out at the garden doors beyond. That through
+       * view is built here rather than faked with a flat panel.
+       */
+      const BEYOND = 3.23;             // the living room's depth
+      g.add(box(r.width, 0.02, BEYOND, m.oakFloor, 0, 0, r.depth));
+      g.add(box(r.width, 0.06, BEYOND, m.ceiling, 0, r.height, r.depth));
+      g.add(box(0.03, r.height, BEYOND, m.wall, 0, 0, r.depth));
+      g.add(box(0.03, r.height, BEYOND, m.wall, r.width - 0.03, 0, r.depth));
+      // The rear wall of the living room, with D01 in it.
+      const beyondRoom = { width: r.width, depth: r.depth + BEYOND, height: r.height };
+      g.add(wall({ side: 'back', ...beyondRoom, material: m.wall, openings: [
+        { u: 0.85, w: 1.75, sill: 0, h: 2.1 },
+      ] }));
+      g.add(glazing({ side: 'back', room: beyondRoom, materials: m,
+        opening: { u: 0.85, w: 1.75, sill: 0, h: 2.1 } }));
+      // A sofa glimpsed in the living room, to the left of those doors.
+      const beyondSofa = sofa(m, { width: 1.9, depth: 0.85 });
+      beyondSofa.rotation.y = Math.PI / 2;
+      beyondSofa.position.set(3.46, 0, r.depth + 0.85);
+      g.add(beyondSofa);
       g.add(door({ side: 'front', room: r, u: 0.3, width: 0.8, materials: m, open: 0.6 }));
 
       const t = table(m, { width: 1.7, depth: 0.88, height: 0.75 });
@@ -264,7 +287,8 @@ export const ROOM_SETS = {
       sb.position.set(2.3, 0, 0.04);
       g.add(sb);
       g.add(panelOnWall('front', r, m, { u: 2.5, sill: 1.05, width: 0.9, height: 0.66, material: m.fabricDeep }));
-      g.add(pendant(m, 1.9, 0.84, r.height, { drop: 1.0, radius: 0.19 }));
+      // Kept short so it lights the table without blocking the through view.
+      g.add(pendant(m, 1.9, 0.72, r.height, { drop: 0.42, radius: 0.17 }));
       g.add(rug(m, 0.7, 0.18, 2.4, 1.32));
       return g;
     },
@@ -272,7 +296,8 @@ export const ROOM_SETS = {
 
   living: {
     width: 4.95, depth: 3.23, height: GROUND_H, floor: 'oakFloor',
-    camera: { pos: [4.56, 1.6, 0.52], target: [1.35, 0.95, 2.82], fov: 64 },
+    // Faces the garden doors, with the sofa in frame to the left of them.
+    camera: { pos: [0.6, 1.6, 0.32], target: [2.85, 1.02, 2.55], fov: 82 },
     walls: (r, m) => [
       wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 1.2, w: 2.2, sill: 0, h: 2.1, kind: 'door' }] }),
       // Rear wall as drawn: W01 nearest the outer corner, garden doors D01
@@ -291,30 +316,31 @@ export const ROOM_SETS = {
       // Steel beam over, encased and expressed as a shallow downstand.
       g.add(box(r.width, 0.16, 0.22, m.ceiling, 0, r.height - 0.16, r.depth - 0.34));
 
-      // Seating down the left-hand wall so the garden doors stay in view.
+      // The sofa sits to the left of the garden doors and faces them, which
+      // is how the room is used: the doors are the view, not a back wall.
       const s = sofa(m, { width: 2.3, depth: 0.9 });
-      s.rotation.y = -Math.PI / 2;
-      s.position.set(0.98, 0, 0.42);
+      s.rotation.y = Math.PI / 2;
+      s.position.set(r.width - 0.85, 0, 0.5);
       g.add(s);
       const arm = sofa(m, { width: 0.98, depth: 0.86 });
       arm.rotation.y = Math.PI;
-      arm.position.set(3.15, 0.0, 0.92);
+      arm.position.set(0.82, 0.0, 0.92);
       g.add(arm);
       const ct = table(m, { width: 1.05, depth: 0.58, height: 0.38 });
-      ct.position.set(1.72, 0, 1.28);
+      ct.position.set(2.18, 0, 1.28);
       g.add(ct);
-      g.add(box(0.26, 0.03, 0.19, m.linen, 2.1, 0.38, 1.47));
-      g.add(rug(m, 1.5, 0.78, 2.0, 1.45));
+      g.add(box(0.26, 0.03, 0.19, m.linen, 2.59, 0.38, 1.47));
+      g.add(rug(m, 1.45, 0.78, 2.0, 1.45));
 
-      // Low shelving on the right-hand wall, and planting by the doors.
+      // Low shelving on the far wall, and planting by the doors.
       const shelf = unitRun(m, { length: 1.5, height: 0.52, depth: 0.4, doorMat: m.timberDark, count: 3, plinth: 0.05 });
-      shelf.rotation.y = -Math.PI / 2;
-      shelf.position.set(r.width - 0.04, 0, 0.95);
+      shelf.rotation.y = Math.PI / 2;
+      shelf.position.set(0.04, 0, 0.95);
       g.add(shelf);
-      g.add(box(0.04, 0.58, 1.02, m.frame, r.width - 0.12, 0.82, 1.2));
-      g.add(plant(m, 2.35, 2.78, { height: 1.3 }));
+      g.add(box(0.04, 0.58, 1.02, m.frame, 0.08, 0.82, 1.2));
+      g.add(plant(m, 2.6, 2.78, { height: 1.3 }));
       // Floor lamp in the corner by the window.
-      g.add(cyl(0.035, 1.45, m.frame, 0.42, 0.72, 2.85, 10));
+      g.add(cyl(0.035, 1.45, m.frame, 4.53, 0.72, 2.85, 10));
       g.add(cyl(0.16, 0.26, m.linen, 0.42, 1.55, 2.85, 16));
       return g;
     },
