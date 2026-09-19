@@ -95,7 +95,7 @@ export const ROOMS: Room[] = [
     floor: 'GROUND',
     level: 'Ground floor · front, off the drive',
     size: '2.00 × 3.61 m',
-    openings: 'Front door D07 · stairs to all three floors · smoke alarm',
+    openings: 'Front door D07 · window W07 · stairs to all three floors · smoke alarm',
     desc: 'You come in at the front, beside the kitchen, into a proper entrance hall with the staircase rising through all three floors — not a corridor. Somewhere to put coats and boots down before the rest of the house begins.',
   },
   {
@@ -104,8 +104,8 @@ export const ROOMS: Room[] = [
     floor: 'GROUND',
     level: 'Ground floor · front',
     size: '2.81 × 3.61 m',
-    openings: 'Windows W05 / W06 · heat alarm · mechanical extract',
-    desc: 'The kitchen sits at the front of the plan next to the entrance hall, lit by two front windows (W05 and W06 on the elevations). Units run in a U on three walls, opening to the door — at 2.81 m wide the room takes two facing runs and a proper gangway between them.',
+    openings: 'Window W06 · heat alarm · mechanical extract',
+    desc: 'The kitchen sits at the front of the plan next to the entrance hall, lit by a wide front window (W06 on the elevations). Units run in a U on three walls, opening to the door — at 2.81 m wide the room takes two facing runs and a proper gangway between them.',
   },
   {
     key: 'wc',
@@ -140,8 +140,8 @@ export const ROOMS: Room[] = [
     floor: 'FIRST',
     level: 'First floor · rear',
     size: '3.64 × 2.76 m',
-    openings: 'Windows W10 / W11 · door D10',
-    desc: 'The principal bedroom takes the rear of the first floor, 3.75 m deep, looking over the garden, with its own en-suite and a fitted cupboard off the landing.',
+    openings: 'Window W10 · door D10',
+    desc: 'The principal bedroom takes the rear of the first floor, 3.75 m wide, looking over the garden, with its own en-suite and a fitted cupboard off the landing.',
   },
   {
     key: 'ensuite',
@@ -158,7 +158,7 @@ export const ROOMS: Room[] = [
     floor: 'FIRST',
     level: 'First floor · middle',
     size: '3.75 × 1.70 m',
-    openings: 'Doors D11 / D12 · mechanical extract',
+    openings: 'Door D11 · mechanical extract',
     desc: 'The family bathroom sits in the middle of the first floor beside the landing — bath with overhead shower, large-format tiling and a heated towel rail.',
   },
   {
@@ -167,7 +167,7 @@ export const ROOMS: Room[] = [
     floor: 'FIRST',
     level: 'First floor · front',
     size: '3.75 × 2.95 m',
-    openings: 'Windows W16 / W17 to the front',
+    openings: 'Window W16 to the front · door D12',
     desc: 'The third bedroom looks out over the front of the house, 2.95 m deep — a comfortable single or double, or a generous study.',
   },
   {
@@ -184,8 +184,8 @@ export const ROOMS: Room[] = [
     floor: 'SECOND',
     level: 'Second floor · the whole top storey',
     size: '2.56 × 4.89 m',
-    openings: 'Rooflights RL01 / RL02 · window W18',
-    desc: 'The top floor is one large bedroom — 4.89 m by 3.93 m under a 40° pitched roof, with its own en-suite, a store and a rooflight. The biggest room in the house.',
+    openings: 'Rooflight RL01',
+    desc: 'The top floor is one large bedroom under a 40° pitched roof, with its own en-suite, a store and a rooflight. The biggest room in the house.',
   },
   {
     key: 'landing',
@@ -193,7 +193,7 @@ export const ROOMS: Room[] = [
     floor: 'FIRST',
     level: 'First floor · down the outer wall',
     size: '1.11 m wide',
-    openings: 'Cupboard (Cup’d) · smoke alarm SD',
+    openings: 'Window W17 · cupboard (Cup’d) · smoke alarm SD',
     desc: 'The first-floor landing runs the depth of the house against the outer wall — 1.11 m wide — serving every room on this floor, with the fitted cupboard marked Cup’d off it and a mains-powered interconnected smoke alarm shown on the plan.',
   },
   {

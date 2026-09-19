@@ -80,18 +80,23 @@ export const ROOM_SETS = {
     width: 2.0, depth: 3.61, height: GROUND_H, floor: 'oakFloor',
     camera: { pos: [1.62, 1.6, 0.62], target: [0.62, 1.05, 3.1], fov: 70 },
     walls: (r, m) => [
-      // Front door D07 in the front wall, with a glazed top light beside it.
-      wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 0.5, w: 0.95, sill: 0, h: 2.08, kind: 'door' }] }),
+      // W07 and the front door D07 side by side, as drawn: window to the
+      // outer corner, door beside it.
+      wall({ side: 'front', ...r, material: m.wall, openings: [
+        { u: 0.12, w: 0.72, sill: 0.9, h: 1.2 },
+        { u: 1.0, w: 0.95, sill: 0, h: 2.08, kind: 'door' },
+      ] }),
       wall({ side: 'back', ...r, material: m.wall }),
       wall({ side: 'left', ...r, material: m.wall }),
       wall({ side: 'right', ...r, material: m.wall, openings: [{ u: 0.45, w: 0.82, sill: 0, h: 2.0, kind: 'door' }] }),
     ],
     build: (r, m) => {
       const g = new THREE.Group();
-      // External door leaf with a glazed panel over.
-      g.add(box(0.95, 2.08, 0.06, m.timberDark, 0.5, 0, -0.03));
-      g.add(box(0.5, 0.9, 0.02, m.sky, 0.72, 0.85, -0.055));
-      g.add(box(0.05, 0.05, 0.05, m.brass, 1.34, 1.02, -0.06));
+      // W07, then the external door leaf with a glazed panel over.
+      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.12, w: 0.72, sill: 0.9, h: 1.2 } }));
+      g.add(box(0.95, 2.08, 0.06, m.timberDark, 1.0, 0, -0.03));
+      g.add(box(0.5, 0.9, 0.02, m.sky, 1.22, 0.85, -0.055));
+      g.add(box(0.05, 0.05, 0.05, m.brass, 1.84, 1.02, -0.06));
       // Stair rising against the left wall, away from the door.
       const s = stair(m, { steps: 9, rise: 0.19, going: 0.235, width: 0.88 });
       s.position.set(0.06, 0, 1.3);
@@ -116,10 +121,10 @@ export const ROOM_SETS = {
     // shows all three legs of the U at once.
     camera: { pos: [1.32, 1.58, 3.46], target: [1.62, 1.02, 0.25], fov: 76 },
     walls: (r, m) => [
-      // W05 and W06 to the front, as noted on the elevations.
+      // W06, a single 1585 opening centred on the front wall. W05 is the
+      // matching window in plot 2's kitchen, not a second one in this room.
       wall({ side: 'front', ...r, material: m.wall, openings: [
-        { u: 0.36, w: 0.95, sill: 0.9, h: 1.2 },
-        { u: 1.5, w: 0.95, sill: 0.9, h: 1.2 },
+        { u: 0.61, w: 1.585, sill: 0.9, h: 1.2 },
       ] }),
       wall({ side: 'back', ...r, material: m.wall }),
       wall({ side: 'left', ...r, material: m.wall, openings: [{ u: 2.3, w: 0.82, sill: 0, h: 2.0, kind: 'door' }] }),
@@ -140,8 +145,7 @@ export const ROOM_SETS = {
       const H = 0.87;         // worktop height, clear of the 900 window sills
       const DOOR_U = 2.3;     // door starts here along the left wall
 
-      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.36, w: 0.95, sill: 0.9, h: 1.2 } }));
-      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 1.5, w: 0.95, sill: 0.9, h: 1.2 } }));
+      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.61, w: 1.585, sill: 0.9, h: 1.2 } }));
 
       // Head of the U: across the front wall under W05 and W06, with the
       // sink centred between them.
@@ -206,16 +210,17 @@ export const ROOM_SETS = {
     width: 1.06, depth: 1.68, height: GROUND_H, floor: 'tileFloor',
     camera: { pos: [0.82, 1.5, 1.5], target: [0.45, 1.0, 0.2], fov: 74 },
     walls: (r, m) => [
-      wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 0.28, w: 0.5, sill: 1.35, h: 0.7 }] }),
+      // W08 obs is in the external side wall, the long one, not the end.
+      wall({ side: 'front', ...r, material: m.wall }),
       wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 0.15, w: 0.72, sill: 0, h: 2.0, kind: 'door' }] }),
-      wall({ side: 'left', ...r, material: m.wall }),
+      wall({ side: 'left', ...r, material: m.wall, openings: [{ u: 0.52, w: 0.62, sill: 1.35, h: 0.7 }] }),
       wall({ side: 'right', ...r, material: m.wall }),
     ],
     build: (r, m) => {
       const g = new THREE.Group();
       g.add(tiledWalls(r, m, 1.15));
       // Obscure-glazed W08: the sky plane sits behind a milky pane.
-      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.28, w: 0.5, sill: 1.35, h: 0.7 } }));
+      g.add(glazing({ side: 'left', room: r, materials: m, opening: { u: 0.52, w: 0.62, sill: 1.35, h: 0.7 } }));
       // Back-to-wall W/C with a concealed cistern, and a small basin.
       g.add(box(0.55, 0.42, 0.22, m.tileWall, 0.25, 0, 0.02));
       g.add(boxAt(0.37, 0.4, 0.56, m.sanitary, 0.52, 0.2, 0.46));
@@ -270,18 +275,19 @@ export const ROOM_SETS = {
     camera: { pos: [4.56, 1.6, 0.52], target: [1.35, 0.95, 2.82], fov: 64 },
     walls: (r, m) => [
       wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 1.2, w: 2.2, sill: 0, h: 2.1, kind: 'door' }] }),
-      // Rear wall: garden doors D01/D02 with window W01 alongside.
+      // Rear wall as drawn: W01 nearest the outer corner, garden doors D01
+      // toward the party wall.
       wall({ side: 'back', ...r, material: m.wall, openings: [
-        { u: 0.6, w: 1.75, sill: 0, h: 2.1 },
-        { u: 2.75, w: 1.5, sill: 0.9, h: 1.2 },
+        { u: 0.45, w: 1.4, sill: 0.9, h: 1.2 },
+        { u: 2.6, w: 1.75, sill: 0, h: 2.1 },
       ] }),
       wall({ side: 'left', ...r, material: m.wall }),
       wall({ side: 'right', ...r, material: m.wall }),
     ],
     build: (r, m) => {
       const g = new THREE.Group();
-      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 0.6, w: 1.75, sill: 0, h: 2.1 } }));
-      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 2.75, w: 1.5, sill: 0.9, h: 1.2 } }));
+      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 0.45, w: 1.4, sill: 0.9, h: 1.2 } }));
+      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 2.6, w: 1.75, sill: 0, h: 2.1 } }));
       // Steel beam over, encased and expressed as a shallow downstand.
       g.add(box(r.width, 0.16, 0.22, m.ceiling, 0, r.height - 0.16, r.depth - 0.34));
 
@@ -320,18 +326,17 @@ export const ROOM_SETS = {
     camera: { pos: [3.45, 1.66, 0.28], target: [1.5, 1.0, 2.62], fov: 70 },
     walls: (r, m) => [
       wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 0.4, w: 0.82, sill: 0, h: 2.0, kind: 'door' }] }),
-      // W10 and W11 over the garden.
+      // W10 over the garden. W11 is plot 2's master window, not a second
+      // one in this room.
       wall({ side: 'back', ...r, material: m.wall, openings: [
-        { u: 0.5, w: 1.1, sill: 0.9, h: 1.2 },
-        { u: 2.05, w: 1.1, sill: 0.9, h: 1.2 },
+        { u: 0.92, w: 1.79, sill: 0.9, h: 1.2 },
       ] }),
       wall({ side: 'left', ...r, material: m.wall }),
       wall({ side: 'right', ...r, material: m.wall }),
     ],
     build: (r, m) => {
       const g = new THREE.Group();
-      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 0.5, w: 1.1, sill: 0.9, h: 1.2 } }));
-      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 2.05, w: 1.1, sill: 0.9, h: 1.2 } }));
+      g.add(glazing({ side: 'back', room: r, materials: m, opening: { u: 0.92, w: 1.79, sill: 0.9, h: 1.2 } }));
       const b = bed(m, { width: 1.5, length: 2.0 });
       b.position.set(1.02, 0, 0.12);
       g.add(b);
@@ -420,10 +425,10 @@ export const ROOM_SETS = {
     width: 3.75, depth: 2.95, height: FIRST_H, floor: 'carpet',
     camera: { pos: [3.4, 1.55, 2.62], target: [1.5, 1.1, 0.3], fov: 66 },
     walls: (r, m) => [
-      // W16 and W17 to the front.
+      // W16 to the front. W17 lights the landing beside this room, not
+      // bedroom 3 itself.
       wall({ side: 'front', ...r, material: m.wall, openings: [
-        { u: 0.55, w: 1.05, sill: 0.9, h: 1.2 },
-        { u: 2.15, w: 1.05, sill: 0.9, h: 1.2 },
+        { u: 1.08, w: 1.585, sill: 0.9, h: 1.2 },
       ] }),
       wall({ side: 'back', ...r, material: m.wall, openings: [{ u: 0.4, w: 0.82, sill: 0, h: 2.0, kind: 'door' }] }),
       wall({ side: 'left', ...r, material: m.wall }),
@@ -431,8 +436,7 @@ export const ROOM_SETS = {
     ],
     build: (r, m) => {
       const g = new THREE.Group();
-      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.55, w: 1.05, sill: 0.9, h: 1.2 } }));
-      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 2.15, w: 1.05, sill: 0.9, h: 1.2 } }));
+      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 1.08, w: 1.585, sill: 0.9, h: 1.2 } }));
       const b = bed(m, { width: 1.35, length: 1.95 });
       b.rotation.y = Math.PI / 2;
       b.position.set(0.12, 0, 0.55);
@@ -461,9 +465,11 @@ export const ROOM_SETS = {
     width: 1.11, depth: 6.035, height: FIRST_H, floor: 'oakFloor',
     camera: { pos: [0.24, 1.64, 5.75], target: [0.95, 1.05, 0.9], fov: 76 },
     walls: (r, m) => [
-      wall({ side: 'front', ...r, material: m.wall }),
+      // W17 lights the landing at its front end; the side wall is solid on
+      // this plot — W13 is plot 2's stair window.
+      wall({ side: 'front', ...r, material: m.wall, openings: [{ u: 0.18, w: 0.75, sill: 0.9, h: 1.2 }] }),
       wall({ side: 'back', ...r, material: m.wall }),
-      wall({ side: 'left', ...r, material: m.wall, openings: [{ u: 1.6, w: 0.5, sill: 1.0, h: 1.0 }] }),
+      wall({ side: 'left', ...r, material: m.wall }),
       // Doors off the landing: bedroom 3, bathroom, cupboard, master.
       wall({ side: 'right', ...r, material: m.wall, openings: [
         { u: 0.55, w: 0.8, sill: 0, h: 2.0, kind: 'door' },
@@ -474,7 +480,7 @@ export const ROOM_SETS = {
     ],
     build: (r, m) => {
       const g = new THREE.Group();
-      g.add(glazing({ side: 'left', room: r, materials: m, opening: { u: 1.6, w: 0.5, sill: 1.0, h: 1.0 } }));
+      g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.18, w: 0.75, sill: 0.9, h: 1.2 } }));
       [0.55, 1.9, 3.2, 4.6].forEach((u, i) =>
         g.add(door({ side: 'right', room: r, u, width: i === 0 || i === 3 ? 0.82 : 0.76, materials: m, open: i === 1 ? 0.5 : 0 })),
       );
@@ -493,17 +499,18 @@ export const ROOM_SETS = {
   bed2: {
     width: 3.93, depth: 4.89, y0: 1.75, pitched: true, floor: 'carpet',
     camera: { pos: [3.55, 1.5, 4.5], target: [1.6, 1.15, 0.6], fov: 68 },
-    rooflights: [{ u: 1.1, along: 1.4 }, { u: 2.5, along: 1.4 }],
+    // RL01 only. RL02 is plot 2's rooflight.
+    rooflights: [{ u: 1.5, along: 1.4 }],
     walls: (r, m) => [
       wall({ side: 'front', ...r, material: m.wall }),
       wall({ side: 'back', ...r, material: m.wall }),
       wall({ side: 'left', ...r, material: m.wall, openings: [{ u: 3.6, w: 0.76, sill: 0, h: 2.0, kind: 'door' }] }),
-      wall({ side: 'right', ...r, material: m.wall, openings: [{ u: 2.0, w: 0.9, sill: 0.6, h: 1.1 }] }),
+      // Both side walls are internal here: the party wall one side, the
+      // landing the other. W18 is plot 2's top-landing window.
+      wall({ side: 'right', ...r, material: m.wall }),
     ],
     build: (r, m) => {
       const g = new THREE.Group();
-      // W18 in the gable wall.
-      g.add(glazing({ side: 'right', room: r, materials: m, opening: { u: 2.0, w: 0.9, sill: 0.6, h: 1.1 } }));
       const b = bed(m, { width: 1.6, length: 2.05 });
       b.position.set(1.1, 0, 0.35);
       g.add(b);

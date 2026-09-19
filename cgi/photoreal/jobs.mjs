@@ -168,3 +168,72 @@ export function photorealJobs() {
   }
   return jobs;
 }
+
+/* ------------------------------------------------------------------ chain */
+
+/**
+ * The generation chain.
+ *
+ * Generating each colourway independently from its own render gave twelve
+ * kitchens that read as twelve different kitchens: the model re-interprets the
+ * room every time, and there is no seed to lock. So each room is generated
+ * once as a base, and every other colourway is an edit of that finished
+ * photoreal image rather than a fresh interpretation of a render. The edit is
+ * then trivial — repaint a surface — and the geometry cannot drift.
+ *
+ * `from` is the slug this job is generated from: null means it comes from the
+ * render, otherwise it comes from that job's accepted image.
+ */
+export function photorealChain() {
+  const bySlug = new Map(photorealJobs().map((j) => [j.slug, j]));
+  const chain = [];
+  const add = (slug, from, change) => {
+    const job = bySlug.get(slug);
+    if (!job) throw new Error(`chain references unknown job "${slug}"`);
+    chain.push({ ...job, from, change });
+  };
+
+  // Wave 0 — one base per room, from the corrected render.
+  for (const room of PHOTOREAL_ROOMS) add(`${room}--${PINNED.kitchen}-${PINNED.walls}`, null, null);
+
+  // Wave 1 — the kitchen's other unit colours, from the kitchen base.
+  const kitchenBase = `kitchen--${PINNED.kitchen}-${PINNED.walls}`;
+  for (const k of KITCHEN_FINISHES) {
+    if (k === PINNED.kitchen) continue;
+    add(`kitchen--${k}-${PINNED.walls}`, kitchenBase, `units:${k}`);
+  }
+
+  // Wave 2 — every wall colour, from the matching same-walls image.
+  for (const room of PHOTOREAL_ROOMS) {
+    const kitchens = room === 'kitchen' ? KITCHEN_FINISHES : [PINNED.kitchen];
+    for (const k of kitchens) {
+      for (const w of WALL_FINISHES) {
+        if (w === PINNED.walls) continue;
+        add(`${room}--${k}-${w}`, `${room}--${k}-${PINNED.walls}`, `walls:${w}`);
+      }
+    }
+  }
+  return chain;
+}
+
+/** Unit-door colour, for a recolour instruction. */
+const UNIT_PLAIN = { graphite: 'dark graphite grey', sage: 'muted sage green', oak: 'light natural oak', ivory: 'soft ivory' };
+const WALL_PLAIN = { chalk: 'chalk white', clay: 'warm clay beige', slate: 'soft slate blue' };
+
+/**
+ * The prompt for a chained edit: repaint one surface and leave the photograph
+ * otherwise untouched.
+ */
+export function recolourPrompt(change) {
+  const [axis, value] = change.split(':');
+  const what =
+    axis === 'units'
+      ? `Repaint only the kitchen unit doors and drawer fronts to ${UNIT_PLAIN[value]}. The worktop stays light quartz, the splashback stays white metro tile, the handles stay brushed steel, the walls and floor are unchanged.`
+      : `Repaint only the painted wall surfaces to ${WALL_PLAIN[value]}. Tiling, joinery, skirting, doors, flooring, furniture and fittings all keep their existing colours.`;
+  return [
+    'Take this photograph and change one thing.',
+    what,
+    'Everything else must be pixel-for-pixel the same photograph: identical room shape, identical camera and framing, identical window and door positions, identical furniture in identical places, identical lighting, shadows and reflections. Do not restyle, re-light, re-stage or re-interpret the room. This is a paint change, nothing more.',
+    'No people, no text, no watermark.',
+  ].join(' ');
+}
