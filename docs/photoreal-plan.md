@@ -94,17 +94,50 @@ Keep the structural-fidelity setting high enough that the window positions and
 room proportions do not drift — if they drift, the image contradicts the
 drawings and cannot be used.
 
-## Wiring the results in
+## The pipeline, as built
 
-1. Put the accepted images in `public/assets/photoreal/`.
-2. Extend `scripts/prepare-photo.mjs`, or add a sibling, to size them to the
-   same widths the renders use and write a manifest with the same shape:
-   `{ defaults, axes, images: { "room|kitchen|walls|doors": {width: path} } }`.
-3. In `src/lib/cgi.ts`, have `roomImage()` try the photoreal manifest first and
-   fall back to the render manifest. The key canonicalisation already handles
-   differing axes per room, so this is a small change.
-4. `scripts/verify-assets.mjs` should assert that every photoreal key it holds
-   resolves, and report how many selections are photoreal versus rendered.
+Everything below the generation step is in the repository and working. Only
+the generation itself is outstanding.
+
+```shell
+node scripts/photoreal-refs.mjs       # 27 reference JPEGs -> .photoreal/refs/
+#   ... generate, review, keep the good ones ...
+#   accepted images go to .photoreal/accepted/<slug>.jpg
+node scripts/prepare-photoreal.mjs    # sizes them and writes the manifest
+npm run check                         # asserts every claimed image resolves
+```
+
+`cgi/photoreal/jobs.mjs` holds the 27 jobs — room, finish combination,
+which render is its structural reference, and the prompt. Both scripts read
+it, so the slug, the key and the prompt can never drift apart.
+
+`src/lib/cgi.ts` already prefers a photoreal image and falls back to the
+render, and `ResolvedImage.kind` tells the page which it got. A partial set is
+therefore safe at any point: every selection without a photoreal image keeps
+serving exactly what it serves today.
+
+### Generation settings
+
+Confirmed against the node catalogue:
+
+| | |
+|---|---|
+| Node chain | `LoadImage` -> `NanoBananaProGenerate` |
+| Mode | `edit` (the reference goes in on `edge-in`) |
+| Aspect ratio | `3:2` — the renders are 1600 x 1067 |
+| Resolution | `2K` |
+| `num_images` | 2 or 3, to choose from |
+
+Nano Banana Pro is the photorealism-led model in the catalogue and is what the
+account's existing project already uses. Its own guidance is to direct an
+image like a scene rather than tag it like a stock prompt, which is how the
+prompts in `jobs.mjs` are written: subject and composition, then the fit-out,
+then the finish, then the lighting, then the camera.
+
+Every prompt ends with an instruction to hold the reference's room shape,
+opening positions, layout and camera, and to change only material realism and
+lighting. If an image drifts off that, it contradicts the drawings and is
+rejected — see below.
 
 ## What must not change
 
@@ -117,14 +150,17 @@ drawings and cannot be used.
   rejected, however good it looks.
 - **The plots are a handed pair**, never higher/lower.
 
-## Prerequisite
+## Prerequisite — done
 
-This needs `api.youart.ai` and `static.youart.ai` reachable from the session:
-generation goes through MCP, but discovering node types, uploading the
-reference renders and downloading the results all need direct HTTPS. Add them
-to the environment's network policy and start a new session — the proxy is
-configured when the container starts, so an existing session will not pick the
-change up.
+`api.youart.ai` and `static.youart.ai` are reachable: the environment's
+network access was set to **Custom** with `youart.ai` and `*.youart.ai`
+allowed, keeping the default package-manager list. Verify from any session
+with:
 
-See https://code.claude.com/docs/en/claude-code-on-the-web for where
-environments and their network access are configured.
+```shell
+curl -sS -o /dev/null -w "%{http_code}\n" https://api.youart.ai/
+```
+
+See https://code.claude.com/docs/en/cloud-environments for where that is
+configured. The network policy is read when a container starts, so a change
+needs a new session or a restarted one.

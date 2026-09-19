@@ -1,0 +1,30 @@
+{
+  "generated": "2026-09-19T07:38:29.360Z",
+  "defaults": {
+    "kitchen": "graphite",
+    "walls": "chalk",
+    "doors": "white"
+  },
+  "axes": {
+    "kitchen": [
+      "kitchen",
+      "walls"
+    ],
+    "living": [
+      "walls"
+    ],
+    "dining": [
+      "walls"
+    ],
+    "master": [
+      "walls"
+    ],
+    "bath": [
+      "walls"
+    ],
+    "bed2": [
+      "walls"
+    ]
+  },
+  "images": {}
+}

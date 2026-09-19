@@ -15,6 +15,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), 'utf8'));
 
 const cgi = read('public/assets/cgi/manifest.json');
+const photoreal = read('public/assets/photoreal/manifest.json');
 const photo = read('public/assets/photo/manifest.json');
 const sheets = read('public/assets/sheets/manifest.json');
 
@@ -50,8 +51,18 @@ function key(room, sel) {
   return `${room}|${pick('kitchen')}|${pick('walls')}|${pick('doors')}`;
 }
 
+/** Mirrors the photoreal branch of src/lib/cgi.ts. */
+function photorealKey(room, sel) {
+  const relevant = photoreal.axes?.[room];
+  if (!relevant) return null;
+  const pick = (axis) => (relevant.includes(axis) ? sel[axis] : photoreal.defaults[axis]);
+  return `${room}|${pick('kitchen')}|${pick('walls')}|${pick('doors')}`;
+}
+
 const seen = new Set();
+const photorealSeen = new Set();
 let selections = 0;
+let photorealSelections = 0;
 
 for (const room of ROOMS) {
   if (!cgi.rooms[room]) fail(`no base render for room "${room}"`);
@@ -66,9 +77,24 @@ for (const room of ROOMS) {
         if (!cgi.variants[k]) {
           fail(`selection ${room} / ${kitchen} / ${walls} / ${doors} resolves to "${k}", which has no render`);
         }
+
+        // A photoreal image is optional, but if one is claimed for this
+        // selection its files have to be there — otherwise the page would
+        // serve a broken src in preference to a working render.
+        const pk = photorealKey(room, { kitchen, walls, doors });
+        if (pk && photoreal.images?.[pk]) {
+          photorealSelections += 1;
+          photorealSeen.add(pk);
+        }
       }
     }
   }
+}
+
+// Every photoreal image has to be reachable, or it is dead weight that also
+// silently fails to override the render it was made to replace.
+for (const k of Object.keys(photoreal.images ?? {})) {
+  if (!photorealSeen.has(k)) fail(`photoreal image "${k}" is not reachable from any selection`);
 }
 
 for (const view of EXTERIOR_VIEWS) {
@@ -96,6 +122,7 @@ const checkFiles = (group) => {
 checkFiles(cgi.exterior);
 checkFiles(cgi.rooms);
 checkFiles(cgi.variants);
+checkFiles(photoreal.images ?? {});
 checkFiles(photo.images ?? {});
 for (const sheet of sheets) {
   for (const s of [...sheet.sizes.map((x) => x.file), sheet.full]) {
@@ -111,6 +138,10 @@ console.log(`${ROOMS.length} rooms × ${selections / ROOMS.length} selections = 
 console.log(`${Object.keys(cgi.variants).length} interior renders, ${seen.size} reachable`);
 console.log(`${Object.keys(cgi.exterior).length} exterior CGI views (reference), ${sheets.length} drawing sheets`);
 console.log(`${Object.keys(photo.images ?? {}).length} approved exterior images, ${photo.native?.width}px native`);
+console.log(
+  `${Object.keys(photoreal.images ?? {}).length} photoreal images covering ${photorealSelections} of ${selections} selections ` +
+    `(${selections - photorealSelections} served by renders)`,
+);
 console.log(`${files} image files checked`);
 if (orphans.length) console.log(`note: ${orphans.length} renders are not reachable from any selection`);
 

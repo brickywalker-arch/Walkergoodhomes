@@ -1,4 +1,5 @@
 import manifest from '../../public/assets/cgi/manifest.json';
+import photorealManifest from '../../public/assets/photoreal/manifest.json';
 import photoManifest from '../../public/assets/photo/manifest.json';
 import sheetManifest from '../../public/assets/sheets/manifest.json';
 import type { Finishes } from '@/data/interior';
@@ -36,8 +37,15 @@ const EXT_WIDTHS = [800, 1280, 2000, 2800];
 export type ResolvedImage = {
   src: string;
   srcSet: string;
-  /** True when this exact finish combination has its own render. */
+  /** True when this exact finish combination has its own image. */
   exact: boolean;
+  /**
+   * How the image was made. A photoreal image is a generated photograph built
+   * from the render of this exact selection, so it carries the drawn geometry;
+   * a render is the parametric model itself. Both are computer-generated, and
+   * the page says so either way.
+   */
+  kind: 'render' | 'photoreal';
 };
 
 function toSrcSet(sizes: SizeMap, widths: number[]): string {
@@ -83,7 +91,50 @@ function manifestKey(roomKey: string, finishes: Finishes): string {
   return `${roomKey}|${pick('kitchen')}|${pick('walls')}|${pick('doors')}`;
 }
 
+type PhotorealManifest = {
+  generated: string;
+  defaults: Finishes;
+  axes: Record<string, FinishAxis[]>;
+  images: Record<string, SizeMap>;
+};
+
+const PHOTOREAL = photorealManifest as PhotorealManifest;
+
+/**
+ * The photoreal key for a selection.
+ *
+ * Photoreal images use coarser axes than the renders — the internal-door
+ * colour is barely visible in the six rooms that have them — so the same
+ * pinning applies, against the photoreal manifest's own axes.
+ */
+function photorealKey(roomKey: string, finishes: Finishes): string | null {
+  const relevant = PHOTOREAL.axes?.[roomKey];
+  if (!relevant) return null;
+  const pick = (axis: FinishAxis) =>
+    relevant.includes(axis) ? finishes[axis] : (PHOTOREAL.defaults?.[axis] ?? finishes[axis]);
+  return `${roomKey}|${pick('kitchen')}|${pick('walls')}|${pick('doors')}`;
+}
+
+/**
+ * The image for a room and a selection.
+ *
+ * A photoreal image wins where one exists, because it was generated from the
+ * render of this exact selection and so carries the same drawn geometry. Where
+ * one does not, the render is served — which is what every selection got
+ * before the photoreal pass, so a partial set is safe.
+ */
 export function roomImage(roomKey: string, finishes: Finishes): ResolvedImage {
+  const photoKey = photorealKey(roomKey, finishes);
+  const photoSizes = photoKey ? PHOTOREAL.images[photoKey] : undefined;
+  if (photoSizes) {
+    return {
+      src: largest(photoSizes, ROOM_WIDTHS),
+      srcSet: toSrcSet(photoSizes, ROOM_WIDTHS),
+      exact: true,
+      kind: 'photoreal',
+    };
+  }
+
   const key = manifestKey(roomKey, finishes);
   const exactSizes = CGI.variants[key];
   const sizes = exactSizes ?? CGI.rooms[roomKey];
@@ -92,6 +143,7 @@ export function roomImage(roomKey: string, finishes: Finishes): ResolvedImage {
     src: largest(sizes, ROOM_WIDTHS),
     srcSet: toSrcSet(sizes, ROOM_WIDTHS),
     exact: Boolean(exactSizes),
+    kind: 'render',
   };
 }
 
@@ -102,6 +154,7 @@ export function exteriorImage(view: string): ResolvedImage {
     src: largest(sizes, EXT_WIDTHS),
     srcSet: toSrcSet(sizes, EXT_WIDTHS),
     exact: true,
+    kind: 'render',
   };
 }
 
@@ -135,6 +188,7 @@ export function photoImage(key: string): ResolvedImage {
     src: largest(sizes, PHOTO_WIDTHS),
     srcSet: toSrcSet(sizes, PHOTO_WIDTHS),
     exact: true,
+    kind: 'render',
   };
 }
 
