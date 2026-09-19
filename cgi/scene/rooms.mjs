@@ -112,7 +112,9 @@ export const ROOM_SETS = {
 
   kitchen: {
     width: 2.81, depth: 3.61, height: GROUND_H, floor: 'oakFloor',
-    camera: { pos: [0.42, 1.56, 3.32], target: [1.85, 1.05, 0.3], fov: 68 },
+    // From the doorway looking down the gangway, which is the only view that
+    // shows all three legs of the U at once.
+    camera: { pos: [1.32, 1.58, 3.46], target: [1.62, 1.02, 0.25], fov: 76 },
     walls: (r, m) => [
       // W05 and W06 to the front, as noted on the elevations.
       wall({ side: 'front', ...r, material: m.wall, openings: [
@@ -123,51 +125,79 @@ export const ROOM_SETS = {
       wall({ side: 'left', ...r, material: m.wall, openings: [{ u: 2.3, w: 0.82, sill: 0, h: 2.0, kind: 'door' }] }),
       wall({ side: 'right', ...r, material: m.wall }),
     ],
+    /*
+     * A U on three walls, opening to the door in the back of the left wall.
+     *
+     * The room is 2810 wide. Two 600 deep runs facing each other leave a
+     * 1610 gangway, which is a working kitchen. An island does not fit and
+     * never did: it would have left about 370 between its worktop and the
+     * opposite run, so the earlier layout was not buildable.
+     */
     build: (r, m) => {
       const g = new THREE.Group();
+      const D = 0.6;          // base unit depth
+      const WT = 0.64;        // worktop depth, 40 proud of the doors
+      const H = 0.87;         // worktop height, clear of the 900 window sills
+      const DOOR_U = 2.3;     // door starts here along the left wall
+
       g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 0.36, w: 0.95, sill: 0.9, h: 1.2 } }));
       g.add(glazing({ side: 'front', room: r, materials: m, opening: { u: 1.5, w: 0.95, sill: 0.9, h: 1.2 } }));
 
-      // Base run down the right-hand wall, under the windows and returning.
-      const run = unitRun(m, { length: 3.0, height: 0.87, depth: 0.6, doorMat: m.kitchenUnit, count: 5 });
-      run.rotation.y = -Math.PI / 2;
-      run.position.set(r.width, 0, 0.3);
-      g.add(run);
-      const wtop = box(0.64, 0.04, 3.0, m.worktop, r.width - 0.64, 0.87, 0.3);
-      g.add(wtop);
+      // Head of the U: across the front wall under W05 and W06, with the
+      // sink centred between them.
+      const front = unitRun(m, { length: r.width, height: H, depth: D, doorMat: m.kitchenUnit, count: 4 });
+      front.position.set(0, 0, 0);
+      g.add(front);
+      g.add(box(r.width, 0.04, WT, m.worktop, 0, H, 0));
+      // Stops at the 900 sill so it does not cross W05/W06.
+      g.add(box(r.width - 0.02, 0.9 - (H + 0.04), 0.02, m.tileWall, 0.01, H + 0.04, 0));
+      g.add(box(0.44, 0.02, 0.38, m.steel, 0.94, H + 0.015, 0.12));
+      g.add(cyl(0.018, 0.3, m.chrome, 1.16, H + 0.19, 0.06, 10));
+      g.add(box(0.2, 0.02, 0.03, m.chrome, 1.0, H + 0.33, 0.075));
 
-      // Wall units above, stopping short of the window reveal.
-      const wallRun = unitRun(m, { length: 1.5, height: 0.72, depth: 0.34, doorMat: m.kitchenWall, count: 3, plinth: 0 });
-      wallRun.rotation.y = -Math.PI / 2;
-      wallRun.position.set(r.width, 1.48, 1.8);
-      g.add(wallRun);
+      // Right leg, on the party wall: base units from the window end back to
+      // the tall housing, which sits at the far end nearest the door — where
+      // the plan draws it.
+      const TALL = 0.6;
+      const rightLen = r.depth - D - TALL;
+      const right = unitRun(m, { length: rightLen, height: H, depth: D, doorMat: m.kitchenUnit, count: 3 });
+      right.rotation.y = -Math.PI / 2;
+      right.position.set(r.width, 0, D);
+      g.add(right);
+      g.add(box(WT, 0.04, rightLen, m.worktop, r.width - WT, H, D));
+      g.add(box(0.02, 0.5, rightLen - 0.02, m.tileWall, r.width - 0.02, H + 0.04, D + 0.01));
+      g.add(box(0.52, 0.01, 0.46, m.frame, r.width - 0.58, H + 0.045, 1.0));
 
-      // Tall housing with the oven stack against the back wall.
-      const tall = unitRun(m, { length: 1.2, height: 2.15, depth: 0.6, doorMat: m.kitchenUnit, count: 2 });
-      tall.position.set(1.45, 0, r.depth - 0.6);
+      const tall = unitRun(m, { length: TALL, height: 2.15, depth: D, doorMat: m.kitchenUnit, count: 1 });
+      tall.rotation.y = -Math.PI / 2;
+      tall.position.set(r.width, 0, D + rightLen);
       g.add(tall);
-      g.add(box(0.58, 0.58, 0.04, m.frame, 1.76, 0.92, r.depth - 0.62));
-      g.add(box(0.5, 0.06, 0.03, m.steel, 1.8, 1.16, r.depth - 0.65));
+      g.add(box(0.04, 0.58, 0.52, m.frame, r.width - D, 0.92, D + rightLen + 0.04));
+      g.add(box(0.03, 0.06, 0.46, m.steel, r.width - D + 0.03, 1.16, D + rightLen + 0.07));
 
-      // Splashback and sink under the window.
-      g.add(box(0.02, 0.5, 2.9, m.tileWall, r.width - 0.66, 0.91, 0.35));
-      g.add(box(0.44, 0.02, 0.38, m.steel, r.width - 0.56, 0.885, 1.6));
-      g.add(cyl(0.018, 0.3, m.chrome, r.width - 0.2, 1.04, 1.6, 10));
-      g.add(box(0.2, 0.02, 0.03, m.chrome, r.width - 0.36, 1.18, 1.585));
+      // Left leg, on the hall wall: runs the full depth up to the door.
+      const leftLen = DOOR_U - D;
+      const left = unitRun(m, { length: leftLen, height: H, depth: D, doorMat: m.kitchenUnit, count: 3 });
+      left.rotation.y = Math.PI / 2;
+      left.position.set(0, 0, D + leftLen);
+      g.add(left);
+      g.add(box(WT, 0.04, leftLen, m.worktop, 0, H, D));
+      g.add(box(0.02, 0.5, leftLen - 0.02, m.tileWall, 0, H + 0.04, D + 0.01));
 
-      // Island with a breakfast overhang and two stools.
-      const island = unitRun(m, { length: 1.5, height: 0.87, depth: 0.7, doorMat: m.kitchenUnit, count: 3 });
-      island.position.set(0.28, 0, 1.35);
-      g.add(island);
-      g.add(box(1.62, 0.045, 0.86, m.worktop, 0.22, 0.87, 1.27));
-      [0.6, 1.15].forEach((x) => {
-        g.add(cyl(0.03, 0.62, m.steel, x, 0.31, 2.28, 10));
-        g.add(cyl(0.16, 0.05, m.timberDark, x, 0.64, 2.28, 14));
-      });
+      // Wall units over both legs, kept off the window reveals.
+      const wallRight = unitRun(m, { length: 1.3, height: 0.72, depth: 0.34, doorMat: m.kitchenWall, count: 2, plinth: 0 });
+      wallRight.rotation.y = -Math.PI / 2;
+      wallRight.position.set(r.width, 1.48, 1.3);
+      g.add(wallRight);
+      const wallLeft = unitRun(m, { length: 1.2, height: 0.72, depth: 0.34, doorMat: m.kitchenWall, count: 2, plinth: 0 });
+      wallLeft.rotation.y = Math.PI / 2;
+      wallLeft.position.set(0, 1.48, 2.1);
+      g.add(wallLeft);
 
-      g.add(pendant(m, 0.7, 1.7, r.height, { drop: 0.95, radius: 0.14 }));
-      g.add(pendant(m, 1.25, 1.7, r.height, { drop: 0.95, radius: 0.14 }));
-      g.add(door({ side: 'left', room: r, u: 2.3, width: 0.82, materials: m, open: 0.7 }));
+      // No island, so the light is a pair down the middle of the gangway.
+      g.add(pendant(m, r.width / 2, 1.25, r.height, { drop: 0.7, radius: 0.13 }));
+      g.add(pendant(m, r.width / 2, 2.45, r.height, { drop: 0.7, radius: 0.13 }));
+      g.add(door({ side: 'left', room: r, u: DOOR_U, width: 0.82, materials: m, open: 0.7 }));
       return g;
     },
   },

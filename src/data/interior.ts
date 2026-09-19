@@ -105,7 +105,7 @@ export const ROOMS: Room[] = [
     level: 'Ground floor · front',
     size: '2.81 × 3.61 m',
     openings: 'Windows W05 / W06 · heat alarm · mechanical extract',
-    desc: 'The kitchen sits at the front of the plan next to the entrance hall, lit by two front windows (W05 and W06 on the elevations). The run and island arrangement follows the drawn layout.',
+    desc: 'The kitchen sits at the front of the plan next to the entrance hall, lit by two front windows (W05 and W06 on the elevations). Units run in a U on three walls, opening to the door — at 2.81 m wide the room takes two facing runs and a proper gangway between them.',
   },
   {
     key: 'wc',

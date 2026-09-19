@@ -58,10 +58,10 @@ const ROOM_SCENE = {
     subject:
       'a new-build UK kitchen, 2.81 x 3.61 m, at the front of the ground floor. Two windows (W05 and W06) in the front elevation wall',
     fitout:
-      'Howdens Shaker-style kitchen — rails and stiles around a recessed panel on every door — with a light quartz worktop, brushed-steel bar handles, a matching island with two stools, a tall oven housing, and a metro-tile splashback',
+      'Howdens Shaker-style kitchen — rails and stiles around a recessed panel on every door — laid out as a U on three walls opening to the door, with a light quartz worktop, brushed-steel bar handles, the sink under the windows, a tall oven housing closing one leg, and a metro-tile splashback. There is no island: the room is only 2.81 m wide and the two facing runs leave a gangway between them',
     floor: 'engineered oak floor',
     light:
-      'daylight from the two front windows, two pendants over the island, warm interior lighting',
+      'daylight from the two front windows, two pendants down the middle of the gangway, warm interior lighting',
   },
   living: {
     subject:

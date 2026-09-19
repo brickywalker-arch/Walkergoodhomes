@@ -83,10 +83,12 @@ Worked example, kitchen with graphite units and chalk-white walls:
 
 > Photoreal interior photograph of a new-build UK kitchen, 2.81 × 3.61 m, at
 > the front of the ground floor. Two windows to the front elevation.
-> Howdens Shaker-style kitchen in graphite with a light quartz worktop, bar
-> handles, matching island with two stools, tall oven housing, metro-tile
-> splashback. Chalk-white painted walls, engineered oak floor. Two pendants
-> over the island. Daylight from the front windows, warm interior lighting.
+> Howdens Shaker-style kitchen in graphite, laid out as a U on three walls
+> opening to the door, with a light quartz worktop, bar handles, the sink
+> under the windows, a tall oven housing closing the party-wall leg, and a
+> metro-tile splashback. There is no island: the room is only 2.81 m wide.
+> Chalk-white painted walls, engineered oak floor. Two pendants down the
+> gangway. Daylight from the front windows, warm interior lighting.
 > Yorkshire new-build, restrained and premium, no clutter.
 > Architectural photography, 35mm, verticals vertical, natural exposure.
 
@@ -148,6 +150,12 @@ rejected — see below.
   sheets 26/1362/01–06. If a generated image shows something the drawings do
   not support — a window that is not there, a room the wrong shape — it is
   rejected, however good it looks.
+- **Fittings are drawn too, and get checked against the plan.** The kitchen
+  originally carried an island. Sheet 03 draws units on three walls with an
+  empty centre, and at 2810 wide an island would have left about 370 to the
+  opposite run — not a gangway anyone can use. It was invented, and the room
+  copy then claimed it followed the drawn layout. Read the plan for what is
+  actually drawn before modelling a fitting, and check the clearance it leaves.
 - **The plots are a handed pair**, never higher/lower.
 
 ## Prerequisite — done
