@@ -12,7 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
-import { photorealJobs } from '../cgi/photoreal/jobs.mjs';
+import { photorealChain } from '../cgi/photoreal/jobs.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.resolve(ROOT, process.argv[2] ?? '.photoreal/refs');
@@ -23,7 +23,10 @@ const manifest = JSON.parse(
 
 fs.mkdirSync(OUT, { recursive: true });
 
-const jobs = photorealJobs();
+// Only the chain roots come from a render. Everything else is an edit of an
+// image that already exists, so exporting a reference for it would be 255
+// JPEGs nothing reads.
+const jobs = photorealChain().filter((j) => j.depth === 0);
 const missing = jobs.filter((j) => !manifest.variants[j.reference]);
 if (missing.length) {
   console.error(`${missing.length} job(s) reference a render that does not exist:`);
@@ -41,4 +44,4 @@ for (const job of jobs) {
 }
 
 console.log(`\n${written} reference images in ${path.relative(ROOT, OUT)}`);
-console.log(`${jobs.length} jobs: ${jobs.filter((j) => j.room === 'kitchen').length} kitchen, ${jobs.length - jobs.filter((j) => j.room === 'kitchen').length} other rooms`);
+console.log(`${jobs.length} chain roots, one per room`);

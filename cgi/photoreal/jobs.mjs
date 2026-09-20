@@ -7,29 +7,44 @@
  * fit-out wording is the confirmed Howdens specification. Nothing here
  * describes a feature the drawings do not show.
  *
- * Used by scripts/photoreal-refs.mjs to export the reference images and by
- * scripts/photoreal-run.mjs to drive the generation.
+ * Used by scripts/photoreal-refs.mjs to export the reference images, by
+ * scripts/photoreal-plan.mjs to work out what is still outstanding, and by
+ * scripts/prepare-photoreal.mjs to size the accepted results.
  */
 
-/** Only these rooms are worth generating. See docs/photoreal-plan.md. */
-export const PHOTOREAL_ROOMS = ['kitchen', 'living', 'dining', 'master', 'bath', 'bed2', 'hall'];
+/** Every room a visitor can open, which is every room on the plan. */
+export const PHOTOREAL_ROOMS = [
+  'hall', 'kitchen', 'wc', 'dining', 'living',
+  'master', 'ensuite', 'bath', 'bed3', 'landing',
+  'bed2', 'ensuite2', 'landing2', 'store', 'store2',
+];
 
 /**
- * Which finish axes change a photoreal image. Coarser than the renders' axes:
- * the internal-door colour is barely visible in these rooms, so it is pinned
- * and the door axis collapses.
+ * Which finish axes change a photoreal image.
  *
- * An axis listed here is not necessarily generated across — see
- * PHOTOREAL_VALUES. Listing it is what makes the fallback work.
+ * Coarser than the renders' axes on one count only: the internal-door colour
+ * is pinned, because at 0-7% of the frame across every room it is not
+ * something a photograph can be trusted to hold steady. Everything else a
+ * buyer can pick is generated, because it is visible — checked against the
+ * renders rather than assumed. Listed in the canonical axis order, which is
+ * what `slugFor` names a file by, so these lists must not be reordered.
  */
 export const PHOTOREAL_AXES = {
-  kitchen: ['kitchen', 'walls', 'floors'],
-  living: ['walls', 'floors'],
-  dining: ['walls', 'floors'],
-  master: ['walls', 'floors'],
-  bath: ['walls', 'tiles'],
-  bed2: ['walls', 'floors'],
   hall: ['walls', 'floors', 'stairs'],
+  kitchen: ['kitchen', 'walls', 'floors'],
+  wc: ['walls', 'tiles'],
+  dining: ['walls', 'floors'],
+  living: ['walls', 'floors'],
+  master: ['walls', 'floors'],
+  ensuite: ['walls', 'tiles'],
+  bath: ['walls', 'tiles'],
+  bed3: ['walls', 'floors'],
+  landing: ['walls', 'floors', 'stairs'],
+  bed2: ['walls', 'floors'],
+  ensuite2: ['walls', 'tiles'],
+  landing2: ['walls', 'floors', 'stairs'],
+  store: ['walls'],
+  store2: ['walls'],
 };
 
 /** Pinned values for the axes a photoreal image does not vary. */
@@ -48,30 +63,37 @@ export const AXES = ['kitchen', 'walls', 'doors', 'floors', 'tiles', 'stairs'];
 export const KITCHEN_FINISHES = ['graphite', 'sage', 'oak', 'ivory'];
 export const WALL_FINISHES = ['chalk', 'clay', 'slate'];
 export const TILE_FINISHES = ['calacatta', 'capel', 'bardiglio', 'noir'];
+export const FLOOR_FINISHES = ['oak', 'smoked', 'grey', 'stone'];
+export const STAIR_FINISHES = ['chamfered', 'oak', 'glass'];
 
 /**
- * The values each axis is actually generated across.
+ * The values each axis is generated across — every value the chooser offers.
  *
- * Where this lists only the pinned value, the axis is declared in
- * PHOTOREAL_AXES but not generated: a buyer choosing anything else gets a key
- * the photoreal manifest has no image for, and `roomImage` falls back to the
- * render — which does show their choice. Leaving the axis undeclared instead
- * would have served the same photograph for every value and made the chooser
- * look broken.
- *
- * Floors and stairs sit there for now. Tiles do not: the bathroom is the one
- * room where the finish *is* the room, and a photograph of grey stone served
- * as a white marble selection would be a claim about what is being fitted.
+ * It used to list only the pinned value for floors and stairs, which meant a
+ * buyer who changed either one dropped off the photoreal set and back onto the
+ * render. That is the inconsistency this set exists to remove: an option is
+ * either worth offering, in which case it is worth photographing, or it is not
+ * offered at all.
  */
 export const PHOTOREAL_VALUES = {
   kitchen: KITCHEN_FINISHES,
   walls: WALL_FINISHES,
   tiles: TILE_FINISHES,
-  floors: [PINNED.floors],
-  stairs: [PINNED.stairs],
+  floors: FLOOR_FINISHES,
+  stairs: STAIR_FINISHES,
 };
 
-/** Wall paint as it should read in a photograph. */
+/**
+ * The order a room's axes are generated in.
+ *
+ * Every image past the base is an edit of the one before it, so error
+ * accumulates with depth. The hardest change to hold — the balustrade, which
+ * is geometry rather than colour — goes closest to the base, and the most
+ * forgiving one, a wall repaint, goes last.
+ */
+const CHAIN_ORDER = ['stairs', 'tiles', 'kitchen', 'floors', 'walls'];
+
+/** Tile range as it should read in a photograph. */
 const TILE_DESC = {
   calacatta: 'bright white Calacatta marble-effect porcelain with soft grey veining',
   capel: 'warm white Calacatta Gold marble-effect porcelain with gold veining',
@@ -95,75 +117,177 @@ const WALL_DESC = {
 };
 
 /**
- * Per-room scene copy. `subject` states the room off the drawings; `light`
- * states where daylight comes from, which the openings fix.
+ * Floor covering as it should read in a photograph.
+ *
+ * One selection, two materials: the boards go down on the ground floor and the
+ * landings and the carpet goes down in the bedrooms, which is how the range is
+ * sold and how `FINISHES.floors` describes it. A room states which it has.
+ */
+const FLOOR_DESC = {
+  board: {
+    oak: 'a pale natural-oak engineered board floor',
+    smoked: 'a deep smoked-oak engineered board floor',
+    grey: 'a grey-washed engineered board floor',
+    stone: 'a pale stone-effect plank floor',
+  },
+  carpet: {
+    oak: 'a pale wool-look fitted carpet',
+    smoked: 'a warm greige fitted carpet',
+    grey: 'a cool pebble-grey fitted carpet',
+    stone: 'an oatmeal fitted carpet',
+  },
+};
+
+/** Balustrade as it should read in a photograph. */
+const STAIR_DESC = {
+  chamfered:
+    'a Howdens stop-chamfered balustrade — square-topped spindles chamfered along their middles, capped newel posts, a stained hardwood handrail and a closed painted string',
+  oak: 'a Howdens square oak balustrade — plain square-section oak spindles, oak newel posts with square caps, an oak handrail and a closed painted string',
+  glass:
+    'a Richard Burbidge glass-panel balustrade — clear toughened glass panels in place of spindles, held top and bottom in oak rails, with oak newel posts, an oak handrail and a closed painted string',
+};
+
+/**
+ * Per-room scene copy.
+ *
+ * `subject` states the room off the drawings and `light` states where daylight
+ * comes from, which the openings fix. `covering` says which of the two floor
+ * materials this room takes, and is absent where the floor is tiled or boarded
+ * out and the floor axis does not apply.
  */
 const ROOM_SCENE = {
+  hall: {
+    subject:
+      'a new-build UK entrance hall, 2.00 x 3.61 m, at the front of the ground floor beside the kitchen. A window (W07) and the front door (D07) side by side in the front wall behind the camera, and a door through to the kitchen',
+    fitout:
+      'a straight staircase rising against the outer side wall and carrying on up through all three floors, with BALUSTRADE. A console table with a lamp and a mirror over it against the party wall, a runner on the floor, coat hooks and boots at the far end, and a cupboard door under the flight',
+    covering: 'board',
+    light:
+      'daylight coming in over the shoulder from the front door and window, a pendant down the middle, the stairwell above falling away into shadow',
+  },
   kitchen: {
     subject:
       'a new-build UK kitchen, 2.81 x 3.61 m, at the front of the ground floor. One wide window (W06) in the front elevation wall',
     fitout:
       'Howdens Shaker-style kitchen — rails and stiles around a recessed panel on every door — laid out as a U on three walls opening to the door, with a light quartz worktop, brushed-steel bar handles, the sink under the window, a tall oven housing closing one leg, and a metro-tile splashback. There is no island: the room is only 2.81 m wide and the two facing runs leave a gangway between them',
-    floor: 'engineered oak floor',
+    covering: 'board',
     light:
       'daylight from the wide front window, two pendants down the middle of the gangway, warm interior lighting',
   },
-  living: {
+  wc: {
     subject:
-      'a new-build UK living room, 4.95 x 3.23 m, across the full width of the rear ground floor. External garden doors (D01) and a window (W01) in the rear wall, the window nearest the outer corner',
+      'a very small new-build UK ground-floor cloakroom W/C, 1.06 x 1.68 m, in the middle of the plan beside the stair. One small obscure-glazed window (W08) set high in the long external wall, and the door in the wall at the near end',
     fitout:
-      'a low fabric sofa with cushions and a throw over one arm set against the rear wall to the left of the garden doors, a media wall on the return wall opposite with an inset electric fire and a wall-mounted television over it, an armchair turned in toward the fire, a solid timber coffee table with a tray and books on it, a floor lamp and a large low-pile rug',
-    floor: 'engineered oak floor',
-    view:
-      'Through the glazing, the enclosed rear garden only: lawn, a close-boarded timber fence along the boundary, and mature trees rising behind it. No other houses, no roofs and no roads are visible from this room',
+      'a back-to-wall W/C with a concealed cistern and a tiled shelf over it, a small wall-hung basin with a mirror above, a slim chrome towel rail on the facing wall, large-format wall and floor tiling and chrome brassware',
     light:
-      'strong daylight flooding in through the rear garden doors, soft bounce onto the ceiling, warm lamplight in the corner and a low amber glow from the fire',
+      'soft daylight through the obscured glazing and one warm ceiling downlight, soft reflections in the tiling',
   },
   dining: {
     subject:
       'a new-build UK dining room, 3.79 x 1.68 m, in the middle band of the ground floor between the kitchen at the front and the living room at the rear. No external window — doors D03/D04 off the hall',
     fitout:
       'a solid timber dining table with a rail under the top and six upholstered chairs, a sideboard against the long wall, a pendant centred over the table',
-    floor: 'engineered oak floor',
+    covering: 'board',
     light:
       'borrowed daylight through the open doorways from the rooms either side, warm pendant light over the table as the key source',
+  },
+  living: {
+    subject:
+      'a new-build UK living room, 4.95 x 3.23 m, across the full width of the rear ground floor. External garden doors (D01) and a window (W01) in the rear wall, the window nearest the outer corner',
+    fitout:
+      'a low fabric sofa with cushions and a throw over one arm set against the rear wall to the left of the garden doors, a media wall on the return wall opposite with an inset electric fire and a wall-mounted television over it, an armchair turned in toward the fire, a solid timber coffee table with a tray and books on it, a floor lamp and a large low-pile rug',
+    covering: 'board',
+    view:
+      'Through the glazing, the enclosed rear garden only: lawn, a close-boarded timber fence along the boundary, and mature trees rising behind it. No other houses, no roofs and no roads are visible from this room',
+    light:
+      'strong daylight flooding in through the rear garden doors, soft bounce onto the ceiling, warm lamplight in the corner and a low amber glow from the fire',
   },
   master: {
     subject:
       'a new-build UK master bedroom, 3.75 x 2.76 m, at the rear of the first floor looking over the garden. One wide window (W10) in the rear wall',
     fitout:
       'a double bed with layered linen that drapes and folds, two bedside tables with lamps, a wardrobe against the side wall',
-    floor: 'soft pale carpet',
+    covering: 'carpet',
     view:
       'Through the window, the enclosed rear garden only: lawn, a close-boarded timber fence along the boundary, and open green country rising behind it. No other houses are visible from this room',
     light: 'morning daylight from the wide rear window, warm bedside lamps',
+  },
+  ensuite: {
+    subject:
+      'a narrow new-build UK en-suite shower room, 1.10 x 2.76 m, off the master bedroom at the rear of the first floor. One small obscure-glazed window (W09) set high in the wall at the far end, and the door (D09) in the wall at the near end',
+    fitout:
+      'a walk-in shower at the window end on a level tiled tray behind a single fixed glazed screen, with a large round overhead rose and a hand shower on a rail; a wall-hung basin with a mirror over it on the long wall, a back-to-wall W/C at the near end, a slim heated towel rail opposite, large-format wall and floor tiling and chrome brassware',
+    light:
+      'daylight through the obscured window at the far end and warm ceiling downlights, soft reflections in the tiling and the glass screen',
   },
   bath: {
     subject:
       'a long narrow new-build UK family bathroom, 2.80 x 1.70 m, in the middle of the first floor. No external window — mechanically extracted, one door (D11) in the short wall at the near end',
     fitout:
       'a 1500 bath set across the far end of the room hard against the end wall, with an overhead shower and a glazed screen at its tap end; a back-to-wall W/C and a wall-hung basin with a mirror over it ranged along the long side wall; a heated towel rail on the opposite long wall; large-format wall and floor tiling, chrome brassware',
-    floor: 'large-format tiled floor',
     light:
       'even warm ceiling downlights as the only source, soft reflections in the tiling and the glass screen',
   },
-  hall: {
+  bed3: {
     subject:
-      'a new-build UK entrance hall, 2.00 x 3.61 m, at the front of the ground floor beside the kitchen. A window (W07) and the front door (D07) side by side in the front wall behind the camera, and a door through to the kitchen',
+      'a new-build UK third bedroom at the front of the first floor, 2.80 x 2.95 m. One wide window (W16) centred in the front wall, and the door (D12) in the long side wall at the rear end',
     fitout:
-      'a straight staircase rising against the outer side wall and carrying on up through all three floors, with a Howdens stop-chamfered balustrade — square-topped spindles chamfered along their middles, capped newel posts, a stained hardwood handrail and a closed painted string. A console table with a lamp and a mirror over it against the party wall, a runner on the floor, coat hooks and boots at the far end, and a cupboard door under the flight',
-    floor: 'engineered oak floor',
+      'a double bed along the party wall with its head to the rear and layered linen, a small bedside chest with a lamp on it, a desk and chair under the window, and a two-door wardrobe against the rear wall',
+    covering: 'carpet',
+    view:
+      'Through the window, soft daylight and green planting beyond. No other houses, no roofs and no roads are visible from this room',
+    light: 'daylight from the wide front window falling across the desk, warm lamplight by the bed',
+  },
+  landing: {
+    subject:
+      'a new-build UK first-floor landing, 2.00 m wide and 5.94 m long, running down the outer wall of the house. A window (W17) in the wall at the far end, three internal doors along the opposite side with the middle one standing open, and the stairwell opening in the floor on the near left',
+    fitout:
+      'BALUSTRADE guarding the stairwell on the left and carrying on up the next flight to the top floor; a fitted two-door cupboard at the far end past the last door, a runner on the floor and a ceiling-mounted smoke alarm',
+    covering: 'board',
     light:
-      'daylight coming in over the shoulder from the front door and window, a pendant down the middle, the stairwell above falling away into shadow',
+      'daylight from the window at the far end, a pendant down the middle, the stairwell falling away into shadow on the left',
   },
   bed2: {
     subject:
       'a new-build UK bedroom on the top floor under a 40 degree pitched roof, 3.93 x 5.70 m, with the ceiling sloping down to low eaves on both sides. A single rooflight (RL01) in the slope is its only opening — both side walls are internal',
     fitout:
       'a double bed set along the low eaves wall, bedside tables with lamps, a low chest where the ceiling comes down at the rear',
-    floor: 'soft pale carpet',
+    covering: 'carpet',
     light:
       'daylight falling steeply through the rooflight onto the bed and floor, and nothing else — the room is lit from above',
+  },
+  ensuite2: {
+    subject:
+      'a narrow new-build UK en-suite shower room on the top floor under a 40 degree pitched roof, 0.98 x 2.61 m, off bedroom 2. No window — mechanically extracted into the eaves — with the ceiling sloping down on one side and the door in the wall at the far end',
+    fitout:
+      'a walk-in shower at the near end on a level tiled tray behind a single fixed glazed screen with a round overhead rose, a wall-hung basin with a mirror over it, a back-to-wall W/C at the far end, a boxed soil pipe in the corner beside it, large-format wall and floor tiling and chrome brassware',
+    light:
+      'warm ceiling downlights as the only source, soft reflections in the tiling and the glass screen',
+  },
+  landing2: {
+    subject:
+      'a narrow new-build UK top-floor landing under a 40 degree pitched roof, 0.98 m wide and 4.89 m long, against the outer wall. No window of its own — it borrows light from the rooms off it — with two doors along one side, the nearer one standing open, and a low eaves-store door in the end wall ahead',
+    fitout:
+      'BALUSTRADE guarding the stairwell in the near foreground on the left, where the flight arrives from the first floor, and a plain landing running away beyond it',
+    covering: 'board',
+    light:
+      'soft borrowed daylight through the open door on the right and a warm ceiling downlight, the sloping ceiling catching most of it',
+  },
+  store: {
+    subject:
+      'a boarded-out eaves storage space in a new-build UK roof, 4.95 m wide and 1.30 m deep, running across the front of the top floor behind the rooms. The ceiling follows a 40 degree pitch down to a low outer eaves, and a low access door about a metre high stands open in the wall behind the camera',
+    fitout:
+      'plain painted plasterboard and a boarded floor, a low timber shelf along the back wall, a few neatly stacked storage boxes and a folded stepladder — clean and dry, a proper storage room rather than a junk space',
+    floor: 'a plain boarded floor',
+    light: 'a single ceiling bulkhead light and daylight spilling in low through the open access door',
+  },
+  store2: {
+    subject:
+      'a boarded-out eaves storage space in a new-build UK roof, 4.95 m wide and 1.45 m deep, running across the rear of the top floor behind the rooms. The ceiling follows a 40 degree pitch down to a low outer eaves, and a low access door about a metre high stands open in the wall behind the camera',
+    fitout:
+      'plain painted plasterboard and a boarded floor, a low timber shelf along the back wall, a few neatly stacked storage boxes and a folded stepladder, and a capped air admittance valve standing in the eaves as noted on the drawing',
+    floor: 'a plain boarded floor',
+    light: 'a single ceiling bulkhead light and daylight spilling in low through the open access door',
   },
 };
 
@@ -189,10 +313,19 @@ export function referenceKey(room, finishes) {
   return [room, ...AXES.map((a) => pick[a])].join('|');
 }
 
+/** The floor this room takes, in the words a photograph needs. */
+function floorPhrase(room, finishes) {
+  const scene = ROOM_SCENE[room];
+  if (!scene.covering) return scene.floor ?? `a floor tiled to match in ${TILE_DESC[finishes.tiles]}`;
+  return FLOOR_DESC[scene.covering][finishes.floors];
+}
+
 function buildPrompt(room, finishes) {
   const scene = ROOM_SCENE[room];
+  const axes = PHOTOREAL_AXES[room] ?? [];
   const walls = WALL_DESC[finishes.walls];
   let fitout = scene.fitout;
+
   if (room === 'kitchen') {
     fitout = fitout.replace(
       'Howdens Shaker-style kitchen',
@@ -201,18 +334,23 @@ function buildPrompt(room, finishes) {
   }
   // In a bathroom the tile is the room, so the range goes in the fit-out
   // rather than being left to the generic "large-format tiling".
-  if (room === 'bath') {
+  if (axes.includes('tiles')) {
     fitout = fitout.replace(
       'large-format wall and floor tiling',
       `large-format wall and floor tiling in ${TILE_DESC[finishes.tiles]}`,
     );
   }
-  const floor = room === 'bath' ? `a floor tiled to match in ${TILE_DESC[finishes.tiles]}` : scene.floor;
+  // The balustrade is named where the room has one in frame.
+  fitout = fitout.replace('BALUSTRADE', STAIR_DESC[finishes.stairs]);
+
+  const joinery = ROOM_SCENE[room].covering || scene.floor
+    ? 'white-painted skirting and a four-panel moulded internal door'
+    : 'white-painted joinery';
 
   return [
     `Photoreal interior photograph of ${scene.subject}.`,
     `${fitout[0].toUpperCase()}${fitout.slice(1)}.`,
-    `${walls[0].toUpperCase()}${walls.slice(1)}, ${floor}, white-painted skirting and a four-panel moulded internal door.`,
+    `${walls[0].toUpperCase()}${walls.slice(1)}, ${floorPhrase(room, finishes)}, ${joinery}.`,
     scene.view ? `${scene.view}.` : null,
     `${scene.light[0].toUpperCase()}${scene.light.slice(1)}.`,
     'Match the reference image exactly for room shape, wall positions, window and door positions, furniture layout and camera angle — change only the material realism and the lighting.',
@@ -226,12 +364,8 @@ export function slugFor(room, finishes) {
 }
 
 /**
- * Every job, in a stable order.
- *
- * One per combination of the values each of the room's axes is generated
- * across, with everything else pinned. Axis-driven rather than hardcoded to
- * units and walls, because the bathroom varies on its tile range and the hall
- * would vary on its balustrade if the budget went that way.
+ * Every job, in a stable order: one per combination of the values each of the
+ * room's axes is generated across, with everything else pinned.
  */
 export function photorealJobs() {
   const jobs = [];
@@ -267,58 +401,49 @@ export function photorealJobs() {
  * Generating each colourway independently from its own render gave twelve
  * kitchens that read as twelve different kitchens: the model re-interprets the
  * room every time, and there is no seed to lock. So each room is generated
- * once as a base, and every other colourway is an edit of that finished
- * photoreal image rather than a fresh interpretation of a render. The edit is
- * then trivial — repaint a surface — and the geometry cannot drift.
+ * once as a base, and every other combination is reached by editing an image
+ * that already exists, one axis at a time. The edit is then trivial — repaint
+ * a surface, swap a material — and the geometry cannot drift.
  *
- * `from` is the slug this job is generated from: null means it comes from the
- * render, otherwise it comes from that job's accepted image.
+ * It is a cascade rather than a star: the axes are expanded in CHAIN_ORDER,
+ * and each new image is an edit of the image that differs from it in exactly
+ * one axis and has every later axis still at its pinned value. That reaches
+ * the full cross product with every step a single change, and puts the change
+ * that is hardest to hold — the balustrade — closest to the base.
+ *
+ * `from` is the slug this job is generated from; null means it comes from the
+ * render. `depth` is how many edits deep it sits, so a caller can run a whole
+ * generation in waves: everything at one depth can be generated at once.
  */
 export function photorealChain() {
-  const jobs = photorealJobs();
-  const bySlug = new Map(jobs.map((j) => [j.slug, j]));
   const chain = [];
-  const add = (slug, from, change) => {
-    const job = bySlug.get(slug);
-    if (!job) throw new Error(`chain references unknown job "${slug}"`);
-    chain.push({ ...job, from, change });
-  };
-  const seen = new Set();
-  const once = (slug, from, change) => {
-    if (seen.has(slug)) return;
-    seen.add(slug);
-    add(slug, from, change);
-  };
+  const bySlug = new Map(photorealJobs().map((j) => [j.slug, j]));
 
   for (const room of PHOTOREAL_ROOMS) {
-    const axes = PHOTOREAL_AXES[room] ?? [];
-    const base = slugFor(room, PINNED);
+    const axes = CHAIN_ORDER.filter((a) => (PHOTOREAL_AXES[room] ?? []).includes(a));
+    let combos = [{ ...PINNED }];
 
     // Wave 0 — the room's base, the only image made from a render.
-    once(base, null, null);
+    chain.push({ ...bySlug.get(slugFor(room, PINNED)), from: null, change: null, depth: 0 });
 
-    // Wave 1 — every axis except the walls, varied off that base. These are
-    // the changes that alter a material rather than a colour, so each one is
-    // an edit of the finished photograph and the geometry cannot drift.
-    const others = axes.filter((a) => a !== 'walls');
-    const roots = [{ finishes: { ...PINNED }, slug: base }];
-    for (const axis of others) {
-      for (const value of PHOTOREAL_VALUES[axis] ?? []) {
-        if (value === PINNED[axis]) continue;
-        const finishes = { ...PINNED, [axis]: value };
-        const slug = slugFor(room, finishes);
-        once(slug, base, `${axis}:${value}`);
-        roots.push({ finishes, slug });
+    let depth = 0;
+    for (const axis of axes) {
+      depth += 1;
+      const grown = [...combos];
+      for (const parent of combos) {
+        for (const value of PHOTOREAL_VALUES[axis] ?? []) {
+          if (value === PINNED[axis]) continue;
+          const finishes = { ...parent, [axis]: value };
+          chain.push({
+            ...bySlug.get(slugFor(room, finishes)),
+            from: slugFor(room, parent),
+            change: `${axis}:${value}`,
+            depth,
+          });
+          grown.push(finishes);
+        }
       }
-    }
-
-    // Wave 2 — the wall colours, each off the matching chalk-walled image.
-    if (!axes.includes('walls')) continue;
-    for (const root of roots) {
-      for (const w of PHOTOREAL_VALUES.walls) {
-        if (w === PINNED.walls) continue;
-        once(slugFor(room, { ...root.finishes, walls: w }), root.slug, `walls:${w}`);
-      }
+      combos = grown;
     }
   }
   return chain;
@@ -329,10 +454,15 @@ const UNIT_PLAIN = { graphite: 'dark graphite grey', sage: 'muted sage green', o
 const WALL_PLAIN = { chalk: 'chalk white', clay: 'warm clay beige', slate: 'soft slate blue' };
 
 /**
- * The prompt for a chained edit: repaint one surface and leave the photograph
+ * The prompt for a chained edit: change one thing and leave the photograph
  * otherwise untouched.
+ *
+ * `room` is needed because the floor axis is two materials — boards on the
+ * ground floor and the landings, carpet in the bedrooms — and an instruction
+ * to lay a plank floor in a carpeted bedroom would be a change to the
+ * specification rather than to the picture.
  */
-export function recolourPrompt(change) {
+export function recolourPrompt(change, room) {
   const [axis, value] = change.split(':');
   let what;
   if (axis === 'kitchen') {
@@ -341,14 +471,21 @@ export function recolourPrompt(change) {
     // A tile swap is not a repaint, so it says so: same tiles in the same
     // places and the same sizes, a different stone.
     what =
-      `Replace the material of the wall and floor tiles with ${TILE_DESC[value]}. Every tile stays exactly where it is, the same size, in the same layout, with the same grout joints in the same places — only the stone they are cut from changes. The sanitaryware, the shower screen, the brassware, the vanity, the towel rail, the painted walls and the ceiling are all unchanged.`;
+      `Replace the material of the wall and floor tiles with ${TILE_DESC[value]}. Every tile stays exactly where it is, the same size, in the same layout, with the same grout joints in the same places — only the stone they are cut from changes. Every fitting in the room is unchanged and nothing is added to it: the sanitaryware, the brassware, the towel rail, any glazed screen or mirror already present, the painted walls and the ceiling all stay exactly as they are.`;
+  } else if (axis === 'floors') {
+    const covering = ROOM_SCENE[room]?.covering ?? 'board';
+    what =
+      `Replace the floor covering with ${FLOOR_DESC[covering][value]}. It covers exactly the same area and meets the skirting on the same line, and everything standing on it — furniture, rugs, doors, fittings — stays exactly where it is and keeps its own colour. The walls, ceiling, joinery and lighting are unchanged.`;
+  } else if (axis === 'stairs') {
+    what =
+      `Replace only the staircase balustrade with ${STAIR_DESC[value]}. The flight itself is unchanged: the same treads and risers in the same places, the same pitch, the same painted string, the same position in the room. Only the spindles, the newel posts and the handrail change. The walls, floor, doors, furniture and lighting are unchanged.`;
   } else {
     what = `Repaint only the painted wall surfaces to ${WALL_PLAIN[value]}. Tiling, joinery, skirting, doors, flooring, furniture and fittings all keep their existing colours.`;
   }
   return [
     'Take this photograph and change one thing.',
     what,
-    'Everything else must be pixel-for-pixel the same photograph: identical room shape, identical camera and framing, identical window and door positions, identical furniture in identical places, identical lighting, shadows and reflections. Do not restyle, re-light, re-stage or re-interpret the room. This is a paint change, nothing more.',
+    'Everything else must be pixel-for-pixel the same photograph: identical room shape, identical camera and framing, identical window and door positions, identical furniture in identical places, identical lighting, shadows and reflections. Do not restyle, re-light, re-stage or re-interpret the room.',
     'No people, no text, no watermark.',
   ].join(' ');
 }
