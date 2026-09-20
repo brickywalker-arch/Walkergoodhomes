@@ -90,6 +90,21 @@ export const NAV_LINKS = [
   { href: '/#inside', label: 'INSIDE' },
   { href: '/#spec', label: 'SPECIFICATION' },
   { href: '/#buyers', label: 'RESERVED BUYERS' },
+  { href: '/#help', label: 'WORK WITH US' },
+];
+
+/**
+ * The business-development routes.
+ *
+ * One list, read by the footer and by the sitemap, so a new partner page
+ * cannot be added without both of them finding it.
+ */
+export const PARTNER_LINKS = [
+  { href: '/land', label: 'Land wanted' },
+  { href: '/partnerships/development', label: 'Development partnerships' },
+  { href: '/partnerships/housing', label: 'Housing partnerships' },
+  { href: '/supply-chain', label: 'Join our supply chain' },
+  { href: '/partnerships/professional', label: 'Professional partners' },
 ];
 
 export type SpecSection = { title: string; items: string[] };

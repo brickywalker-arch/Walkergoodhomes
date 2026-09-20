@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { DEVELOPMENT } from '@/data/development';
+import { DEVELOPMENT, PARTNER_LINKS } from '@/data/development';
 
 export function Footer() {
   return (
@@ -38,6 +38,20 @@ export function Footer() {
               <br />
               {DEVELOPMENT.addressLines[1]}
             </p>
+          </div>
+          <div>
+            <div style={{ fontWeight: 600, fontSize: 9.5, letterSpacing: '.16em', color: 'var(--ink-faint-navy-2)' }}>
+              WORK WITH US
+            </div>
+            <ul style={{ listStyle: 'none', margin: '12px 0 0', padding: 0, display: 'grid', gap: 7 }}>
+              {PARTNER_LINKS.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--ink-on-navy-2)' }}>
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
           <div>
             <div style={{ fontWeight: 600, fontSize: 9.5, letterSpacing: '.16em', color: 'var(--ink-faint-navy-2)' }}>

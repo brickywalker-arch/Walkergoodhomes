@@ -298,3 +298,343 @@ main[id] {
   white-space: nowrap;
   border: 0;
 }
+
+/* ==========================================================================
+ * Business-development sections
+ *
+ * Everything below was added to carry the partnership, supply-chain, land and
+ * development-journal sections. It extends the system above rather than
+ * replacing any of it: same square corners, same hairline rules, same navy
+ * and gold, same fluid clamps and no media queries.
+ * ========================================================================== */
+
+:root {
+  /*
+   * The display face, in one place.
+   *
+   * The brand direction asks for an editorial serif on major headings; the
+   * site was built on Barlow Condensed and the brief also says to preserve
+   * the current identity. Rather than pick one and bury it, every heading on
+   * the site — old and new — now reads this token, so the whole site changes
+   * face by changing this line alone.
+   */
+  --font-display: var(--font-barlow-condensed), sans-serif;
+
+  --reveal-shift: 18px;
+  --reveal-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --elev: 0 1px 0 rgba(6, 34, 58, 0.04);
+  --elev-hover: 0 14px 34px -18px rgba(6, 34, 58, 0.42);
+}
+
+.hd {
+  font-family: var(--font-display);
+}
+
+/* ------------------------------------------------------------- scroll reveal
+ * Opacity and a short lift, added once when the element first enters view.
+ * The initial state is only applied to elements the observer has claimed
+ * (data-reveal="armed"), so if JavaScript never runs the content is visible.
+ */
+[data-reveal='armed'] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-shift), 0);
+}
+
+[data-reveal='in'] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s var(--reveal-ease),
+    transform 0.7s var(--reveal-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal='armed'] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------ gold divider
+ * A hairline that draws itself in from the left when its section arrives.
+ */
+.rule-gold {
+  display: block;
+  height: 2px;
+  width: clamp(54px, 7vw, 84px);
+  background: var(--gold);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+[data-reveal='in'] .rule-gold,
+.rule-gold[data-reveal='in'] {
+  transform: scaleX(1);
+  transition: transform 0.9s var(--reveal-ease) 0.12s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rule-gold {
+    transform: scaleX(1);
+  }
+}
+
+/* --------------------------------------------------------------------- card
+ * Hover elevation, and a gold rule that wipes across the top edge. Both are
+ * :focus-within too, so a keyboard user sees the same state.
+ */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border: 1px solid var(--rule);
+  padding: clamp(20px, 2.6vw, 30px);
+  transition:
+    transform 0.28s var(--reveal-ease),
+    box-shadow 0.28s var(--reveal-ease),
+    border-color 0.28s var(--reveal-ease);
+  box-shadow: var(--elev);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: -1px -1px auto -1px;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.42s var(--reveal-ease);
+}
+
+.card:hover,
+.card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: var(--elev-hover);
+  border-color: var(--rule-light);
+}
+
+.card:hover::before,
+.card:focus-within::before {
+  transform: scaleX(1);
+}
+
+.card-navy {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(239, 207, 145, 0.24);
+  color: var(--ink-on-navy);
+}
+
+.card-navy:hover,
+.card-navy:focus-within {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(239, 207, 145, 0.45);
+}
+
+/* A whole card that is one link or button. */
+.card-action {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+/* -------------------------------------------------------------------- grids */
+.grid-auto {
+  display: grid;
+  gap: clamp(14px, 2.2vw, 24px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+.grid-wide {
+  display: grid;
+  gap: clamp(14px, 2.2vw, 24px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+}
+
+/* -------------------------------------------------------------------- chips
+ * Multi-select tags: opportunity types, trades, product categories.
+ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  cursor: pointer;
+  border: 1px solid var(--input-border);
+  background: var(--white);
+  color: var(--ink);
+  border-radius: 0;
+  transition:
+    background 0.18s,
+    border-color 0.18s,
+    color 0.18s;
+}
+
+.chip:hover {
+  border-color: var(--gold-deep);
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--gold-light);
+}
+
+.chip-on-navy {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--ink-on-navy);
+}
+
+.chip-on-navy:hover {
+  border-color: var(--gold);
+}
+
+.chip-on-navy[aria-pressed='true'] {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy);
+}
+
+/* -------------------------------------------------------------------- modal */
+.modal-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(4, 24, 43, 0.62);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(0px, 3vw, 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: scrim-in 0.24s var(--reveal-ease);
+}
+
+.modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  box-shadow: 0 30px 70px -30px rgba(4, 24, 43, 0.7);
+  animation: panel-in 0.3s var(--reveal-ease);
+}
+
+@keyframes scrim-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-scrim,
+  .modal-panel {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------- dropzone */
+.dropzone {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 18px;
+  border: 1px dashed var(--input-border);
+  background: var(--white);
+  cursor: pointer;
+  transition:
+    border-color 0.18s,
+    background 0.18s;
+}
+
+.dropzone:hover,
+.dropzone[data-over='true'] {
+  border-color: var(--gold-deep);
+  background: #fffdf8;
+}
+
+/* ------------------------------------------------------------ sticky panels
+ * Used by the how-we-build and partnership sequences. The sticky side holds
+ * while the steps scroll past it; below 900px the grid collapses to one
+ * column and position:sticky stops applying because there is nothing to
+ * scroll against.
+ */
+.sticky-pane {
+  position: sticky;
+  top: calc(var(--header-h, 76px) + clamp(16px, 4vh, 48px));
+}
+
+/* --------------------------------------------------------------- utilities */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.link-arrow > .arrow {
+  transition: transform 0.24s var(--reveal-ease);
+}
+
+.card:hover .link-arrow > .arrow,
+.link-arrow:hover > .arrow {
+  transform: translateX(5px);
+}
+
+.stack-sm > * + * {
+  margin-top: 10px;
+}
+
+/* --------------------------------------------------- sticky build sequence
+ * The section shows one held image beside the steps when there is room for
+ * two columns, and an image per step when there is not. A container query
+ * decides, rather than a media query, because what matters is the width of
+ * the grid itself — the same rule then holds wherever the section is placed.
+ */
+.build-grid {
+  container-type: inline-size;
+}
+
+/*
+ * The pane's display belongs here rather than on the element. An inline style
+ * would outrank the container query below, and this rule has to be declared
+ * before it for the same reason — equal specificity, so source order decides.
+ */
+.build-grid .sticky-pane {
+  display: grid;
+}
+
+@container (min-width: 800px) {
+  .build-grid [data-inline-figure] {
+    display: none;
+  }
+}
+
+@container (max-width: 799px) {
+  .build-grid .sticky-pane {
+    display: none;
+  }
+}

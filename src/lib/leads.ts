@@ -256,3 +256,82 @@ export function clientIp(headers: Headers): string {
   if (fwd) return fwd.split(',')[0].trim();
   return headers.get('x-real-ip') || headers.get('cf-connecting-ip') || 'unknown';
 }
+
+/* ------------------------------------------- business-development enquiries */
+
+export type PartnerLead = {
+  ref: string;
+  receivedAt: string;
+  kind: string;
+  title: string;
+  contactName: string;
+  email: string;
+  /** Label/value pairs in the order the form asked them. */
+  answers: { label: string; value: string }[];
+  attachments: { name: string; size: number; type: string }[];
+  source: string;
+  userAgent: string;
+};
+
+/**
+ * Stores uploaded files where the host gives us somewhere to put them.
+ *
+ * Netlify Blobs is the same store the enquiries go to, so there is no extra
+ * account or secret. Everywhere else this is a no-op and the enquiry still
+ * lands — the filenames are in the email either way, and Michael can ask for
+ * anything he needs. A dropped attachment must never lose the enquiry.
+ */
+async function persistAttachments(ref: string, files: File[]): Promise<number> {
+  if (!files.length || !process.env.NETLIFY) return 0;
+  try {
+    const { getStore } = await import('@netlify/blobs');
+    const store = getStore('wgh-attachments');
+    let saved = 0;
+    for (const [i, file] of files.entries()) {
+      const safe = file.name.replace(/[^\w.\- ]+/g, '_').slice(-120);
+      await store.set(`${ref}/${i + 1}-${safe}`, await file.arrayBuffer(), {
+        metadata: { ref, name: file.name, type: file.type },
+      });
+      saved += 1;
+    }
+    return saved;
+  } catch (err) {
+    console.error('[leads] could not store attachments:', (err as Error).message);
+    return 0;
+  }
+}
+
+export async function recordPartnerEnquiry(
+  lead: PartnerLead,
+  files: File[] = [],
+): Promise<{ stored: boolean; emailed: boolean }> {
+  const savedCount = await persistAttachments(lead.ref, files);
+
+  const width = Math.max(...lead.answers.map((a) => a.label.length), 12);
+  const body = [
+    `${lead.title} — ${DEVELOPMENT.company}`,
+    '',
+    `Reference:  ${lead.ref}`,
+    `Enquiry:    ${lead.kind}`,
+    `Received:   ${lead.receivedAt}`,
+    '',
+    ...lead.answers.map((a) => `${`${a.label}:`.padEnd(width + 2)}${a.value}`),
+    '',
+    lead.attachments.length
+      ? [
+          `Attachments (${lead.attachments.length}):`,
+          ...lead.attachments.map((a) => `  · ${a.name} (${Math.round(a.size / 1024)} KB)`),
+          savedCount
+            ? `  Stored under ${lead.ref}/ in the wgh-attachments store.`
+            : '  Not stored on this host — reply to the sender to ask for them.',
+        ].join('\n')
+      : 'No attachments.',
+  ].join('\n');
+
+  const [onDisk, inStore, emailed] = await Promise.all([
+    persist(lead, 'partner-enquiries.jsonl'),
+    persistToStore(lead, 'wgh-partner-enquiries'),
+    sendEmail(`${lead.title} — ${lead.contactName}`, body, lead.email || undefined),
+  ]);
+  return { stored: onDisk || inStore, emailed };
+}
