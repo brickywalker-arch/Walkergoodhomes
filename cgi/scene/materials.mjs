@@ -36,23 +36,25 @@ export const KITCHEN_FINISH = {
  * instead, because there the floor tile is the tile choice.
  */
 export const FLOOR_FINISH = {
-  oak: {
-    board: { color: '#b08a5f', roughness: 0.55, grain: 1, mottle: 0 },
-    carpet: { color: '#bdb6a9', roughness: 1.0 },
-  },
-  smoked: {
-    board: { color: '#7c5c3e', roughness: 0.52, grain: 1.15, mottle: 0 },
-    carpet: { color: '#aea496', roughness: 1.0 },
-  },
-  grey: {
-    board: { color: '#a8a29a', roughness: 0.58, grain: 0.75, mottle: 0 },
-    carpet: { color: '#aaa9a6', roughness: 1.0 },
-  },
-  stone: {
-    // A stone-effect plank, so the grain drops away and the face mottles.
-    board: { color: '#c2baae', roughness: 0.4, grain: 0.15, mottle: 1 },
-    carpet: { color: '#c0b6a3', roughness: 1.0 },
-  },
+  oak: { color: '#b08a5f', roughness: 0.55, grain: 1, mottle: 0 },
+  smoked: { color: '#7c5c3e', roughness: 0.52, grain: 1.15, mottle: 0 },
+  grey: { color: '#a8a29a', roughness: 0.58, grain: 0.75, mottle: 0 },
+  // A stone-effect plank, so the grain drops away and the face mottles.
+  stone: { color: '#c2baae', roughness: 0.4, grain: 0.15, mottle: 1 },
+};
+
+/**
+ * The bedroom carpets.
+ *
+ * A separate choice from the boards above: the two are picked to sit together
+ * but a buyer is not obliged to take the pale carpet because they wanted the
+ * pale hall, so they are two axes rather than one scheme.
+ */
+export const CARPET_FINISH = {
+  wool: { color: '#bdb6a9', roughness: 1.0 },
+  greige: { color: '#aea496', roughness: 1.0 },
+  pebble: { color: '#aaa9a6', roughness: 1.0 },
+  oatmeal: { color: '#c0b6a3', roughness: 1.0 },
 };
 
 /**
@@ -193,9 +195,11 @@ export function makeMaterials(finishes, level = 'ground') {
   const door = DOOR_FINISH[finishes.doors] ?? DOOR_FINISH.white;
   const kitchen = KITCHEN_FINISH[finishes.kitchen] ?? KITCHEN_FINISH.graphite;
   const floorId = FLOOR_FINISH[finishes.floors] ? finishes.floors : 'oak';
+  const carpetId = CARPET_FINISH[finishes.carpet] ? finishes.carpet : 'wool';
   const tileId = TILE_FINISH[finishes.tiles] ? finishes.tiles : 'calacatta';
   const stairId = STAIR_FINISH[finishes.stairs] ? finishes.stairs : 'chamfered';
   const floors = FLOOR_FINISH[floorId];
+  const carpets = CARPET_FINISH[carpetId];
   const tiles = TILE_FINISH[tileId];
   const stairs = STAIR_FINISH[stairId];
 
@@ -204,11 +208,11 @@ export function makeMaterials(finishes, level = 'ground') {
   // floor choices that all look identical is worse than not offering them.
   const board = textured(
     `board:${floorId}`,
-    floors.board,
-    () => plankCanvas(floors.board.color, { grain: floors.board.grain, mottle: floors.board.mottle }),
+    floors,
+    () => plankCanvas(floors.color, { grain: floors.grain, mottle: floors.mottle }),
     1.4,
   );
-  const carpet = textured(`carpet:${floorId}`, floors.carpet, () => carpetCanvas(floors.carpet.color), 0.7);
+  const carpet = textured(`carpet:${carpetId}`, carpets, () => carpetCanvas(carpets.color), 0.7);
   const tileFloor = textured(
     `tileFloor:${tileId}`,
     tiles.floor,

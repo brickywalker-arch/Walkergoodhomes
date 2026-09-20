@@ -25,11 +25,12 @@ const FINISHES = {
   walls: ['chalk', 'clay', 'slate'],
   doors: ['white', 'oak', 'grey'],
   floors: ['oak', 'smoked', 'grey', 'stone'],
+  carpet: ['wool', 'greige', 'pebble', 'oatmeal'],
   tiles: ['calacatta', 'capel', 'bardiglio', 'noir'],
   stairs: ['chamfered', 'oak', 'glass'],
 };
 /** The order the axes appear in a manifest key. Must match src/lib/cgi.ts. */
-const AXES = ['kitchen', 'walls', 'doors', 'floors', 'tiles', 'stairs'];
+const AXES = ['kitchen', 'walls', 'doors', 'floors', 'carpet', 'tiles', 'stairs'];
 
 /** Every combination the chooser can produce — the full selection space. */
 function allSelections() {

@@ -60,6 +60,7 @@ export function validateEnquiry(body: unknown): { lead: Omit<Lead, 'ref' | 'rece
     walls: pickFinish('walls', b.finishes),
     doors: pickFinish('doors', b.finishes),
     floors: pickFinish('floors', b.finishes),
+    carpet: pickFinish('carpet', b.finishes),
     tiles: pickFinish('tiles', b.finishes),
     stairs: pickFinish('stairs', b.finishes),
   };
@@ -156,7 +157,8 @@ export async function recordLead(lead: Lead): Promise<{ stored: boolean; emailed
     `Phone:      ${lead.phone || '—'}`,
     `Plot:       ${lead.plot}`,
     `Finishes:   ${lead.finishes.kitchen} kitchen / ${lead.finishes.walls} walls / ${lead.finishes.doors} doors`,
-    `            ${lead.finishes.floors} floors / ${lead.finishes.tiles} tiles / ${lead.finishes.stairs} staircase`,
+    `            ${lead.finishes.floors} boards / ${lead.finishes.carpet} carpet`,
+    `            ${lead.finishes.tiles} tiles / ${lead.finishes.stairs} staircase`,
     `Received:   ${lead.receivedAt}`,
     '',
     lead.message ? `Message:\n${lead.message}` : 'No message.',

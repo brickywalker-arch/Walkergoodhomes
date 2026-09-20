@@ -47,6 +47,7 @@ const FINISHES = {
   walls: ['chalk', 'clay', 'slate'],
   doors: ['white', 'oak', 'grey'],
   floors: ['oak', 'smoked', 'grey', 'stone'],
+  carpet: ['wool', 'greige', 'pebble', 'oatmeal'],
   tiles: ['calacatta', 'capel', 'bardiglio', 'noir'],
   stairs: ['chamfered', 'oak', 'glass'],
 };
@@ -56,6 +57,7 @@ const DEFAULTS = {
   walls: 'chalk',
   doors: 'white',
   floors: 'oak',
+  carpet: 'wool',
   tiles: 'calacatta',
   stairs: 'chamfered',
 };
@@ -70,9 +72,12 @@ const DEFAULTS = {
  * which would otherwise look the same to a visitor.
  *
  *   kitchen  only the kitchen has kitchen units in it.
- *   floors   the rooms with a boarded or carpeted floor. The wet rooms take
- *            their floor from the tile choice and the eaves stores are boarded
- *            out, so neither varies on it.
+ *   floors   the boarded rooms — hall, kitchen, dining, living and both
+ *            landings. The wet rooms take their floor from the tile choice and
+ *            the eaves stores are boarded out, so neither varies on it.
+ *   carpet   the three bedrooms, which are the carpeted rooms. Boards and
+ *            carpet are separate choices, so a room shows one or the other
+ *            and never both.
  *   tiles    the bathroom, both en-suites and the W/C.
  *   doors    pinned in the four wet rooms and the two stores, where the door
  *            is behind the camera and never appears in the picture.
@@ -82,12 +87,14 @@ const DEFAULTS = {
 const WET = ['wc', 'bath', 'ensuite', 'ensuite2'];
 const STORES = ['store', 'store2'];
 const WITH_STAIRS = ['hall', 'landing', 'landing2'];
+const CARPETED = ['master', 'bed3', 'bed2'];
 
 function axesFor(roomKey) {
   const axes = ['walls'];
   if (roomKey === 'kitchen') axes.unshift('kitchen');
   if (!WET.includes(roomKey) && !STORES.includes(roomKey)) axes.push('doors');
-  if (!WET.includes(roomKey) && !STORES.includes(roomKey)) axes.push('floors');
+  if (CARPETED.includes(roomKey)) axes.push('carpet');
+  else if (!WET.includes(roomKey) && !STORES.includes(roomKey)) axes.push('floors');
   if (WET.includes(roomKey)) axes.push('tiles');
   if (WITH_STAIRS.includes(roomKey)) axes.push('stairs');
   return axes;

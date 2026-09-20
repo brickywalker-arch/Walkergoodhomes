@@ -238,7 +238,7 @@ export const ROOMS: Room[] = [
 ];
 
 export type FinishOption = { id: string; label: string; swatch: string; note?: string };
-export type FinishGroupKey = 'kitchen' | 'walls' | 'doors' | 'floors' | 'tiles' | 'stairs';
+export type FinishGroupKey = 'kitchen' | 'walls' | 'doors' | 'floors' | 'carpet' | 'tiles' | 'stairs';
 export type FinishGroup = { name: string; hint?: string; options: FinishOption[] };
 
 export const FINISHES: Record<FinishGroupKey, FinishGroup> = {
@@ -270,17 +270,30 @@ export const FINISHES: Record<FinishGroupKey, FinishGroup> = {
     ],
   },
   floors: {
-    // One scheme covering the whole house rather than a choice per room: the
-    // boarded floor downstairs and on the landings, and the carpet in the
-    // bedrooms, are picked to sit together. The tiled rooms take their floor
-    // from the tile choice below instead.
-    name: 'Floor coverings',
-    hint: 'Boards downstairs and on the landings, carpet in the bedrooms',
+    // The boarded floor, which is what goes down everywhere the buyer walks
+    // shod: the hall, the kitchen, the dining and living rooms and both
+    // landings. The bedrooms take a carpet instead and the tiled rooms take
+    // their floor from the tile choice, so neither varies on this.
+    name: 'Floor boards',
+    hint: 'Downstairs and on both landings',
     options: [
-      { id: 'oak', label: 'Natural oak', swatch: '#b08a5f', note: 'Engineered oak board with a pale wool-look carpet above' },
-      { id: 'smoked', label: 'Smoked oak', swatch: '#7c5c3e', note: 'Deeper brown board with a warm greige carpet above' },
-      { id: 'grey', label: 'Grey wash', swatch: '#a8a29a', note: 'Grey-washed plank with a cool pebble carpet above' },
-      { id: 'stone', label: 'Stone', swatch: '#c2baae', note: 'Stone-effect plank with an oatmeal carpet above' },
+      { id: 'oak', label: 'Natural oak', swatch: '#b08a5f', note: 'Pale natural-oak engineered board' },
+      { id: 'smoked', label: 'Smoked oak', swatch: '#7c5c3e', note: 'Deep smoked-oak engineered board' },
+      { id: 'grey', label: 'Grey wash', swatch: '#a8a29a', note: 'Grey-washed engineered board' },
+      { id: 'stone', label: 'Stone', swatch: '#c2baae', note: 'Pale stone-effect plank' },
+    ],
+  },
+  carpet: {
+    // The bedroom carpet, chosen separately from the boards below stairs —
+    // the two need to sit together but they are not the same decision, and a
+    // buyer who wants a smoked-oak hall and a pale bedroom can have both.
+    name: 'Carpets',
+    hint: 'The three bedrooms',
+    options: [
+      { id: 'wool', label: 'Wool white', swatch: '#bdb6a9', note: 'Pale wool-look fitted carpet' },
+      { id: 'greige', label: 'Greige', swatch: '#aea496', note: 'Warm greige fitted carpet' },
+      { id: 'pebble', label: 'Pebble grey', swatch: '#aaa9a6', note: 'Cool pebble-grey fitted carpet' },
+      { id: 'oatmeal', label: 'Oatmeal', swatch: '#c0b6a3', note: 'Oatmeal fitted carpet' },
     ],
   },
   tiles: {
@@ -315,6 +328,7 @@ export type Finishes = {
   walls: string;
   doors: string;
   floors: string;
+  carpet: string;
   tiles: string;
   stairs: string;
 };
@@ -324,6 +338,7 @@ export const DEFAULT_FINISHES: Finishes = {
   walls: 'chalk',
   doors: 'white',
   floors: 'oak',
+  carpet: 'wool',
   tiles: 'calacatta',
   stairs: 'chamfered',
 };
@@ -333,6 +348,7 @@ export const FINISH_GROUP_KEYS: FinishGroupKey[] = [
   'walls',
   'doors',
   'floors',
+  'carpet',
   'tiles',
   'stairs',
 ];
@@ -342,7 +358,8 @@ const FINISH_NOUN: Record<FinishGroupKey, string> = {
   kitchen: 'kitchen',
   walls: 'walls',
   doors: 'doors',
-  floors: 'floors',
+  floors: 'boards',
+  carpet: 'carpet',
   tiles: 'tiles',
   stairs: 'staircase',
 };

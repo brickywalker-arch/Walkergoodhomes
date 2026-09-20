@@ -30,19 +30,19 @@ export const PHOTOREAL_ROOMS = [
  * what `slugFor` names a file by, so these lists must not be reordered.
  */
 export const PHOTOREAL_AXES = {
-  hall: ['walls', 'floors', 'stairs'],
-  kitchen: ['kitchen', 'walls', 'floors'],
+  hall: ['walls', 'doors', 'floors', 'stairs'],
+  kitchen: ['kitchen', 'walls', 'doors', 'floors'],
   wc: ['walls', 'tiles'],
-  dining: ['walls', 'floors'],
-  living: ['walls', 'floors'],
-  master: ['walls', 'floors'],
+  dining: ['walls', 'doors', 'floors'],
+  living: ['walls', 'doors', 'floors'],
+  master: ['walls', 'doors', 'carpet'],
   ensuite: ['walls', 'tiles'],
   bath: ['walls', 'tiles'],
-  bed3: ['walls', 'floors'],
-  landing: ['walls', 'floors', 'stairs'],
-  bed2: ['walls', 'floors'],
+  bed3: ['walls', 'doors', 'carpet'],
+  landing: ['walls', 'doors', 'floors', 'stairs'],
+  bed2: ['walls', 'doors', 'carpet'],
   ensuite2: ['walls', 'tiles'],
-  landing2: ['walls', 'floors', 'stairs'],
+  landing2: ['walls', 'doors', 'floors', 'stairs'],
   store: ['walls'],
   store2: ['walls'],
 };
@@ -53,17 +53,20 @@ export const PINNED = {
   walls: 'chalk',
   doors: 'white',
   floors: 'oak',
+  carpet: 'wool',
   tiles: 'calacatta',
   stairs: 'chamfered',
 };
 
 /** The order the axes appear in a manifest key. Must match src/lib/cgi.ts. */
-export const AXES = ['kitchen', 'walls', 'doors', 'floors', 'tiles', 'stairs'];
+export const AXES = ['kitchen', 'walls', 'doors', 'floors', 'carpet', 'tiles', 'stairs'];
 
 export const KITCHEN_FINISHES = ['graphite', 'sage', 'oak', 'ivory'];
 export const WALL_FINISHES = ['chalk', 'clay', 'slate'];
 export const TILE_FINISHES = ['calacatta', 'capel', 'bardiglio', 'noir'];
 export const FLOOR_FINISHES = ['oak', 'smoked', 'grey', 'stone'];
+export const CARPET_FINISHES = ['wool', 'greige', 'pebble', 'oatmeal'];
+export const DOOR_FINISHES = ['white', 'oak', 'grey'];
 export const STAIR_FINISHES = ['chamfered', 'oak', 'glass'];
 
 /**
@@ -80,6 +83,8 @@ export const PHOTOREAL_VALUES = {
   walls: WALL_FINISHES,
   tiles: TILE_FINISHES,
   floors: FLOOR_FINISHES,
+  carpet: CARPET_FINISHES,
+  doors: DOOR_FINISHES,
   stairs: STAIR_FINISHES,
 };
 
@@ -89,9 +94,14 @@ export const PHOTOREAL_VALUES = {
  * Every image past the base is an edit of the one before it, so error
  * accumulates with depth. The hardest change to hold — the balustrade, which
  * is geometry rather than colour — goes closest to the base, and the most
- * forgiving one, a wall repaint, goes last.
+ * forgiving ones go last.
+ *
+ * Doors are last for a second reason: they were added to a set that was
+ * already complete without them, so putting them at the end makes every image
+ * that already exists the parent of its own two door variants, and nothing
+ * generated before has to be generated again.
  */
-const CHAIN_ORDER = ['stairs', 'tiles', 'kitchen', 'floors', 'walls'];
+const CHAIN_ORDER = ['stairs', 'tiles', 'kitchen', 'floors', 'carpet', 'walls', 'doors'];
 
 /** Tile range as it should read in a photograph. */
 const TILE_DESC = {
@@ -119,9 +129,10 @@ const WALL_DESC = {
 /**
  * Floor covering as it should read in a photograph.
  *
- * One selection, two materials: the boards go down on the ground floor and the
- * landings and the carpet goes down in the bedrooms, which is how the range is
- * sold and how `FINISHES.floors` describes it. A room states which it has.
+ * Two materials on two separate axes: the boards go down on the ground floor
+ * and the landings, the carpet goes down in the bedrooms, and a room takes one
+ * or the other. `ROOM_SCENE[room].covering` says which, and that also picks
+ * which axis the room varies on.
  */
 const FLOOR_DESC = {
   board: {
@@ -131,11 +142,27 @@ const FLOOR_DESC = {
     stone: 'a pale stone-effect plank floor',
   },
   carpet: {
-    oak: 'a pale wool-look fitted carpet',
-    smoked: 'a warm greige fitted carpet',
-    grey: 'a cool pebble-grey fitted carpet',
-    stone: 'an oatmeal fitted carpet',
+    wool: 'a pale wool-look fitted carpet',
+    greige: 'a warm greige fitted carpet',
+    pebble: 'a cool pebble-grey fitted carpet',
+    oatmeal: 'an oatmeal fitted carpet',
   },
+};
+
+/** Which axis a room's floor covering is chosen on. */
+const COVERING_AXIS = { board: 'floors', carpet: 'carpet' };
+
+/**
+ * Internal doors as they should read in a photograph.
+ *
+ * The leaf is the same four-panel moulded door throughout — it is the finish
+ * the buyer chooses, not the door — so each of these describes the same door
+ * in a different finish and nothing else about it.
+ */
+const DOOR_DESC = {
+  white: 'a white-painted four-panel moulded internal door with a brushed-steel lever handle',
+  oak: 'an oak-veneered four-panel internal door in a clear satin lacquer, with a brushed-steel lever handle',
+  grey: 'a dark grey painted four-panel moulded internal door with a brushed-steel lever handle',
 };
 
 /** Balustrade as it should read in a photograph. */
@@ -319,7 +346,7 @@ export function referenceKey(room, finishes) {
 function floorPhrase(room, finishes) {
   const scene = ROOM_SCENE[room];
   if (!scene.covering) return scene.floor ?? `a floor tiled to match in ${TILE_DESC[finishes.tiles]}`;
-  return FLOOR_DESC[scene.covering][finishes.floors];
+  return FLOOR_DESC[scene.covering][finishes[COVERING_AXIS[scene.covering]]];
 }
 
 function buildPrompt(room, finishes) {
@@ -346,9 +373,15 @@ function buildPrompt(room, finishes) {
   fitout = fitout.replace('BALUSTRADE', STAIR_DESC[finishes.stairs]);
 
   // A habitable room has skirting and a panelled door; a tiled wet room and a
-  // boarded eaves store do not, and saying they do invents joinery.
+  // boarded eaves store do not, and saying they do invents joinery. Where the
+  // door is in shot its finish is the buyer's, so it is named rather than
+  // assumed white.
   const joinery = scene.joinery
-    ?? (scene.covering ? 'white-painted skirting and a four-panel moulded internal door' : 'white-painted joinery');
+    ?? (axes.includes('doors')
+      ? `white-painted skirting and ${DOOR_DESC[finishes.doors]}`
+      : scene.covering
+        ? 'white-painted skirting and a four-panel moulded internal door'
+        : 'white-painted joinery');
 
   return [
     `Photoreal interior photograph of ${scene.subject}.`,
@@ -460,10 +493,9 @@ const WALL_PLAIN = { chalk: 'chalk white', clay: 'warm clay beige', slate: 'soft
  * The prompt for a chained edit: change one thing and leave the photograph
  * otherwise untouched.
  *
- * `room` is needed because the floor axis is two materials — boards on the
- * ground floor and the landings, carpet in the bedrooms — and an instruction
- * to lay a plank floor in a carpeted bedroom would be a change to the
- * specification rather than to the picture.
+ * `room` is kept for the axes whose wording depends on which room is being
+ * edited; the boards and the carpet are separate axes now, so the floor case
+ * no longer has to work out which material the room takes.
  */
 export function recolourPrompt(change, room) {
   const [axis, value] = change.split(':');
@@ -475,10 +507,17 @@ export function recolourPrompt(change, room) {
     // places and the same sizes, a different stone.
     what =
       `Replace the material of the wall and floor tiles with ${TILE_DESC[value]}. Every tile stays exactly where it is, the same size, in the same layout, with the same grout joints in the same places — only the stone they are cut from changes. Every fitting in the room is unchanged and nothing is added to it: the sanitaryware, the brassware, the towel rail, any glazed screen or mirror already present, the painted walls and the ceiling all stay exactly as they are.`;
-  } else if (axis === 'floors') {
-    const covering = ROOM_SCENE[room]?.covering ?? 'board';
+  } else if (axis === 'floors' || axis === 'carpet') {
+    const covering = axis === 'carpet' ? 'carpet' : 'board';
     what =
       `Replace the floor covering with ${FLOOR_DESC[covering][value]}. It covers exactly the same area and meets the skirting on the same line, and everything standing on it — furniture, rugs, doors, fittings — stays exactly where it is and keeps its own colour. The walls, ceiling, joinery and lighting are unchanged.`;
+  } else if (axis === 'doors') {
+    // The door is a small part of most of these frames, so the instruction
+    // says what not to touch at least as firmly as what to change: a model
+    // given a nearly-identical picture will otherwise repaint the skirting
+    // and the architrave along with the leaf.
+    what =
+      `Refinish only the internal door leaves so that each one reads as ${DOOR_DESC[value]}. Every door stays exactly where it is, the same size, hung the same way, open or closed exactly as it is now, with its architrave, frame and hinges unchanged and its handle in the same place. The skirting, the architraves, the window boards, the staircase, the walls, the floor, the furniture and the lighting all keep their existing colours.`;
   } else if (axis === 'stairs') {
     what =
       `Replace only the staircase balustrade with ${STAIR_DESC[value]}. The flight itself is unchanged: the same treads and risers in the same places, the same pitch, the same painted string, the same position in the room. Only the spindles, the newel posts and the handrail change. The walls, floor, doors, furniture and lighting are unchanged.`;

@@ -16,10 +16,10 @@ import type { Finishes } from '@/data/interior';
 
 type SizeMap = Record<string, string>;
 
-type FinishAxis = 'kitchen' | 'walls' | 'doors' | 'floors' | 'tiles' | 'stairs';
+type FinishAxis = 'kitchen' | 'walls' | 'doors' | 'floors' | 'carpet' | 'tiles' | 'stairs';
 
 /** The order the axes appear in a manifest key. Must match scripts/render-cgi.mjs. */
-const AXES: FinishAxis[] = ['kitchen', 'walls', 'doors', 'floors', 'tiles', 'stairs'];
+const AXES: FinishAxis[] = ['kitchen', 'walls', 'doors', 'floors', 'carpet', 'tiles', 'stairs'];
 
 type CgiManifest = {
   generated: string;
