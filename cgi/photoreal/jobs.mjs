@@ -516,8 +516,15 @@ export function recolourPrompt(change, room) {
     // says what not to touch at least as firmly as what to change: a model
     // given a nearly-identical picture will otherwise repaint the skirting
     // and the architrave along with the leaf.
+    //
+    // It also has to be told not to make more doors. On a landing with three
+    // of them in shot the first attempts turned the fitted cupboard into a
+    // single door and hung a new one on a blank wall — a change to the plan,
+    // not to the finish. And built-in joinery has to be told apart from
+    // furniture: a fitted wardrobe matching the doors is right, a freestanding
+    // one repainted to match them is a picture of different furniture.
     what =
-      `Refinish only the internal door leaves so that each one reads as ${DOOR_DESC[value]}. Every door stays exactly where it is, the same size, hung the same way, open or closed exactly as it is now, with its architrave, frame and hinges unchanged and its handle in the same place. The skirting, the architraves, the window boards, the staircase, the walls, the floor, the furniture and the lighting all keep their existing colours.`;
+      `Refinish the internal doors that are already in this photograph so that each one reads as ${DOOR_DESC[value]}. Count the doors first and end with exactly the same ones: do not add a door anywhere, do not take one away, and do not turn a wall, a panel, a recess or a cupboard front into a door. Every door stays exactly where it is, the same width and height, the same number of panels, hung on the same side, standing open or closed exactly as it is now, with its architrave, frame and hinges unchanged and its handle the same handle in the same place. A cupboard built into the fabric of the room — a fitted wardrobe, an airing cupboard, an under-stair door — is joinery and takes the same finish, keeping its own shape, its own number of leaves and its own handles. Furniture standing on the floor is not: a freestanding wardrobe, a chest, a desk or a bedside table keeps its own colour and its own material. The skirting, the architraves, the walls, the floor, any staircase or balustrade in shot, the furniture and the lighting all keep their existing colours.`;
   } else if (axis === 'stairs') {
     what =
       `Replace only the staircase balustrade with ${STAIR_DESC[value]}. The flight itself is unchanged: the same treads and risers in the same places, the same pitch, the same painted string, the same position in the room. Only the spindles, the newel posts and the handrail change. The walls, floor, doors, furniture and lighting are unchanged.`;
