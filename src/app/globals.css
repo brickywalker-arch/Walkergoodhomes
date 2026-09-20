@@ -645,3 +645,102 @@ main[id],
     display: none;
   }
 }
+
+/* ------------------------------------------------- the interior explorer */
+
+/*
+ * The picture is the point of this section, so it takes the wide column and
+ * the controls sit in a rail beside it. Below the breakpoint the rail falls
+ * under the picture, which is the right order on a phone: see the room, then
+ * change it.
+ */
+.inside-grid {
+  display: grid;
+  gap: clamp(16px, 2.2vw, 28px);
+  align-items: start;
+}
+
+.inside-stage {
+  display: grid;
+  gap: 0;
+  align-content: start;
+}
+
+.inside-rail {
+  display: grid;
+  gap: clamp(14px, 1.8vw, 20px);
+  align-content: start;
+}
+
+.inside-panel {
+  border: 1px solid rgba(239, 207, 145, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  padding: clamp(14px, 1.9vw, 20px);
+}
+
+.inside-panel-head {
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+/* Plan beside the room names: two ways into the same choice, side by side. */
+.inside-picker {
+  display: grid;
+  grid-template-columns: minmax(0, 118px) minmax(0, 1fr);
+  gap: clamp(12px, 1.6vw, 18px);
+  margin-top: 14px;
+}
+
+.inside-plan {
+  margin-inline: auto;
+}
+
+@media (min-width: 900px) {
+  .inside-grid {
+    grid-template-columns: minmax(0, 1.62fr) minmax(330px, 0.88fr);
+  }
+}
+
+/*
+ * Hold the picture on screen while the rail beside it is worked through — but
+ * only where the stage actually fits, or sticky pins its top and hides its
+ * bottom, which is worse than not sticking at all.
+ */
+@media (min-width: 900px) and (min-height: 900px) {
+  .inside-stage {
+    position: sticky;
+    top: calc(var(--header-h, 76px) + 16px);
+  }
+}
+
+/* Single column: the plan has the width to be read rather than pointed at. */
+@media (max-width: 899px) {
+  .inside-picker {
+    grid-template-columns: minmax(0, 160px) minmax(0, 1fr);
+  }
+}
+
+/*
+ * Room figures under the picture. Side by side while there is room for both,
+ * stacked once the openings list would be squeezed into a column of one word.
+ */
+.inside-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px clamp(14px, 2vw, 26px);
+}
+
+.inside-facts > * {
+  min-width: 132px;
+}
+
+@media (max-width: 560px) {
+  .inside-facts {
+    display: grid;
+    gap: 12px;
+  }
+}
