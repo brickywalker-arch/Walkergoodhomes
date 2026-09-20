@@ -38,12 +38,39 @@ camera all survive; what changes is the material and light realism.
 
 ## Which images to generate
 
-Not all fifteen rooms. The narrow utility spaces — landing (1.11 m wide), top
-landing (0.98 m), and the two eaves stores — will not photograph well however
-they are rendered, and nothing is gained by spending on them. Six rooms carry
-the development:
+**All fifteen rooms, and every value of every axis a buyer can change.**
 
-`kitchen`, `living`, `dining`, `master`, `bath`, `bed2`
+This started as six rooms on the reasoning that the narrow utility spaces would
+not photograph well. Two things overturned it. The drawing audit corrected the
+first-floor landing from 1110 to 2000 wide — it is the same band the entrance
+hall occupies below it, not a corridor — and, more importantly, a partial set
+is its own defect: a chooser where some rooms are photographs and some are
+renders, and where changing the floor changes how good the picture is rather
+than just what is in it, reads as broken. An option is either worth offering,
+in which case it is worth photographing, or it is not offered.
+
+So the set is the full cross product, 270 images:
+
+| Room | Axes | Images |
+|---|---|---|
+| kitchen | units × walls × floors | 4 × 3 × 4 = 48 |
+| hall, landing, landing2 | walls × floors × stairs | 3 × 4 × 3 = 36 each |
+| dining, living, master, bed2, bed3 | walls × floors | 3 × 4 = 12 each |
+| wc, ensuite, bath, ensuite2 | walls × tiles | 3 × 4 = 12 each |
+| store, store2 | walls | 3 each |
+
+The one axis still pinned is the internal-door colour. That is measured rather
+than assumed: comparing each room's render against the same render with the
+door colour changed moves 0–7% of the frame, which is not something a
+generated photograph can be trusted to hold steady. Everything else a buyer
+can pick is generated.
+
+**Check the images, not the metric.** The same pixel comparison said the hall
+floor moves 4.4% of the frame and the top-landing balustrade 6.5% — both
+looked droppable. Put side by side at full size, the hall floor is a large
+warm-to-grey change across the lower frame and the top landing's balustrade
+stands in the near foreground. Both stayed. A percentage is a hint about where
+to look, not a decision.
 
 ### Collapsing the finish axes
 
@@ -194,7 +221,10 @@ place that decides it, and both scripts read it.
   opposite run — not a gangway anyone can use. It was invented, and the room
   copy then claimed it followed the drawn layout. Read the plan for what is
   actually drawn before modelling a fitting, and check the clearance it leaves.
-- **The plots are a handed pair**, never higher/lower.
+- **The plots are a handed pair in plan** — the same drawing, mirrored — and
+  they **step down the sloping site**, plot 1 higher and plot 2 lower. Both are
+  true and neither replaces the other: do not describe them as two different
+  house types, and do not draw them level.
 
 ## Prerequisite — done
 

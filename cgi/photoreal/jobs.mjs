@@ -279,6 +279,7 @@ const ROOM_SCENE = {
     fitout:
       'plain painted plasterboard and a boarded floor, a low timber shelf along the back wall, a few neatly stacked storage boxes and a folded stepladder — clean and dry, a proper storage room rather than a junk space',
     floor: 'a plain boarded floor',
+    joinery: 'plain painted plasterboard reveals and a low boarded access door — no skirting and no panelled doors in here',
     light: 'a single ceiling bulkhead light and daylight spilling in low through the open access door',
   },
   store2: {
@@ -287,6 +288,7 @@ const ROOM_SCENE = {
     fitout:
       'plain painted plasterboard and a boarded floor, a low timber shelf along the back wall, a few neatly stacked storage boxes and a folded stepladder, and a capped air admittance valve standing in the eaves as noted on the drawing',
     floor: 'a plain boarded floor',
+    joinery: 'plain painted plasterboard reveals and a low boarded access door — no skirting and no panelled doors in here',
     light: 'a single ceiling bulkhead light and daylight spilling in low through the open access door',
   },
 };
@@ -343,9 +345,10 @@ function buildPrompt(room, finishes) {
   // The balustrade is named where the room has one in frame.
   fitout = fitout.replace('BALUSTRADE', STAIR_DESC[finishes.stairs]);
 
-  const joinery = ROOM_SCENE[room].covering || scene.floor
-    ? 'white-painted skirting and a four-panel moulded internal door'
-    : 'white-painted joinery';
+  // A habitable room has skirting and a panelled door; a tiled wet room and a
+  // boarded eaves store do not, and saying they do invents joinery.
+  const joinery = scene.joinery
+    ?? (scene.covering ? 'white-painted skirting and a four-panel moulded internal door' : 'white-painted joinery');
 
   return [
     `Photoreal interior photograph of ${scene.subject}.`,
