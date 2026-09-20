@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-20T02:18:59.435Z",
+  "generated": "2026-09-20T06:45:55.405Z",
   "defaults": {
     "kitchen": "graphite",
     "walls": "chalk",
@@ -101,6 +101,21 @@
       "1000": "/assets/photoreal/kitchen--ivory-slate-oak-1000.webp",
       "1600": "/assets/photoreal/kitchen--ivory-slate-oak-1600.webp"
     },
+    "living|graphite|chalk|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/living--chalk-oak-640.webp",
+      "1000": "/assets/photoreal/living--chalk-oak-1000.webp",
+      "1600": "/assets/photoreal/living--chalk-oak-1600.webp"
+    },
+    "living|graphite|clay|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/living--clay-oak-640.webp",
+      "1000": "/assets/photoreal/living--clay-oak-1000.webp",
+      "1600": "/assets/photoreal/living--clay-oak-1600.webp"
+    },
+    "living|graphite|slate|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/living--slate-oak-640.webp",
+      "1000": "/assets/photoreal/living--slate-oak-1000.webp",
+      "1600": "/assets/photoreal/living--slate-oak-1600.webp"
+    },
     "dining|graphite|chalk|white|oak|calacatta|chamfered": {
       "640": "/assets/photoreal/dining--chalk-oak-640.webp",
       "1000": "/assets/photoreal/dining--chalk-oak-1000.webp",
@@ -115,6 +130,111 @@
       "640": "/assets/photoreal/dining--slate-oak-640.webp",
       "1000": "/assets/photoreal/dining--slate-oak-1000.webp",
       "1600": "/assets/photoreal/dining--slate-oak-1600.webp"
+    },
+    "master|graphite|chalk|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/master--chalk-oak-640.webp",
+      "1000": "/assets/photoreal/master--chalk-oak-1000.webp",
+      "1600": "/assets/photoreal/master--chalk-oak-1600.webp"
+    },
+    "master|graphite|clay|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/master--clay-oak-640.webp",
+      "1000": "/assets/photoreal/master--clay-oak-1000.webp",
+      "1600": "/assets/photoreal/master--clay-oak-1600.webp"
+    },
+    "master|graphite|slate|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/master--slate-oak-640.webp",
+      "1000": "/assets/photoreal/master--slate-oak-1000.webp",
+      "1600": "/assets/photoreal/master--slate-oak-1600.webp"
+    },
+    "bath|graphite|chalk|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/bath--chalk-calacatta-640.webp",
+      "1000": "/assets/photoreal/bath--chalk-calacatta-1000.webp",
+      "1600": "/assets/photoreal/bath--chalk-calacatta-1600.webp"
+    },
+    "bath|graphite|chalk|white|oak|capel|chamfered": {
+      "640": "/assets/photoreal/bath--chalk-capel-640.webp",
+      "1000": "/assets/photoreal/bath--chalk-capel-1000.webp",
+      "1600": "/assets/photoreal/bath--chalk-capel-1600.webp"
+    },
+    "bath|graphite|chalk|white|oak|bardiglio|chamfered": {
+      "640": "/assets/photoreal/bath--chalk-bardiglio-640.webp",
+      "1000": "/assets/photoreal/bath--chalk-bardiglio-1000.webp",
+      "1600": "/assets/photoreal/bath--chalk-bardiglio-1600.webp"
+    },
+    "bath|graphite|chalk|white|oak|noir|chamfered": {
+      "640": "/assets/photoreal/bath--chalk-noir-640.webp",
+      "1000": "/assets/photoreal/bath--chalk-noir-1000.webp",
+      "1600": "/assets/photoreal/bath--chalk-noir-1600.webp"
+    },
+    "bath|graphite|clay|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/bath--clay-calacatta-640.webp",
+      "1000": "/assets/photoreal/bath--clay-calacatta-1000.webp",
+      "1600": "/assets/photoreal/bath--clay-calacatta-1600.webp"
+    },
+    "bath|graphite|clay|white|oak|capel|chamfered": {
+      "640": "/assets/photoreal/bath--clay-capel-640.webp",
+      "1000": "/assets/photoreal/bath--clay-capel-1000.webp",
+      "1600": "/assets/photoreal/bath--clay-capel-1600.webp"
+    },
+    "bath|graphite|clay|white|oak|bardiglio|chamfered": {
+      "640": "/assets/photoreal/bath--clay-bardiglio-640.webp",
+      "1000": "/assets/photoreal/bath--clay-bardiglio-1000.webp",
+      "1600": "/assets/photoreal/bath--clay-bardiglio-1600.webp"
+    },
+    "bath|graphite|clay|white|oak|noir|chamfered": {
+      "640": "/assets/photoreal/bath--clay-noir-640.webp",
+      "1000": "/assets/photoreal/bath--clay-noir-1000.webp",
+      "1600": "/assets/photoreal/bath--clay-noir-1600.webp"
+    },
+    "bath|graphite|slate|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/bath--slate-calacatta-640.webp",
+      "1000": "/assets/photoreal/bath--slate-calacatta-1000.webp",
+      "1600": "/assets/photoreal/bath--slate-calacatta-1600.webp"
+    },
+    "bath|graphite|slate|white|oak|capel|chamfered": {
+      "640": "/assets/photoreal/bath--slate-capel-640.webp",
+      "1000": "/assets/photoreal/bath--slate-capel-1000.webp",
+      "1600": "/assets/photoreal/bath--slate-capel-1600.webp"
+    },
+    "bath|graphite|slate|white|oak|bardiglio|chamfered": {
+      "640": "/assets/photoreal/bath--slate-bardiglio-640.webp",
+      "1000": "/assets/photoreal/bath--slate-bardiglio-1000.webp",
+      "1600": "/assets/photoreal/bath--slate-bardiglio-1600.webp"
+    },
+    "bath|graphite|slate|white|oak|noir|chamfered": {
+      "640": "/assets/photoreal/bath--slate-noir-640.webp",
+      "1000": "/assets/photoreal/bath--slate-noir-1000.webp",
+      "1600": "/assets/photoreal/bath--slate-noir-1600.webp"
+    },
+    "bed2|graphite|chalk|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/bed2--chalk-oak-640.webp",
+      "1000": "/assets/photoreal/bed2--chalk-oak-1000.webp",
+      "1600": "/assets/photoreal/bed2--chalk-oak-1600.webp"
+    },
+    "bed2|graphite|clay|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/bed2--clay-oak-640.webp",
+      "1000": "/assets/photoreal/bed2--clay-oak-1000.webp",
+      "1600": "/assets/photoreal/bed2--clay-oak-1600.webp"
+    },
+    "bed2|graphite|slate|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/bed2--slate-oak-640.webp",
+      "1000": "/assets/photoreal/bed2--slate-oak-1000.webp",
+      "1600": "/assets/photoreal/bed2--slate-oak-1600.webp"
+    },
+    "hall|graphite|chalk|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--chalk-oak-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-chamfered-1600.webp"
+    },
+    "hall|graphite|clay|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--clay-oak-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-chamfered-1600.webp"
+    },
+    "hall|graphite|slate|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--slate-oak-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-chamfered-1600.webp"
     }
   }
 }

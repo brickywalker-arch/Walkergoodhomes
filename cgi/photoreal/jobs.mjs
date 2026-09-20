@@ -114,6 +114,8 @@ const ROOM_SCENE = {
     fitout:
       'a low fabric sofa with cushions and a throw over one arm set against the rear wall to the left of the garden doors, a media wall on the return wall opposite with an inset electric fire and a wall-mounted television over it, an armchair turned in toward the fire, a solid timber coffee table with a tray and books on it, a floor lamp and a large low-pile rug',
     floor: 'engineered oak floor',
+    view:
+      'Through the glazing, the enclosed rear garden only: lawn, a close-boarded timber fence along the boundary, and mature trees rising behind it. No other houses, no roofs and no roads are visible from this room',
     light:
       'strong daylight flooding in through the rear garden doors, soft bounce onto the ceiling, warm lamplight in the corner and a low amber glow from the fire',
   },
@@ -128,17 +130,19 @@ const ROOM_SCENE = {
   },
   master: {
     subject:
-      'a new-build UK master bedroom, 3.64 x 2.76 m, at the rear of the first floor looking over the garden. One wide window (W10) in the rear wall',
+      'a new-build UK master bedroom, 3.75 x 2.76 m, at the rear of the first floor looking over the garden. One wide window (W10) in the rear wall',
     fitout:
       'a double bed with layered linen that drapes and folds, two bedside tables with lamps, a wardrobe against the side wall',
     floor: 'soft pale carpet',
+    view:
+      'Through the window, the enclosed rear garden only: lawn, a close-boarded timber fence along the boundary, and open green country rising behind it. No other houses are visible from this room',
     light: 'morning daylight from the wide rear window, warm bedside lamps',
   },
   bath: {
     subject:
-      'a new-build UK family bathroom, 3.75 x 1.70 m, in the middle of the first floor. No external window — mechanically extracted, doors D11/D12',
+      'a long narrow new-build UK family bathroom, 2.80 x 1.70 m, in the middle of the first floor. No external window — mechanically extracted, one door (D11) in the short wall at the near end',
     fitout:
-      'a bath with an overhead shower and a glazed screen, large-format wall and floor tiling, a wall-hung basin with a mirror over, a heated towel rail, chrome brassware',
+      'a 1500 bath set across the far end of the room hard against the end wall, with an overhead shower and a glazed screen at its tap end; a back-to-wall W/C and a wall-hung basin with a mirror over it ranged along the long side wall; a heated towel rail on the opposite long wall; large-format wall and floor tiling, chrome brassware',
     floor: 'large-format tiled floor',
     light:
       'even warm ceiling downlights as the only source, soft reflections in the tiling and the glass screen',
@@ -154,7 +158,7 @@ const ROOM_SCENE = {
   },
   bed2: {
     subject:
-      'a new-build UK bedroom on the top floor under a 40 degree pitched roof, 4.89 m long, with the ceiling sloping down to low eaves on both sides. A single rooflight (RL01) in the slope is its only opening — both side walls are internal',
+      'a new-build UK bedroom on the top floor under a 40 degree pitched roof, 3.93 x 5.70 m, with the ceiling sloping down to low eaves on both sides. A single rooflight (RL01) in the slope is its only opening — both side walls are internal',
     fitout:
       'a double bed set along the low eaves wall, bedside tables with lamps, a low chest where the ceiling comes down at the rear',
     floor: 'soft pale carpet',
@@ -209,10 +213,11 @@ function buildPrompt(room, finishes) {
     `Photoreal interior photograph of ${scene.subject}.`,
     `${fitout[0].toUpperCase()}${fitout.slice(1)}.`,
     `${walls[0].toUpperCase()}${walls.slice(1)}, ${floor}, white-painted skirting and a four-panel moulded internal door.`,
+    scene.view ? `${scene.view}.` : null,
     `${scene.light[0].toUpperCase()}${scene.light.slice(1)}.`,
     'Match the reference image exactly for room shape, wall positions, window and door positions, furniture layout and camera angle — change only the material realism and the lighting.',
     CAMERA,
-  ].join(' ');
+  ].filter(Boolean).join(' ');
 }
 
 /** The slug a job's files are named by: the room's own axes, in order. */
