@@ -156,6 +156,29 @@ opening positions, layout and camera, and to change only material realism and
 lighting. If an image drifts off that, it contradicts the drawings and is
 rejected — see below.
 
+## When the geometry moves, the photographs are void
+
+A photoreal image is a photograph of a render. When the render changes, the
+photograph is of a room that is not being built any more, and no amount of it
+looking good makes it usable.
+
+The drawing audit (`docs/drawing-audit.md`) moved several rooms, and the
+photoreal set was reconciled against it rather than left to rot:
+
+| Room | What happened |
+|---|---|
+| kitchen, dining | Geometry unchanged — kept, renamed to the new slug |
+| bath | Superseded: both the layout and the size were wrong |
+| bedroom 2 | Superseded: depth corrected 4890 → 5695 |
+| master | Superseded: width corrected 3640 → 3745, and the bed moved |
+| living | Superseded: the media wall did not exist when it was generated |
+| hall | New to the set — it is where the staircase choice shows |
+
+The slug format changed with the axes: it now names only the axes that room
+actually varies on, so a bedroom's file is not stamped with a tile range that
+is nowhere in the picture. `slugFor()` in `cgi/photoreal/jobs.mjs` is the one
+place that decides it, and both scripts read it.
+
 ## What must not change
 
 - **Honest labelling.** These are computer-generated images and the page says

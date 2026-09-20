@@ -1,166 +1,120 @@
 {
-  "generated": "2026-09-19T21:05:47.941Z",
+  "generated": "2026-09-20T02:18:59.435Z",
   "defaults": {
     "kitchen": "graphite",
     "walls": "chalk",
-    "doors": "white"
+    "doors": "white",
+    "floors": "oak",
+    "tiles": "calacatta",
+    "stairs": "chamfered"
   },
   "axes": {
     "kitchen": [
       "kitchen",
-      "walls"
+      "walls",
+      "floors"
     ],
     "living": [
-      "walls"
+      "walls",
+      "floors"
     ],
     "dining": [
-      "walls"
+      "walls",
+      "floors"
     ],
     "master": [
-      "walls"
+      "walls",
+      "floors"
     ],
     "bath": [
-      "walls"
+      "walls",
+      "tiles"
     ],
     "bed2": [
-      "walls"
+      "walls",
+      "floors"
+    ],
+    "hall": [
+      "walls",
+      "floors",
+      "stairs"
     ]
   },
   "images": {
-    "kitchen|graphite|chalk|white": {
-      "640": "/assets/photoreal/kitchen--graphite-chalk-640.webp",
-      "1000": "/assets/photoreal/kitchen--graphite-chalk-1000.webp",
-      "1600": "/assets/photoreal/kitchen--graphite-chalk-1600.webp"
+    "kitchen|graphite|chalk|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--graphite-chalk-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--graphite-chalk-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--graphite-chalk-oak-1600.webp"
     },
-    "kitchen|graphite|clay|white": {
-      "640": "/assets/photoreal/kitchen--graphite-clay-640.webp",
-      "1000": "/assets/photoreal/kitchen--graphite-clay-1000.webp",
-      "1600": "/assets/photoreal/kitchen--graphite-clay-1600.webp"
+    "kitchen|graphite|clay|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--graphite-clay-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--graphite-clay-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--graphite-clay-oak-1600.webp"
     },
-    "kitchen|graphite|slate|white": {
-      "640": "/assets/photoreal/kitchen--graphite-slate-640.webp",
-      "1000": "/assets/photoreal/kitchen--graphite-slate-1000.webp",
-      "1600": "/assets/photoreal/kitchen--graphite-slate-1600.webp"
+    "kitchen|graphite|slate|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--graphite-slate-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--graphite-slate-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--graphite-slate-oak-1600.webp"
     },
-    "kitchen|sage|chalk|white": {
-      "640": "/assets/photoreal/kitchen--sage-chalk-640.webp",
-      "1000": "/assets/photoreal/kitchen--sage-chalk-1000.webp",
-      "1600": "/assets/photoreal/kitchen--sage-chalk-1600.webp"
+    "kitchen|sage|chalk|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--sage-chalk-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--sage-chalk-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--sage-chalk-oak-1600.webp"
     },
-    "kitchen|sage|clay|white": {
-      "640": "/assets/photoreal/kitchen--sage-clay-640.webp",
-      "1000": "/assets/photoreal/kitchen--sage-clay-1000.webp",
-      "1600": "/assets/photoreal/kitchen--sage-clay-1600.webp"
+    "kitchen|sage|clay|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--sage-clay-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--sage-clay-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--sage-clay-oak-1600.webp"
     },
-    "kitchen|sage|slate|white": {
-      "640": "/assets/photoreal/kitchen--sage-slate-640.webp",
-      "1000": "/assets/photoreal/kitchen--sage-slate-1000.webp",
-      "1600": "/assets/photoreal/kitchen--sage-slate-1600.webp"
+    "kitchen|sage|slate|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--sage-slate-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--sage-slate-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--sage-slate-oak-1600.webp"
     },
-    "kitchen|oak|chalk|white": {
-      "640": "/assets/photoreal/kitchen--oak-chalk-640.webp",
-      "1000": "/assets/photoreal/kitchen--oak-chalk-1000.webp",
-      "1600": "/assets/photoreal/kitchen--oak-chalk-1600.webp"
+    "kitchen|oak|chalk|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--oak-chalk-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--oak-chalk-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--oak-chalk-oak-1600.webp"
     },
-    "kitchen|oak|clay|white": {
-      "640": "/assets/photoreal/kitchen--oak-clay-640.webp",
-      "1000": "/assets/photoreal/kitchen--oak-clay-1000.webp",
-      "1600": "/assets/photoreal/kitchen--oak-clay-1600.webp"
+    "kitchen|oak|clay|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--oak-clay-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--oak-clay-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--oak-clay-oak-1600.webp"
     },
-    "kitchen|oak|slate|white": {
-      "640": "/assets/photoreal/kitchen--oak-slate-640.webp",
-      "1000": "/assets/photoreal/kitchen--oak-slate-1000.webp",
-      "1600": "/assets/photoreal/kitchen--oak-slate-1600.webp"
+    "kitchen|oak|slate|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--oak-slate-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--oak-slate-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--oak-slate-oak-1600.webp"
     },
-    "kitchen|ivory|chalk|white": {
-      "640": "/assets/photoreal/kitchen--ivory-chalk-640.webp",
-      "1000": "/assets/photoreal/kitchen--ivory-chalk-1000.webp",
-      "1600": "/assets/photoreal/kitchen--ivory-chalk-1600.webp"
+    "kitchen|ivory|chalk|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--ivory-chalk-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--ivory-chalk-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--ivory-chalk-oak-1600.webp"
     },
-    "kitchen|ivory|clay|white": {
-      "640": "/assets/photoreal/kitchen--ivory-clay-640.webp",
-      "1000": "/assets/photoreal/kitchen--ivory-clay-1000.webp",
-      "1600": "/assets/photoreal/kitchen--ivory-clay-1600.webp"
+    "kitchen|ivory|clay|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--ivory-clay-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--ivory-clay-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--ivory-clay-oak-1600.webp"
     },
-    "kitchen|ivory|slate|white": {
-      "640": "/assets/photoreal/kitchen--ivory-slate-640.webp",
-      "1000": "/assets/photoreal/kitchen--ivory-slate-1000.webp",
-      "1600": "/assets/photoreal/kitchen--ivory-slate-1600.webp"
+    "kitchen|ivory|slate|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/kitchen--ivory-slate-oak-640.webp",
+      "1000": "/assets/photoreal/kitchen--ivory-slate-oak-1000.webp",
+      "1600": "/assets/photoreal/kitchen--ivory-slate-oak-1600.webp"
     },
-    "living|graphite|chalk|white": {
-      "640": "/assets/photoreal/living--graphite-chalk-640.webp",
-      "1000": "/assets/photoreal/living--graphite-chalk-1000.webp",
-      "1600": "/assets/photoreal/living--graphite-chalk-1600.webp"
+    "dining|graphite|chalk|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/dining--chalk-oak-640.webp",
+      "1000": "/assets/photoreal/dining--chalk-oak-1000.webp",
+      "1600": "/assets/photoreal/dining--chalk-oak-1600.webp"
     },
-    "living|graphite|clay|white": {
-      "640": "/assets/photoreal/living--graphite-clay-640.webp",
-      "1000": "/assets/photoreal/living--graphite-clay-1000.webp",
-      "1600": "/assets/photoreal/living--graphite-clay-1600.webp"
+    "dining|graphite|clay|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/dining--clay-oak-640.webp",
+      "1000": "/assets/photoreal/dining--clay-oak-1000.webp",
+      "1600": "/assets/photoreal/dining--clay-oak-1600.webp"
     },
-    "living|graphite|slate|white": {
-      "640": "/assets/photoreal/living--graphite-slate-640.webp",
-      "1000": "/assets/photoreal/living--graphite-slate-1000.webp",
-      "1600": "/assets/photoreal/living--graphite-slate-1600.webp"
-    },
-    "dining|graphite|chalk|white": {
-      "640": "/assets/photoreal/dining--graphite-chalk-640.webp",
-      "1000": "/assets/photoreal/dining--graphite-chalk-1000.webp",
-      "1600": "/assets/photoreal/dining--graphite-chalk-1600.webp"
-    },
-    "dining|graphite|clay|white": {
-      "640": "/assets/photoreal/dining--graphite-clay-640.webp",
-      "1000": "/assets/photoreal/dining--graphite-clay-1000.webp",
-      "1600": "/assets/photoreal/dining--graphite-clay-1600.webp"
-    },
-    "dining|graphite|slate|white": {
-      "640": "/assets/photoreal/dining--graphite-slate-640.webp",
-      "1000": "/assets/photoreal/dining--graphite-slate-1000.webp",
-      "1600": "/assets/photoreal/dining--graphite-slate-1600.webp"
-    },
-    "master|graphite|chalk|white": {
-      "640": "/assets/photoreal/master--graphite-chalk-640.webp",
-      "1000": "/assets/photoreal/master--graphite-chalk-1000.webp",
-      "1600": "/assets/photoreal/master--graphite-chalk-1600.webp"
-    },
-    "master|graphite|clay|white": {
-      "640": "/assets/photoreal/master--graphite-clay-640.webp",
-      "1000": "/assets/photoreal/master--graphite-clay-1000.webp",
-      "1600": "/assets/photoreal/master--graphite-clay-1600.webp"
-    },
-    "master|graphite|slate|white": {
-      "640": "/assets/photoreal/master--graphite-slate-640.webp",
-      "1000": "/assets/photoreal/master--graphite-slate-1000.webp",
-      "1600": "/assets/photoreal/master--graphite-slate-1600.webp"
-    },
-    "bath|graphite|chalk|white": {
-      "640": "/assets/photoreal/bath--graphite-chalk-640.webp",
-      "1000": "/assets/photoreal/bath--graphite-chalk-1000.webp",
-      "1600": "/assets/photoreal/bath--graphite-chalk-1600.webp"
-    },
-    "bath|graphite|clay|white": {
-      "640": "/assets/photoreal/bath--graphite-clay-640.webp",
-      "1000": "/assets/photoreal/bath--graphite-clay-1000.webp",
-      "1600": "/assets/photoreal/bath--graphite-clay-1600.webp"
-    },
-    "bath|graphite|slate|white": {
-      "640": "/assets/photoreal/bath--graphite-slate-640.webp",
-      "1000": "/assets/photoreal/bath--graphite-slate-1000.webp",
-      "1600": "/assets/photoreal/bath--graphite-slate-1600.webp"
-    },
-    "bed2|graphite|chalk|white": {
-      "640": "/assets/photoreal/bed2--graphite-chalk-640.webp",
-      "1000": "/assets/photoreal/bed2--graphite-chalk-1000.webp",
-      "1600": "/assets/photoreal/bed2--graphite-chalk-1600.webp"
-    },
-    "bed2|graphite|clay|white": {
-      "640": "/assets/photoreal/bed2--graphite-clay-640.webp",
-      "1000": "/assets/photoreal/bed2--graphite-clay-1000.webp",
-      "1600": "/assets/photoreal/bed2--graphite-clay-1600.webp"
-    },
-    "bed2|graphite|slate|white": {
-      "640": "/assets/photoreal/bed2--graphite-slate-640.webp",
-      "1000": "/assets/photoreal/bed2--graphite-slate-1000.webp",
-      "1600": "/assets/photoreal/bed2--graphite-slate-1600.webp"
+    "dining|graphite|slate|white|oak|calacatta|chamfered": {
+      "640": "/assets/photoreal/dining--slate-oak-640.webp",
+      "1000": "/assets/photoreal/dining--slate-oak-1000.webp",
+      "1600": "/assets/photoreal/dining--slate-oak-1600.webp"
     }
   }
 }
