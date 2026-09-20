@@ -211,6 +211,10 @@ export function Inside({ onFinishes }: { onFinishes?: (f: Finishes) => void }) {
                       const idx = ROOMS.findIndex((r) => r.key === cell.key);
                       const live = idx >= 0 && idx === roomIndex;
                       const isKitchen = cell.key === 'kitchen';
+                      // A cell this much taller than it is wide has no room for
+                      // its name across — the landings and en-suites are around
+                      // a metre of a 5.6 m frontage — so the name runs up it.
+                      const upright = cell.h / cell.w >= 2.5;
                       return (
                         <button
                           key={cell.key}
@@ -237,17 +241,20 @@ export function Inside({ onFinishes }: { onFinishes?: (f: Finishes) => void }) {
                             borderRadius: 0,
                           }}
                         >
-                          <span
-                            style={{
-                              fontWeight: 700,
-                              fontSize: 7.5,
-                              letterSpacing: '.06em',
-                              lineHeight: 1.05,
-                              textAlign: 'center',
-                            }}
-                          >
-                            {cell.short}
-                          </span>
+                          {cell.noLabel ? null : (
+                            <span
+                              style={{
+                                fontWeight: 700,
+                                fontSize: 7.5,
+                                letterSpacing: '.06em',
+                                lineHeight: 1.05,
+                                textAlign: 'center',
+                                ...(upright ? { writingMode: 'vertical-rl' as const, padding: '3px 0' } : null),
+                              }}
+                            >
+                              {cell.short}
+                            </span>
+                          )}
                         </button>
                       );
                     })}

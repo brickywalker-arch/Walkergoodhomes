@@ -22,6 +22,13 @@ export type PlanCell = {
   y: number;
   w: number;
   h: number;
+  /**
+   * The second-floor landing is a 0.98 m strip the en-suite is drawn inside,
+   * so there is nowhere in it to put a name that the en-suite's would not sit
+   * on top of. The cell still highlights and still clicks; the list beside the
+   * plan and the cell's own tooltip carry the name.
+   */
+  noLabel?: true;
 };
 
 export type PlanFloor = {
@@ -66,7 +73,7 @@ export const PLAN: PlanFloor[] = [
     foot: 'FRONT AT THE TOP · ROOMS UNDER THE 40° PITCH',
     rooms: [
       { key: 'store', short: 'STORE', dims: '1.30 deep', x: 350, y: 350, w: 4945, h: 1300 },
-      { key: 'landing2', short: 'LANDING', dims: '0.98 wide', x: 350, y: 1750, w: 975, h: 4890 },
+      { key: 'landing2', short: 'LANDING', dims: '0.98 wide', x: 350, y: 1750, w: 975, h: 4890, noLabel: true },
       { key: 'ensuite2', short: 'EN-SUITE', dims: '0.98 × 2.61', x: 350, y: 2920, w: 975, h: 2610 },
       { key: 'bed2', short: 'BEDROOM 2', dims: '3.93 × 5.70', x: 1425, y: 1810, w: 3930, h: 5695 },
       { key: 'store2', short: 'STORE', dims: '1.45 deep', x: 350, y: 7695, w: 4945, h: 1450 },
