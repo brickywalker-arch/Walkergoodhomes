@@ -96,8 +96,15 @@ a:hover {
  * published as --header-h; the literal is the server-rendered fallback.
  */
 section[id],
-main[id] {
+main[id],
+.anchor-alias {
   scroll-margin-top: calc(var(--header-h, 76px) + 14px);
+}
+
+/* An empty target for a fragment a section no longer carries. Zero height, so
+   it takes no space; it only has to be somewhere the browser can scroll to. */
+.anchor-alias {
+  display: block;
 }
 
 :focus-visible {

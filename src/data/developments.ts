@@ -60,6 +60,6 @@ export const DEVELOPMENTS: Development[] = [
     summary:
       'Two attached Yorkshire-stone homes stepping down a sloping site, three bedrooms over three storeys in each. Plot 1 sits higher, plot 2 lower.',
     photo: 'hero',
-    href: '/#plots',
+    href: '/#developments',
   },
 ];

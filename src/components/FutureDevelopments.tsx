@@ -142,7 +142,7 @@ function DevelopmentCard({ dev, index }: { dev: Development; index: number }) {
  * of padding the register with invented pipeline it says so and points at the
  * two things that would change that: land and partnerships.
  */
-export function FutureDevelopments({ id = 'developments' }: { id?: string }) {
+export function FutureDevelopments({ id = 'register' }: { id?: string }) {
   const list = ordered(DEVELOPMENTS);
   const homes = list.reduce((n, d) => n + d.homes, 0);
 
@@ -150,7 +150,7 @@ export function FutureDevelopments({ id = 'developments' }: { id?: string }) {
     <section className="sec" id={id}>
       <div className="wrap">
         <SectionHead
-          eyebrow="Developments"
+          eyebrow="The register"
           title="Where we are building."
           lead={
             <>

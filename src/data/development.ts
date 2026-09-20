@@ -78,14 +78,14 @@ export const PLOT_FACTS = [
 ];
 
 export const QUICK_LINKS = [
-  { num: '01', label: 'EXPLORE PLOTS 1 & 2', href: '#plots' },
+  { num: '01', label: 'EXPLORE OUR DEVELOPMENTS', href: '#developments' },
   { num: '02', label: 'ARCHITECT DRAWINGS', href: '#drawings' },
   { num: '03', label: 'STEP INSIDE THE HOME', href: '#inside' },
   { num: '04', label: 'REGISTER YOUR INTEREST', href: '#enquire' },
 ];
 
 export const NAV_LINKS = [
-  { href: '/#plots', label: 'PLOTS 1 & 2' },
+  { href: '/#developments', label: 'DEVELOPMENTS' },
   { href: '/#drawings', label: 'DRAWINGS' },
   { href: '/#inside', label: 'INSIDE' },
   { href: '/#spec', label: 'SPECIFICATION' },

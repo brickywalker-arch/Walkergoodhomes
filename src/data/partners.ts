@@ -366,7 +366,7 @@ export const PARTNER_FORMS: Record<EnquiryKind, EnquiryForm> = {
 /* -------------------------------------------------------- audience router */
 
 export const ROUTER_OPTIONS = [
-  { label: 'FIND A HOME', href: '/#plots', note: 'Plots 1 & 2, Hoyle Ing' },
+  { label: 'FIND A HOME', href: '/#developments', note: 'Hoyle Ing, Linthwaite' },
   { label: 'I HAVE LAND', href: '/land', note: 'Sites across Yorkshire' },
   { label: 'DEVELOP WITH US', href: '/partnerships/development', note: 'Capital, land, opportunities' },
   { label: 'HOUSING PARTNERSHIPS', href: '/partnerships/housing', note: 'Councils and providers' },

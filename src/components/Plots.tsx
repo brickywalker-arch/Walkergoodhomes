@@ -31,12 +31,15 @@ export function Plots() {
     plot === 1 ? 'Plot 1 · the left-hand home' : 'Plot 2 · the right-hand home, the same plan handed';
 
   return (
-    <section className="sec" id="plots">
+    <section className="sec" id="developments">
+      {/* This section was #plots until it was renamed; the alias keeps any
+          link that still carries the old fragment landing here. */}
+      <span className="anchor-alias" id="plots" aria-hidden="true" />
       <div className="wrap">
         <div className="two" style={{ alignItems: 'start' }}>
           <div>
             <div className="eyebrow" style={{ color: 'var(--gold-deep)' }}>
-              The development
+              Developments
             </div>
             <h2 className="hd" style={{ fontSize: 'clamp(38px,5.4vw,70px)', marginTop: 12 }}>
               Two homes. One carefully considered site.
