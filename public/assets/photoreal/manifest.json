@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-20T16:11:27.860Z",
+  "generated": "2026-09-20T16:34:10.792Z",
   "defaults": {
     "kitchen": "graphite",
     "walls": "chalk",
@@ -12,6 +12,7 @@
   "axes": {
     "hall": [
       "walls",
+      "doors",
       "floors",
       "stairs"
     ],
@@ -138,6 +139,126 @@
       "1000": "/assets/photoreal/hall--chalk-white-stone-glass-1000.webp",
       "1600": "/assets/photoreal/hall--chalk-white-stone-glass-1600.webp"
     },
+    "hall|graphite|chalk|oak|oak|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--chalk-oak-oak-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-oak-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-oak-chamfered-1600.webp"
+    },
+    "hall|graphite|chalk|oak|oak|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--chalk-oak-oak-oak-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-oak-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-oak-oak-1600.webp"
+    },
+    "hall|graphite|chalk|oak|oak|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--chalk-oak-oak-glass-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-oak-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-oak-glass-1600.webp"
+    },
+    "hall|graphite|chalk|oak|smoked|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--chalk-oak-smoked-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-smoked-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-smoked-chamfered-1600.webp"
+    },
+    "hall|graphite|chalk|oak|smoked|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--chalk-oak-smoked-oak-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-smoked-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-smoked-oak-1600.webp"
+    },
+    "hall|graphite|chalk|oak|smoked|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--chalk-oak-smoked-glass-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-smoked-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-smoked-glass-1600.webp"
+    },
+    "hall|graphite|chalk|oak|grey|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--chalk-oak-grey-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-grey-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-grey-chamfered-1600.webp"
+    },
+    "hall|graphite|chalk|oak|grey|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--chalk-oak-grey-oak-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-grey-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-grey-oak-1600.webp"
+    },
+    "hall|graphite|chalk|oak|grey|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--chalk-oak-grey-glass-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-grey-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-grey-glass-1600.webp"
+    },
+    "hall|graphite|chalk|oak|stone|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--chalk-oak-stone-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-stone-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-stone-chamfered-1600.webp"
+    },
+    "hall|graphite|chalk|oak|stone|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--chalk-oak-stone-oak-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-stone-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-stone-oak-1600.webp"
+    },
+    "hall|graphite|chalk|oak|stone|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--chalk-oak-stone-glass-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-oak-stone-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-oak-stone-glass-1600.webp"
+    },
+    "hall|graphite|chalk|grey|oak|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--chalk-grey-oak-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-oak-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-oak-chamfered-1600.webp"
+    },
+    "hall|graphite|chalk|grey|oak|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--chalk-grey-oak-oak-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-oak-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-oak-oak-1600.webp"
+    },
+    "hall|graphite|chalk|grey|oak|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--chalk-grey-oak-glass-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-oak-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-oak-glass-1600.webp"
+    },
+    "hall|graphite|chalk|grey|smoked|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--chalk-grey-smoked-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-smoked-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-smoked-chamfered-1600.webp"
+    },
+    "hall|graphite|chalk|grey|smoked|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--chalk-grey-smoked-oak-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-smoked-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-smoked-oak-1600.webp"
+    },
+    "hall|graphite|chalk|grey|smoked|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--chalk-grey-smoked-glass-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-smoked-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-smoked-glass-1600.webp"
+    },
+    "hall|graphite|chalk|grey|grey|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--chalk-grey-grey-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-grey-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-grey-chamfered-1600.webp"
+    },
+    "hall|graphite|chalk|grey|grey|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--chalk-grey-grey-oak-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-grey-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-grey-oak-1600.webp"
+    },
+    "hall|graphite|chalk|grey|grey|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--chalk-grey-grey-glass-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-grey-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-grey-glass-1600.webp"
+    },
+    "hall|graphite|chalk|grey|stone|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--chalk-grey-stone-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-stone-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-stone-chamfered-1600.webp"
+    },
+    "hall|graphite|chalk|grey|stone|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--chalk-grey-stone-oak-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-stone-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-stone-oak-1600.webp"
+    },
+    "hall|graphite|chalk|grey|stone|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--chalk-grey-stone-glass-640.webp",
+      "1000": "/assets/photoreal/hall--chalk-grey-stone-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--chalk-grey-stone-glass-1600.webp"
+    },
     "hall|graphite|clay|white|oak|wool|calacatta|chamfered": {
       "640": "/assets/photoreal/hall--clay-white-oak-chamfered-640.webp",
       "1000": "/assets/photoreal/hall--clay-white-oak-chamfered-1000.webp",
@@ -198,6 +319,126 @@
       "1000": "/assets/photoreal/hall--clay-white-stone-glass-1000.webp",
       "1600": "/assets/photoreal/hall--clay-white-stone-glass-1600.webp"
     },
+    "hall|graphite|clay|oak|oak|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--clay-oak-oak-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-oak-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-oak-chamfered-1600.webp"
+    },
+    "hall|graphite|clay|oak|oak|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--clay-oak-oak-oak-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-oak-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-oak-oak-1600.webp"
+    },
+    "hall|graphite|clay|oak|oak|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--clay-oak-oak-glass-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-oak-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-oak-glass-1600.webp"
+    },
+    "hall|graphite|clay|oak|smoked|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--clay-oak-smoked-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-smoked-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-smoked-chamfered-1600.webp"
+    },
+    "hall|graphite|clay|oak|smoked|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--clay-oak-smoked-oak-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-smoked-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-smoked-oak-1600.webp"
+    },
+    "hall|graphite|clay|oak|smoked|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--clay-oak-smoked-glass-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-smoked-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-smoked-glass-1600.webp"
+    },
+    "hall|graphite|clay|oak|grey|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--clay-oak-grey-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-grey-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-grey-chamfered-1600.webp"
+    },
+    "hall|graphite|clay|oak|grey|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--clay-oak-grey-oak-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-grey-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-grey-oak-1600.webp"
+    },
+    "hall|graphite|clay|oak|grey|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--clay-oak-grey-glass-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-grey-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-grey-glass-1600.webp"
+    },
+    "hall|graphite|clay|oak|stone|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--clay-oak-stone-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-stone-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-stone-chamfered-1600.webp"
+    },
+    "hall|graphite|clay|oak|stone|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--clay-oak-stone-oak-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-stone-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-stone-oak-1600.webp"
+    },
+    "hall|graphite|clay|oak|stone|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--clay-oak-stone-glass-640.webp",
+      "1000": "/assets/photoreal/hall--clay-oak-stone-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-oak-stone-glass-1600.webp"
+    },
+    "hall|graphite|clay|grey|oak|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--clay-grey-oak-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-oak-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-oak-chamfered-1600.webp"
+    },
+    "hall|graphite|clay|grey|oak|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--clay-grey-oak-oak-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-oak-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-oak-oak-1600.webp"
+    },
+    "hall|graphite|clay|grey|oak|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--clay-grey-oak-glass-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-oak-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-oak-glass-1600.webp"
+    },
+    "hall|graphite|clay|grey|smoked|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--clay-grey-smoked-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-smoked-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-smoked-chamfered-1600.webp"
+    },
+    "hall|graphite|clay|grey|smoked|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--clay-grey-smoked-oak-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-smoked-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-smoked-oak-1600.webp"
+    },
+    "hall|graphite|clay|grey|smoked|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--clay-grey-smoked-glass-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-smoked-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-smoked-glass-1600.webp"
+    },
+    "hall|graphite|clay|grey|grey|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--clay-grey-grey-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-grey-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-grey-chamfered-1600.webp"
+    },
+    "hall|graphite|clay|grey|grey|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--clay-grey-grey-oak-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-grey-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-grey-oak-1600.webp"
+    },
+    "hall|graphite|clay|grey|grey|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--clay-grey-grey-glass-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-grey-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-grey-glass-1600.webp"
+    },
+    "hall|graphite|clay|grey|stone|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--clay-grey-stone-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-stone-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-stone-chamfered-1600.webp"
+    },
+    "hall|graphite|clay|grey|stone|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--clay-grey-stone-oak-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-stone-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-stone-oak-1600.webp"
+    },
+    "hall|graphite|clay|grey|stone|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--clay-grey-stone-glass-640.webp",
+      "1000": "/assets/photoreal/hall--clay-grey-stone-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--clay-grey-stone-glass-1600.webp"
+    },
     "hall|graphite|slate|white|oak|wool|calacatta|chamfered": {
       "640": "/assets/photoreal/hall--slate-white-oak-chamfered-640.webp",
       "1000": "/assets/photoreal/hall--slate-white-oak-chamfered-1000.webp",
@@ -257,6 +498,126 @@
       "640": "/assets/photoreal/hall--slate-white-stone-glass-640.webp",
       "1000": "/assets/photoreal/hall--slate-white-stone-glass-1000.webp",
       "1600": "/assets/photoreal/hall--slate-white-stone-glass-1600.webp"
+    },
+    "hall|graphite|slate|oak|oak|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--slate-oak-oak-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-oak-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-oak-chamfered-1600.webp"
+    },
+    "hall|graphite|slate|oak|oak|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--slate-oak-oak-oak-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-oak-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-oak-oak-1600.webp"
+    },
+    "hall|graphite|slate|oak|oak|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--slate-oak-oak-glass-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-oak-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-oak-glass-1600.webp"
+    },
+    "hall|graphite|slate|oak|smoked|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--slate-oak-smoked-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-smoked-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-smoked-chamfered-1600.webp"
+    },
+    "hall|graphite|slate|oak|smoked|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--slate-oak-smoked-oak-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-smoked-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-smoked-oak-1600.webp"
+    },
+    "hall|graphite|slate|oak|smoked|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--slate-oak-smoked-glass-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-smoked-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-smoked-glass-1600.webp"
+    },
+    "hall|graphite|slate|oak|grey|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--slate-oak-grey-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-grey-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-grey-chamfered-1600.webp"
+    },
+    "hall|graphite|slate|oak|grey|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--slate-oak-grey-oak-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-grey-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-grey-oak-1600.webp"
+    },
+    "hall|graphite|slate|oak|grey|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--slate-oak-grey-glass-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-grey-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-grey-glass-1600.webp"
+    },
+    "hall|graphite|slate|oak|stone|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--slate-oak-stone-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-stone-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-stone-chamfered-1600.webp"
+    },
+    "hall|graphite|slate|oak|stone|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--slate-oak-stone-oak-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-stone-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-stone-oak-1600.webp"
+    },
+    "hall|graphite|slate|oak|stone|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--slate-oak-stone-glass-640.webp",
+      "1000": "/assets/photoreal/hall--slate-oak-stone-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-oak-stone-glass-1600.webp"
+    },
+    "hall|graphite|slate|grey|oak|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--slate-grey-oak-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-oak-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-oak-chamfered-1600.webp"
+    },
+    "hall|graphite|slate|grey|oak|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--slate-grey-oak-oak-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-oak-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-oak-oak-1600.webp"
+    },
+    "hall|graphite|slate|grey|oak|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--slate-grey-oak-glass-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-oak-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-oak-glass-1600.webp"
+    },
+    "hall|graphite|slate|grey|smoked|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--slate-grey-smoked-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-smoked-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-smoked-chamfered-1600.webp"
+    },
+    "hall|graphite|slate|grey|smoked|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--slate-grey-smoked-oak-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-smoked-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-smoked-oak-1600.webp"
+    },
+    "hall|graphite|slate|grey|smoked|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--slate-grey-smoked-glass-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-smoked-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-smoked-glass-1600.webp"
+    },
+    "hall|graphite|slate|grey|grey|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--slate-grey-grey-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-grey-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-grey-chamfered-1600.webp"
+    },
+    "hall|graphite|slate|grey|grey|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--slate-grey-grey-oak-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-grey-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-grey-oak-1600.webp"
+    },
+    "hall|graphite|slate|grey|grey|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--slate-grey-grey-glass-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-grey-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-grey-glass-1600.webp"
+    },
+    "hall|graphite|slate|grey|stone|wool|calacatta|chamfered": {
+      "640": "/assets/photoreal/hall--slate-grey-stone-chamfered-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-stone-chamfered-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-stone-chamfered-1600.webp"
+    },
+    "hall|graphite|slate|grey|stone|wool|calacatta|oak": {
+      "640": "/assets/photoreal/hall--slate-grey-stone-oak-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-stone-oak-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-stone-oak-1600.webp"
+    },
+    "hall|graphite|slate|grey|stone|wool|calacatta|glass": {
+      "640": "/assets/photoreal/hall--slate-grey-stone-glass-640.webp",
+      "1000": "/assets/photoreal/hall--slate-grey-stone-glass-1000.webp",
+      "1600": "/assets/photoreal/hall--slate-grey-stone-glass-1600.webp"
     },
     "kitchen|graphite|chalk|white|oak|wool|calacatta|chamfered": {
       "640": "/assets/photoreal/kitchen--graphite-chalk-oak-640.webp",
