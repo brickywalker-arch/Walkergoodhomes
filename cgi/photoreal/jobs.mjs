@@ -22,18 +22,20 @@ export const PHOTOREAL_ROOMS = [
 /**
  * Which finish axes change a photoreal image.
  *
- * Coarser than the renders' axes on one count only: the internal-door colour
- * is pinned, because at 0-7% of the frame across every room it is not
- * something a photograph can be trusted to hold steady. Everything else a
- * buyer can pick is generated, because it is visible — checked against the
- * renders rather than assumed. Listed in the canonical axis order, which is
- * what `slugFor` names a file by, so these lists must not be reordered.
+ * An axis is listed for a room only when the camera can actually see it. The
+ * kitchen and the dining room look away from their own doorways, so neither
+ * frame contains an internal door: asking for a door colour there cannot
+ * change the picture, and in practice makes the edit invent a door on a blank
+ * wall or repaint the kitchen units instead. Their door choice is served by
+ * the same photograph whichever leaf a buyer picks, which is what the room
+ * looks like. Listed in the canonical axis order, which is what `slugFor`
+ * names a file by, so these lists must not be reordered.
  */
 export const PHOTOREAL_AXES = {
   hall: ['walls', 'doors', 'floors', 'stairs'],
-  kitchen: ['kitchen', 'walls', 'doors', 'floors'],
+  kitchen: ['kitchen', 'walls', 'floors'],
   wc: ['walls', 'tiles'],
-  dining: ['walls', 'doors', 'floors'],
+  dining: ['walls', 'floors'],
   living: ['walls', 'doors', 'floors'],
   master: ['walls', 'doors', 'carpet'],
   ensuite: ['walls', 'tiles'],
@@ -523,15 +525,8 @@ export function recolourPrompt(change, room) {
     // not to the finish. And built-in joinery has to be told apart from
     // furniture: a fitted wardrobe matching the doors is right, a freestanding
     // one repainted to match them is a picture of different furniture.
-    // A kitchen is wall-to-wall built-in cupboards, so the joinery sentence
-    // below would hand the buyer's door finish to every unit in the room. The
-    // units are their own axis and are named as off-limits before anything
-    // else is said.
-    const unitsSafe = room === 'kitchen'
-      ? ' The fitted kitchen is not an internal door and does not change: every unit door, drawer front, tall housing, end panel and plinth keeps exactly the colour and material it has now.'
-      : '';
     what =
-      `Refinish the internal doors that are already in this photograph so that each one reads as ${DOOR_DESC[value]}.${unitsSafe} This means the internal doors only: the external doors and the windows are not internal doors, so the front door, any garden or patio doors and every window keep exactly the frame colour and material they have now. Count the internal doors first and end with exactly the same ones: do not add a door anywhere, do not take one away, and do not turn a wall, a panel, a recess or a cupboard front into a door. Every door stays exactly where it is, the same width and height, the same number of panels, hung on the same side, standing open or closed exactly as it is now, with its architrave, frame and hinges unchanged and its handle the same handle in the same place. A cupboard built into the fabric of the room — a fitted wardrobe, an airing cupboard, an under-stair door — is joinery and takes the same finish, keeping its own shape, its own number of leaves and its own handles. Furniture standing on the floor is not: a freestanding wardrobe, a chest, a desk or a bedside table keeps its own colour and its own material. The skirting, the architraves, the walls, the floor, any staircase or balustrade in shot, the furniture and the lighting all keep their existing colours.`;
+      `Refinish the internal doors that are already in this photograph so that each one reads as ${DOOR_DESC[value]}. This means the internal doors only: the external doors and the windows are not internal doors, so the front door, any garden or patio doors and every window keep exactly the frame colour and material they have now. Count the internal doors first and end with exactly the same ones: do not add a door anywhere, do not take one away, and do not turn a wall, a panel, a recess or a cupboard front into a door. Every door stays exactly where it is, the same width and height, the same number of panels, hung on the same side, standing open or closed exactly as it is now, with its architrave, frame and hinges unchanged and its handle the same handle in the same place. A cupboard built into the fabric of the room — a fitted wardrobe, an airing cupboard, an under-stair door — is joinery and takes the same finish, keeping its own shape, its own number of leaves and its own handles. Furniture standing on the floor is not: a freestanding wardrobe, a chest, a desk or a bedside table keeps its own colour and its own material. The skirting, the architraves, the walls, the floor, any staircase or balustrade in shot, the furniture and the lighting all keep their existing colours.`;
   } else if (axis === 'stairs') {
     what =
       `Replace only the staircase balustrade with ${STAIR_DESC[value]}. The flight itself is unchanged: the same treads and risers in the same places, the same pitch, the same painted string, the same position in the room. Only the spindles, the newel posts and the handrail change. The walls, floor, doors, furniture and lighting are unchanged.`;
